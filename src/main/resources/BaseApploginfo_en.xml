@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<info>
+		<code>ERR_0001</code>
+		<msg>Something error when init the Base Application!Please check the configuration file: %1$s
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0002</code>
+		<msg>Something error when do web filter! RequestMsg: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0003</code>
+		<msg>Something error when parse the configuration!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0004</code>
+		<msg>Something error when fill the content into response!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0005</code>
+		<msg>The web filter can not do listener! Request Msg: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0006</code>
+		<msg>Something error when build web filter! FilterId: %2$s ImplementClass: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0007</code>
+		<msg>Something error when build listener filter! ImplementClass: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0008</code>
+		<msg>Something error when build message sender! Id: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0009</code>
+		<msg>Something error when build message receiver! Id: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0010</code>
+		<msg>Something error when build message listener! Id: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0011</code>
+		<msg>The default rest sender can not send async message! Message: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0012</code>
+		<msg>Something error when invoke service! ServiceId: %1$s Request Msg: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0013</code>
+		<msg>Something error when get the constructor for business service! ServiceId: %1$s
+			ImplementClass: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0014</code>
+		<msg>Something error when get the translation message! ServiceId: %1$s ,ImplementClass: %2$s
+			Request Message: %3$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0015</code>
+		<msg>Something error when get the bussiness service! ServiceId:%1$s Request Message:%2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0016</code>
+		<msg>The rest response contains the exception status code!URL:%1$s RequestMsg:%2$s StatusCode:%3$s
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0017</code>
+		<msg>Something error when rest a post reqeust! URL:%1$s RequestMsg:%2$s </msg>
+		<action></action>
+	</info>
+</root>

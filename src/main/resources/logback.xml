@@ -1,0 +1,22 @@
+<configuration>
+	<appender name="SYSTEM" class="ch.qos.logback.core.FileAppender">
+		<file>d:/system111.log</file>
+		<encoder>
+			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<appender name="SQL" class="ch.qos.logback.core.FileAppender">
+		<file>d:/sql111.log</file>
+		<encoder>
+			<pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+	<logger name="SYSTEM">
+		<appender-ref ref="SYSTEM" />
+	</logger>
+	<logger name="SQL">
+		<appender-ref ref="SQL" />
+	</logger>
+</configuration>
