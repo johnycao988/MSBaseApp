@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -31,8 +30,8 @@ public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 	}
 
 	@Override
-	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response,
-			FilterChain chain) throws BaseAppException, MessageException {
+	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
+			throws BaseAppException, MessageException {
 		List<MessageResponse> responses = new ArrayList<>();
 		List<MessageRequest> subRequests = RequestMessageUtils.demergeMultipleReqMsg(csReqMsg);
 		for (MessageRequest r : subRequests) {

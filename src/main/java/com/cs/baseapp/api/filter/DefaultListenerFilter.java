@@ -5,7 +5,6 @@ package com.cs.baseapp.api.filter;
 
 import java.util.Properties;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -24,8 +23,8 @@ public class DefaultListenerFilter extends BaseMessageFilter {
 	}
 
 	@Override
-	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response,
-			FilterChain chain) throws BaseAppException, MessageException {
+	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
+			throws BaseAppException, MessageException {
 
 	}
 

@@ -3,15 +3,22 @@
  */
 package com.cs.baseapp.httpclient;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.http.HttpStatus;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -49,8 +56,17 @@ public class BaseHttpClient {
 		return jsonResponse;
 	}
 
-	public String get() {
-		return null;
+	public InputStream get(String url) throws BaseAppException {
+		HttpGet get = new HttpGet(url);
+		CloseableHttpResponse response;
+		try {
+			response = this.http.execute(get);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			response.getEntity().writeTo(bos);
+			return new ByteArrayInputStream(bos.toByteArray());
+		} catch (Exception e) {
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0017", url));
+		}
 	}
 
 	private void fillRequestHead(HttpEntityEnclosingRequestBase base, Map<String, String> header) {

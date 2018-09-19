@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cs.baseapp.api.repository;
+package com.cs.baseapp.api.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,12 +11,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.cs.baseapp.api.messagebroker.MessageListener;
+import com.cs.baseapp.errorhandling.BaseAppException;
 
 /**
  * @author Donald.Wang
  *
  */
-public class ListenerManager implements Repository<MessageListener> {
+public class ListenerManager {
 
 	private Map<String, MessageListener> listeners = new HashMap<>();
 
@@ -24,12 +25,10 @@ public class ListenerManager implements Repository<MessageListener> {
 		this.listeners = listeners;
 	}
 
-	@Override
 	public MessageListener getById(String id) {
 		return listeners.get(id);
 	}
 
-	@Override
 	public List<MessageListener> getAll() {
 		List<MessageListener> list = new ArrayList<>();
 		Iterator<Entry<String, MessageListener>> it = this.listeners.entrySet().iterator();
@@ -37,6 +36,10 @@ public class ListenerManager implements Repository<MessageListener> {
 			list.add(it.next().getValue());
 		}
 		return list;
+	}
+
+	public void stop(String id) throws BaseAppException {
+		this.listeners.get(id).stop();
 	}
 
 }

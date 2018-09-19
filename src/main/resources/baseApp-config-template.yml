@@ -10,7 +10,7 @@ app:
     KEY_2: VALUE_2	
   webMessageFilter:
     - id: filter1
-      implementClass: com.cs.baseapp.api.filter.DefaultMsgProcWebFilter
+      implementClass: com.cs.baseapp.api.filter.DefaultMsgProcWebFilter #com.cs.baseapp.api.filter.BaseMessageFilter
       desc: eloan filter 1
       urlPattern: /*
       parameters:
@@ -20,14 +20,14 @@ app:
     sender:
     - id: rest-sender
       desc: rest sender
-      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultRestSender
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultRestSender #com.cs.baseapp.api.messagebroker.MessageSender
       poolSize: -1
       parameters:
         restType: formData
         KEY_2: value2
     - id: jms-sender
       desc: eloan jms sender
-      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSSender
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSSender #com.cs.baseapp.api.messagebroker.MessageSender
       poolSize: 20
       parameters:
         KEY_1: value1
@@ -35,7 +35,7 @@ app:
     receiver:
     - id: jms-receiver
       desc: eloan limit jms receiver
-      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSReceiver
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSReceiver #com.cs.baseapp.api.messagebroker.MessageReceiver
       poolSize: 10
       parameters:
         timeout: 100
@@ -43,9 +43,9 @@ app:
     listener:
     - id: eloan-jms-lintenr
       desc: eloan jms listener
-      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSListener
-      messageFilter: com.cs.baseapp.api.filter.DefaultListenerFilter
-      tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSListener #com.cs.baseapp.api.messagebroker.MessageListener
+      messageFilter: com.cs.baseapp.api.filter.DefaultListenerFilter #com.cs.baseapp.api.filter.BaseMessageFilter
+      tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
       maxProcessThreads: 20
       parameters:
         queueName: EE_CE_Queue
@@ -53,25 +53,25 @@ app:
     services:
       local:
       - id: eloan-accrue
-        implementClass: com.cs.demo.Accrue
+        implementClass: com.cs.demo.Accrue #com.cs.baseapp.api.messagebroker.BusinessService
         parameters:
           KEY_1: value1
           KEY_2: value2
       - id: eloan-posting
-        implementClass: com.cs.demo.Accrue
+        implementClass: com.cs.demo.Accrue #com.cs.baseapp.api.messagebroker.BusinessService
         parameters:
           KEY_1: value1
           KEY_2: value2
       remote:
       - id: std-exchangeRate
-        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage
+        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
         senderId: rest-sender
         receiverId: 
         parameters:
           KEY_1: value1
           KEY_2: value2
       - id: tp-service
-        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage
+        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
         senderId: jms-sender
         receiverId: jms-receiver
         parameters:

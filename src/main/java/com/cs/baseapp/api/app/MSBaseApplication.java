@@ -83,13 +83,13 @@ public class MSBaseApplication {
 		return base;
 	}
 
-	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response,
-			FilterChain chain) throws BaseAppException {
+	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
+			throws BaseAppException {
 		try {
 			logger.debug(LogManager.getServiceLogKey(csReqMsg),
 					"Start to do web filter. RequestMsg:" + csReqMsg.getJsonObject());
 			for (MessageFilter f : filters) {
-				f.doWebFilter(csReqMsg, request, response, chain);
+				f.doWebFilter(csReqMsg, request, response);
 			}
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_00002", csReqMsg.getJsonString()));

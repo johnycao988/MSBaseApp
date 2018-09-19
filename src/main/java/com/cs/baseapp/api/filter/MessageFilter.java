@@ -3,7 +3,6 @@
  */
 package com.cs.baseapp.api.filter;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
@@ -17,8 +16,8 @@ import com.cs.cloud.message.domain.errorhandling.MessageException;
  */
 public interface MessageFilter {
 
-	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response,
-			FilterChain chain) throws BaseAppException, MessageException;
+	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
+			throws BaseAppException, MessageException;
 
 	public void doListenerFilter(MessageRequest requestMsg) throws BaseAppException;
 }

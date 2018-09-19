@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.cs.baseapp.api.repository;
+package com.cs.baseapp.api.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,20 +16,18 @@ import com.cs.baseapp.api.messagebroker.MessageReceiver;
  * @author Donald.Wang
  *
  */
-public class ReceiverRepository implements Repository<MessageReceiver> {
+public class ReceiverManager {
 
 	private Map<String, MessageReceiver> receivers = new HashMap<>();
 
-	public ReceiverRepository(Map<String, MessageReceiver> receivers) {
+	public ReceiverManager(Map<String, MessageReceiver> receivers) {
 		this.receivers = receivers;
 	}
 
-	@Override
 	public MessageReceiver getById(String id) {
 		return receivers.get(id);
 	}
 
-	@Override
 	public List<MessageReceiver> getAll() {
 		List<MessageReceiver> list = new ArrayList<>();
 		Iterator<Entry<String, MessageReceiver>> it = this.receivers.entrySet().iterator();
