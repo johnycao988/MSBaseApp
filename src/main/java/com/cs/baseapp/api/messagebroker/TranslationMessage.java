@@ -33,7 +33,7 @@ public abstract class TranslationMessage {
 
 	public abstract MessageResponse getInboundMessage(Object msgResponse) throws BaseAppException, MessageException;
 
-	protected TranslationMessage(Properties prop, MessageRequest msgRequest) {
+	public TranslationMessage(Properties prop, MessageRequest msgRequest) {
 		this.prop = prop;
 		this.msgReqeust = msgRequest;
 	}

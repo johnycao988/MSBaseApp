@@ -20,7 +20,7 @@ import com.cs.cloud.message.domain.factory.MessageFactory;
  */
 public class DefaultTranslationMessage extends TranslationMessage {
 
-	protected DefaultTranslationMessage(Properties prop, MessageRequest msgRequest) {
+	public DefaultTranslationMessage(Properties prop, MessageRequest msgRequest) {
 		super(prop, msgRequest);
 	}
 

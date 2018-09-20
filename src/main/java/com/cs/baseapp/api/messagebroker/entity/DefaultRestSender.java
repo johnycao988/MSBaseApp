@@ -37,7 +37,7 @@ public class DefaultRestSender extends MessageSender {
 
 	@Override
 	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException {
-		String url = requestMsg.getProperty("url");
+		String url = requestMsg.getProperty("URI");
 		BaseHttpClient http = new BaseHttpClient();
 		return MessageFactory.getResopnseMessage(http.post(url, null, requestMsg.getOutboundString()));
 	}
