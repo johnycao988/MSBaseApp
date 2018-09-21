@@ -11,10 +11,10 @@ import com.cs.baseapp.api.manager.ReceiverManager;
 import com.cs.baseapp.api.manager.SenderManager;
 import com.cs.baseapp.api.manager.ServiceManager;
 import com.cs.baseapp.api.messagebroker.MBService;
+import com.cs.baseapp.api.messagebroker.MSMessageReceiver;
+import com.cs.baseapp.api.messagebroker.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.MessageListener;
-import com.cs.baseapp.api.messagebroker.MessageReceiver;
-import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
@@ -34,31 +34,21 @@ public class MessageBrokerEntity implements MessageBroker {
 
 	private ServiceManager serviceManager;
 
-	public MessageBrokerEntity(Map<String, MessageSender> senders, Map<String, MessageReceiver> receivers,
-			Map<String, MessageListener> listeners, Map<String, MBService> services) {
-		this.senderManager = new SenderManager(senders);
-		this.receiverManager = new ReceiverManager(receivers);
+	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
+			Map<String, MessageListener> listeners, Map<String, MBService> services) throws BaseAppException {
+		this.senderManager = new SenderManager(sendersConfig);
+		this.receiverManager = new ReceiverManager(receiverConfig);
 		this.listenerManager = new ListenerManager(listeners);
 		this.serviceManager = new ServiceManager(services);
 	}
 
 	@Override
-	public List<MessageSender> getSenders() {
-		return this.senderManager.getAll();
+	public MSMessageSender getSender(String id) throws BaseAppException, InterruptedException {
+		return this.senderManager.getSender(id);
 	}
 
 	@Override
-	public MessageSender getSender(String id) {
-		return this.senderManager.getById(id);
-	}
-
-	@Override
-	public List<MessageReceiver> getReceivers() {
-		return this.receiverManager.getAll();
-	}
-
-	@Override
-	public MessageReceiver getReceiver(String id) {
+	public MSMessageReceiver getReceiver(String id) throws BaseAppException, InterruptedException {
 		return this.receiverManager.getById(id);
 	}
 
@@ -89,6 +79,17 @@ public class MessageBrokerEntity implements MessageBroker {
 
 	@Override
 	public void shutdown() {
+
+	}
+
+	@Override
+	public void releaseSender(MSMessageSender sender) {
+		this.senderManager.releaseSender(sender);
+	}
+
+	@Override
+	public void releaseReceiver(MSMessageReceiver receiver) {
+		this.receiverManager.release(receiver);
 
 	}
 

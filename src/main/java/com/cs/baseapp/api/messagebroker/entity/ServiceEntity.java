@@ -10,8 +10,8 @@ import java.util.Properties;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.BusinessService;
 import com.cs.baseapp.api.messagebroker.MBService;
-import com.cs.baseapp.api.messagebroker.MessageReceiver;
-import com.cs.baseapp.api.messagebroker.MessageSender;
+import com.cs.baseapp.api.messagebroker.MSMessageReceiver;
+import com.cs.baseapp.api.messagebroker.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
@@ -91,12 +91,12 @@ public class ServiceEntity implements MBService {
 	}
 
 	@Override
-	public MessageSender getSender() throws BaseAppException {
+	public MSMessageSender getSender() throws BaseAppException, InterruptedException {
 		return MSBaseApplication.getMessageBroker().getSender(this.senderId);
 	}
 
 	@Override
-	public MessageReceiver getReceiver() throws BaseAppException {
+	public MSMessageReceiver getReceiver() throws BaseAppException, InterruptedException {
 		return MSBaseApplication.getMessageBroker().getReceiver(this.receiverId);
 	}
 

@@ -16,8 +16,8 @@ import com.cs.cloud.message.api.MessageResponse;
  */
 public class DefaultJMSReceiver extends MessageReceiver {
 
-	public DefaultJMSReceiver(String id, int poolSize, Properties prop) {
-		super(id, poolSize, prop);
+	public DefaultJMSReceiver(String id, Properties prop) {
+		super(id, prop);
 	}
 
 	@Override
@@ -28,6 +28,11 @@ public class DefaultJMSReceiver extends MessageReceiver {
 	@Override
 	public MessageResponse recv(TranslationMessage msgRequest) throws BaseAppException {
 		return null;
+	}
+
+	@Override
+	public void close() {
+
 	}
 
 }

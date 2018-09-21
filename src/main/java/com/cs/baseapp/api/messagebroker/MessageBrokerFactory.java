@@ -39,8 +39,6 @@ public class MessageBrokerFactory {
 
 	private static final String PARAMETER = "parameters";
 
-	private static final String POOL_SIZE = "poolSize";
-
 	public static final int LOCAL_SERVICE = 0;
 
 	public static final int REMOTE_SERVICE = 1;
@@ -50,66 +48,8 @@ public class MessageBrokerFactory {
 			List<Map<String, Object>> localServiceConfig, List<Map<String, Object>> remoteServiceConfig)
 			throws BaseAppException {
 		logger.info(logKey, "Start to build Base App MessageBroker.");
-		return new MessageBrokerEntity(buildMsgSenders(senderConfig), buildMsgReceivers(receiverConfig),
-				buildListeners(listenerConfig), buildServices(localServiceConfig, remoteServiceConfig));
-	}
-
-	private static Map<String, MessageSender> buildMsgSenders(List<Map<String, Object>> sendersConfig)
-			throws BaseAppException {
-		Map<String, MessageSender> senders = new HashMap<>();
-		logger.info(logKey, "Start to build Mb sender.");
-		for (Map<String, Object> singleConfig : sendersConfig) {
-			MessageSender s = buildSingleMsgSender(singleConfig);
-			senders.put(s.getId(), s);
-		}
-		logger.info(logKey, "Build Mb senders success. Total:" + senders.size());
-		return senders;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static MessageSender buildSingleMsgSender(Map<String, Object> singleConfig) throws BaseAppException {
-		MessageSender sender = null;
-		try {
-			sender = (MessageSender) Class.forName((String) singleConfig.get(IMPL_CLASS))
-					.getConstructor(String.class, int.class, Properties.class)
-					.newInstance((String) singleConfig.get("id"), (int) singleConfig.get(POOL_SIZE),
-							(Properties) PropertiesUtils
-									.convertMapToProperties((Map<String, String>) singleConfig.get(PARAMETER)));
-			logger.info(logKey, "Build MB Sender success. SenderId:" + singleConfig.get("id") + IMPL_CLASS + ":"
-					+ singleConfig.get(IMPL_CLASS) + " PoolSize:" + singleConfig.get(POOL_SIZE));
-		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0008", singleConfig.get("id")));
-		}
-		return sender;
-	}
-
-	private static Map<String, MessageReceiver> buildMsgReceivers(List<Map<String, Object>> receiversConfig)
-			throws BaseAppException {
-		logger.info(logKey, "Start to build MB Receiver.");
-		Map<String, MessageReceiver> receivers = new HashMap<>();
-		for (Map<String, Object> singleConfig : receiversConfig) {
-			MessageReceiver r = buildSingleReceiver(singleConfig);
-			receivers.put(r.getId(), r);
-		}
-		logger.info(logKey, "Build MB Receivers Success. Total:" + receivers.size());
-		return receivers;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static MessageReceiver buildSingleReceiver(Map<String, Object> singleConfig) throws BaseAppException {
-		MessageReceiver receiver = null;
-		try {
-			receiver = (MessageReceiver) Class.forName((String) singleConfig.get(IMPL_CLASS))
-					.getConstructor(String.class, int.class, Properties.class)
-					.newInstance((String) singleConfig.get("id"), (int) singleConfig.get(POOL_SIZE),
-							(Properties) PropertiesUtils
-									.convertMapToProperties((Map<String, String>) singleConfig.get(PARAMETER)));
-			logger.info(logKey, "Build MB Receiver Success. ReceiverId:" + singleConfig.get("id") + IMPL_CLASS + ":"
-					+ singleConfig.get(IMPL_CLASS) + " PoolSize:" + singleConfig.get(POOL_SIZE));
-		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0009", singleConfig.get("id")));
-		}
-		return receiver;
+		return new MessageBrokerEntity(senderConfig, receiverConfig, buildListeners(listenerConfig),
+				buildServices(localServiceConfig, remoteServiceConfig));
 	}
 
 	private static Map<String, MessageListener> buildListeners(List<Map<String, Object>> listenersConfig)

@@ -15,4 +15,6 @@ public interface ConnectionPoolManager {
 
 	public Object getConnection(long timeout);
 
+	public void close();
+
 }

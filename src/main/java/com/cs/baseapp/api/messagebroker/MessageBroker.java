@@ -16,13 +16,13 @@ import com.cs.cloud.message.domain.errorhandling.MessageException;
  */
 public interface MessageBroker {
 
-	public List<MessageSender> getSenders();
+	public MSMessageSender getSender(String id) throws BaseAppException, InterruptedException;
 
-	public MessageSender getSender(String id);
+	public void releaseSender(MSMessageSender sender);
 
-	public List<MessageReceiver> getReceivers();
+	public MSMessageReceiver getReceiver(String id) throws BaseAppException, InterruptedException;
 
-	public MessageReceiver getReceiver(String id);
+	public void releaseReceiver(MSMessageReceiver receiver);
 
 	public List<MessageListener> getListeners();
 

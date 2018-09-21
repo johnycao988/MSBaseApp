@@ -20,8 +20,8 @@ import com.cs.log.logs.LogInfoMgr;
  */
 public class DefaultRestSender extends MessageSender {
 
-	public DefaultRestSender(String id, int poolSize, Properties prop) {
-		super(id, poolSize, prop);
+	public DefaultRestSender(String id, Properties prop) {
+		super(id, prop);
 	}
 
 	@Override
@@ -40,6 +40,11 @@ public class DefaultRestSender extends MessageSender {
 		String url = requestMsg.getProperty("URI");
 		BaseHttpClient http = new BaseHttpClient();
 		return MessageFactory.getResopnseMessage(http.post(url, null, requestMsg.getOutboundString()));
+	}
+
+	@Override
+	public void close() {
+		// Do nothing
 	}
 
 }

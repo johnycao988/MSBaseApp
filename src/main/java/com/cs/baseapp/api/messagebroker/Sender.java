@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package com.cs.baseapp.api.messagebroker;
+
+import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.cloud.message.api.MessageResponse;
+import com.cs.cloud.message.domain.errorhandling.MessageException;
+
+/**
+ * @author Donald.Wang
+ *
+ */
+public interface Sender {
+
+	public void initialize() throws BaseAppException;
+
+	public String getId();
+
+	public void sendAsyncMessage(TranslationMessage requestMsg) throws BaseAppException;
+
+	public void close();
+
+	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException;
+
+}
