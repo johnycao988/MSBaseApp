@@ -16,6 +16,6 @@ public interface Receiver {
 
 	public MessageResponse recv(TranslationMessage msgRequest) throws BaseAppException;
 
-	public void close();
+	public void close() throws BaseAppException;
 
 }

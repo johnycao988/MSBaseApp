@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.cs.baseapp.api.messagebroker.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.MessageSender;
+import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;

@@ -11,8 +11,6 @@ import com.cs.baseapp.api.manager.ReceiverManager;
 import com.cs.baseapp.api.manager.SenderManager;
 import com.cs.baseapp.api.manager.ServiceManager;
 import com.cs.baseapp.api.messagebroker.MBService;
-import com.cs.baseapp.api.messagebroker.MSMessageReceiver;
-import com.cs.baseapp.api.messagebroker.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.MessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;

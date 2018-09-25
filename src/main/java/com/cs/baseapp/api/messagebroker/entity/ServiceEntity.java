@@ -10,8 +10,6 @@ import java.util.Properties;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.BusinessService;
 import com.cs.baseapp.api.messagebroker.MBService;
-import com.cs.baseapp.api.messagebroker.MSMessageReceiver;
-import com.cs.baseapp.api.messagebroker.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;

@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
+import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
+import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageRequest;
@@ -56,21 +58,34 @@ public class ServiceManager {
 					"Can not get the information of this service.  RequestMsg:" + req.getJsonString());
 			return resp;
 		}
+		MSMessageSender sender = null;
+		MSMessageReceiver receiver = null;
 		try {
+
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
 				resp = service.getBusinessService(req).process();
 			} else {
 				if (req.getServices().get(0).isSycn()) {
-					resp = service.getSender().sendSyncMessage(service.getTranslationMessage(req));
+					sender = service.getSender();
+					resp = sender.sendSyncMessage(service.getTranslationMessage(req));
 					if (resp == null) {
-						resp = service.getReceiver().recv(service.getTranslationMessage(req));
+						receiver = service.getReceiver();
+						resp = receiver.recv(service.getTranslationMessage(req));
 					}
 				} else {
-					service.getSender().sendAsyncMessage(service.getTranslationMessage(req));
+					sender = service.getSender();
+					sender.sendAsyncMessage(service.getTranslationMessage(req));
 				}
 			}
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0012", service.getId(), req.getJsonString()));
+		} finally {
+			if (sender != null) {
+				sender.close();
+			}
+			if (receiver != null) {
+				receiver.close();
+			}
 		}
 		logger.debug(LogManager.getServiceLogKey(req),
 				"Invoke Service success. RespMsg:" + (resp == null ? "" : resp.getJsonString()));

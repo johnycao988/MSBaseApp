@@ -3,12 +3,13 @@
  */
 package com.cs.baseapp.api.manager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import com.cs.baseapp.api.messagebroker.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.MessageReceiver;
+import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -21,12 +22,17 @@ import com.cs.log.logs.LogInfoMgr;
  */
 public class ReceiverManager {
 
-	private Map<String, ObjectPool<MSMessageReceiver>> pooledReceivers;
+	private Map<String, ObjectPool<MSMessageReceiver>> pooledReceivers = new HashMap<>();;
 
 	public ReceiverManager(List<Map<String, Object>> configs) {
-		for (Map<String, Object> config : configs) {
-			pooledReceivers.put((String) config.get("id"),
-					new ObjectPool<MSMessageReceiver>((int) config.get("poolSize"), new ReceiverFactory(config)));
+		try {
+			for (Map<String, Object> config : configs) {
+				ObjectPool<MSMessageReceiver> pool = new ObjectPool<>((int) config.get("poolSize"),
+						new ReceiverFactory(config));
+				pooledReceivers.put((String) config.get("id"), pool);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 

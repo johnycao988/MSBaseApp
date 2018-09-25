@@ -1,9 +1,12 @@
 /**
  * 
  */
-package com.cs.baseapp.api.messagebroker;
+package com.cs.baseapp.api.messagebroker.entity;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
+import com.cs.baseapp.api.messagebroker.MessageReceiver;
+import com.cs.baseapp.api.messagebroker.Receiver;
+import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageResponse;
 
@@ -37,9 +40,10 @@ public class MSMessageReceiver implements Receiver {
 	}
 
 	@Override
-	public void close() {
+	public void close() throws BaseAppException {
 		if (this.isPooled) {
 			MSBaseApplication.getMessageBroker().releaseReceiver(this);
+			return;
 		}
 		this.receiver.close();
 

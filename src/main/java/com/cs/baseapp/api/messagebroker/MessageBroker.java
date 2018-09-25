@@ -5,6 +5,8 @@ package com.cs.baseapp.api.messagebroker;
 
 import java.util.List;
 
+import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
+import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;

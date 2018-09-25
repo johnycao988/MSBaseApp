@@ -19,8 +19,9 @@ public interface Sender {
 
 	public void sendAsyncMessage(TranslationMessage requestMsg) throws BaseAppException;
 
-	public void close();
+	public void close() throws BaseAppException;
 
-	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException;
+	public MessageResponse sendSyncMessage(TranslationMessage requestMsg)
+			throws BaseAppException, MessageException, InterruptedException;
 
 }

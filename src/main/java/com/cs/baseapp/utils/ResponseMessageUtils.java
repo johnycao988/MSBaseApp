@@ -26,6 +26,9 @@ public class ResponseMessageUtils {
 		builder.setBase(builder.getMessageHeadBaseBuilder().setCorrelationId(originReqMsg.getBase().getId())
 				.setType(MessageConstant.MESSAGE_HEAD_BASE_TYPE_RESPONSE).build());
 		for (MessageResponse r : responses) {
+			if (r == null) {
+				continue;
+			}
 			builder.addResponseBodyService(r.getFirstBodyService());
 		}
 		return builder.build();

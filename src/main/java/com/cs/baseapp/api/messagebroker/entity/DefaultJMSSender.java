@@ -26,16 +26,17 @@ public class DefaultJMSSender extends MessageSender {
 
 	@Override
 	public void initialize() throws BaseAppException {
-
+		System.out.println("Init JMS Sender Success!");
 	}
 
 	@Override
 	public void sendAsyncMessage(TranslationMessage requestMsg) throws BaseAppException {
-
+		System.out.println("Will Sender JMS Async Message!");
 	}
 
 	@Override
 	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException {
+		System.out.println("Will Sender JMS Sync Message!");
 		return null;
 	}
 

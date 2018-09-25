@@ -22,11 +22,12 @@ public class DefaultJMSReceiver extends MessageReceiver {
 
 	@Override
 	public void initialize() throws BaseAppException {
-
+		System.out.println("Init JMS Receiver Success!");
 	}
 
 	@Override
 	public MessageResponse recv(TranslationMessage msgRequest) throws BaseAppException {
+		System.out.println("Receive Message Response!");
 		return null;
 	}
 
