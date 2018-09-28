@@ -5,10 +5,13 @@ package com.cs.baseapp.api.messagebroker.entity;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.httpclient.BaseHttpClient;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageResponse;
 import com.cs.cloud.message.domain.errorhandling.MessageException;
 import com.cs.cloud.message.domain.factory.MessageFactory;
@@ -37,7 +40,10 @@ public class DefaultRestSender extends MessageSender {
 
 	@Override
 	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException {
-		String url = requestMsg.getProperty("URI");
+		String url = requestMsg.getProperty(ConfigConstant.URI.getValue());
+		if (StringUtils.isEmpty(url)) {
+			url = super.getProperty(ConfigConstant.URI.getValue());
+		}
 		BaseHttpClient http = new BaseHttpClient();
 		return MessageFactory.getResopnseMessage(http.post(url, null, requestMsg.getOutboundString()));
 	}

@@ -16,6 +16,7 @@ import com.cs.baseapp.api.messagebroker.entity.MessageBrokerEntity;
 import com.cs.baseapp.api.messagebroker.entity.ServiceEntity;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -34,10 +35,6 @@ public class MessageBrokerFactory {
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
 	private static final Logger logger = Logger.getLogger("SYSTEM");
-
-	private static final String IMPL_CLASS = "implementClass";
-
-	private static final String PARAMETER = "parameters";
 
 	public static final int LOCAL_SERVICE = 0;
 
@@ -68,16 +65,21 @@ public class MessageBrokerFactory {
 	private static MessageListener buildSingleListener(Map<String, Object> singleConfig) throws BaseAppException {
 		MessageListener listener = null;
 		try {
-			listener = (MessageListener) Class.forName((String) singleConfig.get(IMPL_CLASS))
+			listener = (MessageListener) Class.forName((String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
 					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class)
-					.newInstance((String) singleConfig.get("id"), (int) singleConfig.get("maxProcessThreads"),
-							(Properties) PropertiesUtils
-									.convertMapToProperties((Map<String, String>) singleConfig.get(PARAMETER)),
+					.newInstance((String) singleConfig.get(ConfigConstant.ID.getValue()),
+							(int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
+							(Properties) PropertiesUtils.convertMapToProperties(
+									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
 							FilterFactory.buildListenerFilter(singleConfig));
-			logger.info(logKey, "Build MB Listener success. ListenerId:" + singleConfig.get("id") + IMPL_CLASS + ":"
-					+ singleConfig.get(IMPL_CLASS) + " MaxProcessThreads:" + singleConfig.get("maxProcessThreads"));
+			logger.info(logKey,
+					"Build MB Listener success. ListenerId:" + singleConfig.get(ConfigConstant.ID.getValue())
+							+ ConfigConstant.IMPL_CLASS.getValue() + ":"
+							+ singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()) + " MaxProcessThreads:"
+							+ singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()));
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0010", singleConfig.get("id")));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0010", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return listener;
 	}
@@ -105,8 +107,9 @@ public class MessageBrokerFactory {
 		Map<String, String> config = new HashMap<>();
 		config.put("serviceType", String.valueOf(serviceType));
 		Set<Entry<String, Object>> set = serviceConfig.entrySet();
-		Properties prop = PropertiesUtils.convertMapToProperties((Map<String, String>) serviceConfig.get(PARAMETER));
-		serviceConfig.remove(PARAMETER);
+		Properties prop = PropertiesUtils
+				.convertMapToProperties((Map<String, String>) serviceConfig.get(ConfigConstant.PARAMETERS.getValue()));
+		serviceConfig.remove(ConfigConstant.PARAMETERS.getValue());
 		for (Entry<String, Object> e : set) {
 			config.put(e.getKey(), (String) e.getValue());
 		}

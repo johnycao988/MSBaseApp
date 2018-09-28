@@ -12,6 +12,7 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.log.logs.LogInfoMgr;
 
 /**
@@ -42,16 +43,18 @@ public class Configuration {
 			Yaml yamlConfig = new Yaml();
 			Map<String, Object> m = yamlConfig.load(is);
 			Map<String, Object> dtl = (Map<String, Object>) m.entrySet().iterator().next().getValue();
-			this.baseConfig = (Map<String, String>) dtl.get("base");
-			this.envConfig = (Map<String, String>) dtl.get("env");
-			this.filterConfig = (List<Map<String, Object>>) dtl.get("webMessageFilter");
-			Map<String, Object> mbConfig = (Map<String, Object>) dtl.get("messageBroker");
-			this.mbSendersCondig = (List<Map<String, Object>>) mbConfig.get("sender");
-			this.mbReceiversConfig = (List<Map<String, Object>>) mbConfig.get("receiver");
-			this.mbListenersConfig = (List<Map<String, Object>>) mbConfig.get("listener");
-			Map<String, Object> serviceConfig = (Map<String, Object>) mbConfig.get("services");
-			this.mbLoaclServicesConfig = (List<Map<String, Object>>) serviceConfig.get("local");
-			this.mbRemoteServicesConfig = (List<Map<String, Object>>) serviceConfig.get("remote");
+			this.baseConfig = (Map<String, String>) dtl.get(ConfigConstant.BASE.getValue());
+			this.envConfig = (Map<String, String>) dtl.get(ConfigConstant.EVN.getValue());
+			this.filterConfig = (List<Map<String, Object>>) dtl.get(ConfigConstant.WEB_MESSAGE_FILTER.getValue());
+			Map<String, Object> mbConfig = (Map<String, Object>) dtl.get(ConfigConstant.MESSAGE_BROKER.getValue());
+			this.mbSendersCondig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.SENDER.getValue());
+			this.mbReceiversConfig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.RECRIVER.getValue());
+			this.mbListenersConfig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.LISTENER.getValue());
+			Map<String, Object> serviceConfig = (Map<String, Object>) mbConfig.get(ConfigConstant.SERVICES.getValue());
+			this.mbLoaclServicesConfig = (List<Map<String, Object>>) serviceConfig
+					.get(ConfigConstant.LOACL_SERVICE.getValue());
+			this.mbRemoteServicesConfig = (List<Map<String, Object>>) serviceConfig
+					.get(ConfigConstant.REMOTE_SERVICE.getValue());
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0003"));
 		}

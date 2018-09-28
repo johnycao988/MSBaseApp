@@ -5,6 +5,8 @@ package com.cs.baseapp.api.base;
 
 import java.util.Map;
 
+import com.cs.baseapp.utils.ConfigConstant;
+
 /**
  * @author Donald.Wang
  *
@@ -20,10 +22,10 @@ public class BaseEntity implements Base {
 	private String secret;
 
 	public BaseEntity(Map<String, String> baseConfig) {
-		this.version = baseConfig.get("version");
-		this.applicationId = baseConfig.get("applicationId");
-		this.secret = baseConfig.get("secret");
-		this.name = baseConfig.get("name");
+		this.version = baseConfig.get(ConfigConstant.BASE_VERSION.getValue());
+		this.applicationId = baseConfig.get(ConfigConstant.BASE_APP_ID.getValue());
+		this.secret = baseConfig.get(ConfigConstant.BASE_SECRET.getValue());
+		this.name = baseConfig.get(ConfigConstant.BASE_NAME.getValue());
 	}
 
 	@Override

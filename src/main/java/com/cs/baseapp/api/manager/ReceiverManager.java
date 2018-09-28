@@ -13,6 +13,7 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 
@@ -22,14 +23,14 @@ import com.cs.log.logs.LogInfoMgr;
  */
 public class ReceiverManager {
 
-	private Map<String, ObjectPool<MSMessageReceiver>> pooledReceivers = new HashMap<>();;
+	private Map<String, ObjectPool<MSMessageReceiver>> pooledReceivers = new HashMap<>();
 
 	public ReceiverManager(List<Map<String, Object>> configs) {
 		try {
 			for (Map<String, Object> config : configs) {
-				ObjectPool<MSMessageReceiver> pool = new ObjectPool<>((int) config.get("poolSize"),
-						new ReceiverFactory(config));
-				pooledReceivers.put((String) config.get("id"), pool);
+				ObjectPool<MSMessageReceiver> pool = new ObjectPool<>(
+						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new ReceiverFactory(config));
+				pooledReceivers.put((String) config.get(ConfigConstant.ID.getValue()), pool);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -56,7 +57,7 @@ class ReceiverFactory implements PoolObjectFactory<MSMessageReceiver> {
 
 	@Override
 	public MSMessageReceiver createPoolObject() throws BaseAppException {
-		boolean isPooled = (int) this.config.get("poolSize") > 1;
+		boolean isPooled = (int) this.config.get(ConfigConstant.POOL_SZIE.getValue()) > 1;
 		MSMessageReceiver receiver = new MSMessageReceiver(buildSingleReceiver(this.config), isPooled);
 		receiver.initialize();
 		return receiver;
@@ -66,13 +67,15 @@ class ReceiverFactory implements PoolObjectFactory<MSMessageReceiver> {
 	private static MessageReceiver buildSingleReceiver(Map<String, Object> singleConfig) throws BaseAppException {
 		MessageReceiver receiver = null;
 		try {
-			receiver = (MessageReceiver) Class.forName((String) singleConfig.get("implementClass"))
+			receiver = (MessageReceiver) Class.forName((String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
 					.getConstructor(String.class, Properties.class)
-					.newInstance((String) singleConfig.get("id"), (Properties) PropertiesUtils
-							.convertMapToProperties((Map<String, String>) singleConfig.get("parameters")));
+					.newInstance((String) singleConfig.get(ConfigConstant.ID.getValue()),
+							(Properties) PropertiesUtils.convertMapToProperties(
+									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())));
 
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0009", singleConfig.get("id")));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0009", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return receiver;
 	}

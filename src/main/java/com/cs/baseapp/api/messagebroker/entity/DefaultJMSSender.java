@@ -5,7 +5,6 @@ package com.cs.baseapp.api.messagebroker.entity;
 
 import java.util.Properties;
 
-import com.cs.baseapp.api.messagebroker.ConnectionPoolManager;
 import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -17,8 +16,6 @@ import com.cs.cloud.message.domain.errorhandling.MessageException;
  *
  */
 public class DefaultJMSSender extends MessageSender {
-
-	private ConnectionPoolManager connPool;
 
 	public DefaultJMSSender(String id, Properties prop) {
 		super(id, prop);
@@ -42,7 +39,6 @@ public class DefaultJMSSender extends MessageSender {
 
 	@Override
 	public void close() {
-		this.connPool.close();
 	}
 
 }

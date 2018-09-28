@@ -12,6 +12,7 @@ import com.cs.baseapp.api.messagebroker.BusinessService;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.log.logs.LogInfoMgr;
 
@@ -39,12 +40,12 @@ public class ServiceEntity implements MBService {
 
 	public ServiceEntity(Map<String, String> serviceConfig, Properties prop) throws BaseAppException {
 		this.type = Integer.parseInt(serviceConfig.get("serviceType"));
-		this.id = serviceConfig.get("id");
+		this.id = serviceConfig.get(ConfigConstant.ID.getValue());
 		this.prop = prop;
-		this.tranformClass = serviceConfig.get("tranformClass");
-		this.senderId = serviceConfig.get("senderId");
-		this.receiverId = serviceConfig.get("receiverId");
-		this.implementClass = serviceConfig.get("implementClass");
+		this.tranformClass = serviceConfig.get(ConfigConstant.TRANS_CLASS.getValue());
+		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());
+		this.receiverId = serviceConfig.get(ConfigConstant.RECEIVER_ID.getValue());
+		this.implementClass = serviceConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		if (this.type == 0) {
 			this.getBusinessServiceConstructor();
 		}

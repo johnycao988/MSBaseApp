@@ -23,6 +23,7 @@ import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -65,7 +66,7 @@ public class MSBaseApplication {
 	public static void init(InputStream is) throws BaseAppException {
 		Configuration config = new Configuration();
 		config.load(is);
-		LogManager.init(config.getBaseConfig().get("name"));
+		LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
 		logger.info(logKey, "Start to parse the configuration.");
 		base = AppBaseFactory.buildBase(config.getBaseConfig());
 		logger.info(logKey, "Build Base success.");

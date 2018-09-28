@@ -13,6 +13,7 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 
@@ -26,8 +27,8 @@ public class SenderManager {
 
 	public SenderManager(List<Map<String, Object>> sendersConfig) {
 		for (Map<String, Object> config : sendersConfig) {
-			pooledSenders.put((String) config.get("id"),
-					new ObjectPool<MSMessageSender>((int) config.get("poolSize"), new SenderFactory(config)));
+			pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), new ObjectPool<MSMessageSender>(
+					(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config)));
 		}
 	}
 
@@ -51,7 +52,7 @@ class SenderFactory implements PoolObjectFactory<MSMessageSender> {
 
 	@Override
 	public MSMessageSender createPoolObject() throws BaseAppException {
-		boolean isPooled = (int) this.config.get("poolSize") > 1;
+		boolean isPooled = (int) this.config.get(ConfigConstant.POOL_SZIE.getValue()) > 1;
 		MSMessageSender msMsgSendernew = new MSMessageSender(buildSingleMsgSender(this.config), isPooled);
 		msMsgSendernew.initialize();
 		return msMsgSendernew;
@@ -61,12 +62,14 @@ class SenderFactory implements PoolObjectFactory<MSMessageSender> {
 	private static MessageSender buildSingleMsgSender(Map<String, Object> singleConfig) throws BaseAppException {
 		MessageSender sender = null;
 		try {
-			sender = (MessageSender) Class.forName((String) singleConfig.get("implementClass"))
+			sender = (MessageSender) Class.forName((String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
 					.getConstructor(String.class, Properties.class)
-					.newInstance((String) singleConfig.get("id"), (Properties) PropertiesUtils
-							.convertMapToProperties((Map<String, String>) singleConfig.get("parameters")));
+					.newInstance((String) singleConfig.get(ConfigConstant.ID.getValue()),
+							(Properties) PropertiesUtils.convertMapToProperties(
+									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())));
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0008", singleConfig.get("id")));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0008", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return sender;
 	}

@@ -10,6 +10,7 @@ import java.util.Properties;
 
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -24,10 +25,6 @@ public class FilterFactory {
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
 	private static final Logger logger = Logger.getLogger("SYSTEM");
-
-	private static final String IMPL_CLASS = "implementClass";
-
-	private static final String MSG_FILTER = "messageFilter";
 
 	private FilterFactory() {
 
@@ -46,15 +43,18 @@ public class FilterFactory {
 	private static BaseMessageFilter buildWebFilter(Map<String, Object> filterConfig) throws BaseAppException {
 		Object instance = null;
 		try {
-			instance = Class.forName((String) filterConfig.get(IMPL_CLASS))
+			instance = Class.forName((String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
 					.getConstructor(String.class, String.class, Properties.class)
-					.newInstance(filterConfig.get("id"), filterConfig.get("urlPattern"), PropertiesUtils
-							.convertMapToProperties((Map<String, String>) filterConfig.get("parameters")));
+					.newInstance(filterConfig.get(ConfigConstant.ID.getValue()),
+							filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
+							PropertiesUtils.convertMapToProperties(
+									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
 			logger.info(logKey, "Build web filter success. FilterId:" + filterConfig.get("id") + " ImplementClass"
-					+ filterConfig.get(IMPL_CLASS));
+					+ filterConfig.get(ConfigConstant.IMPL_CLASS.getValue()));
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0006", filterConfig.get("id"), filterConfig.get(IMPL_CLASS)));
+					LogInfoMgr.getErrorInfo("ERR_0006", filterConfig.get(ConfigConstant.ID.getValue()),
+							filterConfig.get(ConfigConstant.IMPL_CLASS.getValue())));
 		}
 		return (BaseMessageFilter) instance;
 	}
@@ -63,13 +63,14 @@ public class FilterFactory {
 	public static BaseMessageFilter buildListenerFilter(Map<String, Object> listenerConfig) throws BaseAppException {
 		Object instance = null;
 		try {
-			instance = Class.forName((String) listenerConfig.get(MSG_FILTER)).getConstructor(Properties.class)
-					.newInstance(PropertiesUtils
+			instance = Class.forName((String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue()))
+					.getConstructor(Properties.class).newInstance(PropertiesUtils
 							.convertMapToProperties((Map<String, String>) listenerConfig.get("parameters")));
 			logger.info(logKey, "Build listener filter succsess. ListenerId" + listenerConfig.get("id")
-					+ "ImplementClass:" + listenerConfig.get(MSG_FILTER));
+					+ "ImplementClass:" + listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue()));
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0007", listenerConfig.get(MSG_FILTER)));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0007", listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue())));
 		}
 		return (BaseMessageFilter) instance;
 	}
