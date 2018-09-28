@@ -55,7 +55,9 @@ public class MessageBrokerFactory {
 		Map<String, MessageListener> listeners = new HashMap<>();
 		for (Map<String, Object> singleConfig : listenersConfig) {
 			MessageListener l = buildSingleListener(singleConfig);
-			listeners.put(l.getId(), l);
+			if (l != null) {
+				listeners.put(l.getId(), l);
+			}
 		}
 		logger.info(logKey, "Build MB Listeners success. Total:" + listeners.size());
 		return listeners;
@@ -64,6 +66,9 @@ public class MessageBrokerFactory {
 	@SuppressWarnings("unchecked")
 	private static MessageListener buildSingleListener(Map<String, Object> singleConfig) throws BaseAppException {
 		MessageListener listener = null;
+		if (singleConfig == null || singleConfig.isEmpty()) {
+			return listener;
+		}
 		try {
 			listener = (MessageListener) Class.forName((String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
 					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class)
@@ -78,32 +83,36 @@ public class MessageBrokerFactory {
 							+ singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()) + " MaxProcessThreads:"
 							+ singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()));
 		} catch (Exception e) {
-			throw new BaseAppException(e,
+			BaseAppException ex = new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0010", singleConfig.get(ConfigConstant.ID.getValue())));
+			logger.error(logKey, ex);
 		}
 		return listener;
 	}
 
 	private static Map<String, MBService> buildServices(List<Map<String, Object>> loaclServicesConfig,
-			List<Map<String, Object>> remoteServicesConfig) throws BaseAppException {
+			List<Map<String, Object>> remoteServicesConfig) {
 		Map<String, MBService> services = new HashMap<>();
-		logger.info(logKey, "Start to build MB Service.");
 		logger.info(logKey, "Start to build MB Local Service.");
 		for (Map<String, Object> config : loaclServicesConfig) {
 			MBService m = buildService(config, LOCAL_SERVICE);
-			services.put(m.getId(), m);
+			if (m != null) {
+				services.put(m.getId(), m);
+			}
 		}
 		logger.info(logKey, "Start to build MB Remote Service.");
 		for (Map<String, Object> config : remoteServicesConfig) {
 			MBService m = buildService(config, REMOTE_SERVICE);
-			services.put(m.getId(), m);
+			if (m != null) {
+				services.put(m.getId(), m);
+			}
 		}
 		logger.info(logKey, "Build MB Services success. Total:" + services.size());
 		return services;
 	}
 
 	@SuppressWarnings("unchecked")
-	private static MBService buildService(Map<String, Object> serviceConfig, int serviceType) throws BaseAppException {
+	private static MBService buildService(Map<String, Object> serviceConfig, int serviceType) {
 		Map<String, String> config = new HashMap<>();
 		config.put("serviceType", String.valueOf(serviceType));
 		Set<Entry<String, Object>> set = serviceConfig.entrySet();
@@ -113,9 +122,15 @@ public class MessageBrokerFactory {
 		for (Entry<String, Object> e : set) {
 			config.put(e.getKey(), (String) e.getValue());
 		}
-		logger.info(logKey, "Build MB Service success. ServiceId:" + serviceConfig.get("id") + "ServiceType:"
-				+ (serviceType == LOCAL_SERVICE ? "Local" : "Remote"));
-		return new ServiceEntity(config, prop);
+		logger.info(logKey, "Build MB Service success. ServiceId:" + serviceConfig.get(ConfigConstant.ID.getValue()));
+		ServiceEntity serviceEntity = null;
+		try {
+			serviceEntity = new ServiceEntity(config, prop);
+		} catch (Exception e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			logger.error(logKey, ex);
+		}
+		return serviceEntity;
 	}
 
 }

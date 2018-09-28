@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.log.logs.LogInfoMgr;
 
@@ -27,6 +26,7 @@ public class MessageWebFilter implements Filter {
 	private static final String APP_CONFIG_FILE = "APP_CONFIG_FILE";
 
 	public void destroy() {
+		// Do nothing
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -35,9 +35,7 @@ public class MessageWebFilter implements Filter {
 			MSBaseApplication.doWebFilters(
 					MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream())), request,
 					response);
-		} catch (BaseAppException e) {
-			e.printStackTrace();
-		} catch (MessageException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -58,10 +56,9 @@ public class MessageWebFilter implements Filter {
 	}
 
 	private String convertStreamToString(InputStream is) {
-		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		StringBuilder sb = new StringBuilder();
 		String line = null;
-		try {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is));) {
 			while ((line = reader.readLine()) != null) {
 				sb.append(line);
 			}

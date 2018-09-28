@@ -63,20 +63,25 @@ public class MSBaseApplication {
 		return appEnv;
 	}
 
-	public static void init(InputStream is) throws BaseAppException {
-		Configuration config = new Configuration();
-		config.load(is);
-		LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
-		logger.info(logKey, "Start to parse the configuration.");
-		base = AppBaseFactory.buildBase(config.getBaseConfig());
-		logger.info(logKey, "Build Base success.");
-		appEnv = AppEnvFactory.build(config.getEnvConfig());
-		logger.info(logKey, "Build App Env success.");
-		filters = FilterFactory.buildWebFilters(config.getFilterConfig());
-		logger.info(logKey, "Build Web Filters success. Total:" + filters.size());
-		mb = MessageBrokerFactory.buildMsgBroker(config.getMbSendersConfig(), config.getMbReceiversConfig(),
-				config.getMbListenersConfig(), config.getMbLocalServicesConfig(), config.getMbRemoteServicesConfig());
-		logger.info(logKey, "Build Message Broker Success.");
+	public static void init(InputStream is) {
+		try {
+			Configuration config = new Configuration();
+			config.load(is);
+			LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
+			logger.info(logKey, "Start to parse the configuration.");
+			base = AppBaseFactory.buildBase(config.getBaseConfig());
+			logger.info(logKey, "Build Base success.");
+			appEnv = AppEnvFactory.build(config.getEnvConfig());
+			logger.info(logKey, "Build App Env success.");
+			filters = FilterFactory.buildWebFilters(config.getFilterConfig());
+			logger.info(logKey, "Build Web Filters success. Total:" + filters.size());
+			mb = MessageBrokerFactory.buildMsgBroker(config.getMbSendersConfig(), config.getMbReceiversConfig(),
+					config.getMbListenersConfig(), config.getMbLocalServicesConfig(),
+					config.getMbRemoteServicesConfig());
+			logger.info(logKey, "Build Message Broker Success.");
+		} catch (Exception e) {
+			logger.error(logKey, e);
+		}
 	}
 
 	public static Base getBaseInfo() {
@@ -85,14 +90,19 @@ public class MSBaseApplication {
 
 	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException {
-		try {
-			logger.debug(LogManager.getServiceLogKey(csReqMsg),
-					"Start to do web filter. RequestMsg:" + csReqMsg.getJsonObject());
-			for (MessageFilter f : filters) {
+		if (csReqMsg == null) {
+			throw new BaseAppException(LogInfoMgr.getErrorInfo(""));
+		}
+		logger.debug(LogManager.getServiceLogKey(csReqMsg),
+				"Start to do web filter. RequestMsg:" + csReqMsg.getJsonObject());
+		for (MessageFilter f : filters) {
+			try {
 				f.doWebFilter(csReqMsg, request, response);
+			} catch (Exception e) {
+				BaseAppException ex = new BaseAppException(e,
+						LogInfoMgr.getErrorInfo("ERR_00002", csReqMsg.getJsonString()));
+				logger.error(logKey, ex);
 			}
-		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_00002", csReqMsg.getJsonString()));
 		}
 	}
 
