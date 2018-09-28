@@ -53,6 +53,9 @@ public class MessageBrokerFactory {
 			throws BaseAppException {
 		logger.info(logKey, "Start to build MB Listener.");
 		Map<String, MessageListener> listeners = new HashMap<>();
+		if (listeners == null || listeners.isEmpty()) {
+			return listeners;
+		}
 		for (Map<String, Object> singleConfig : listenersConfig) {
 			MessageListener l = buildSingleListener(singleConfig);
 			if (l != null) {
@@ -94,17 +97,21 @@ public class MessageBrokerFactory {
 			List<Map<String, Object>> remoteServicesConfig) {
 		Map<String, MBService> services = new HashMap<>();
 		logger.info(logKey, "Start to build MB Local Service.");
-		for (Map<String, Object> config : loaclServicesConfig) {
-			MBService m = buildService(config, LOCAL_SERVICE);
-			if (m != null) {
-				services.put(m.getId(), m);
+		if (loaclServicesConfig != null) {
+			for (Map<String, Object> config : loaclServicesConfig) {
+				MBService m = buildService(config, LOCAL_SERVICE);
+				if (m != null) {
+					services.put(m.getId(), m);
+				}
 			}
 		}
 		logger.info(logKey, "Start to build MB Remote Service.");
-		for (Map<String, Object> config : remoteServicesConfig) {
-			MBService m = buildService(config, REMOTE_SERVICE);
-			if (m != null) {
-				services.put(m.getId(), m);
+		if (remoteServicesConfig != null) {
+			for (Map<String, Object> config : remoteServicesConfig) {
+				MBService m = buildService(config, REMOTE_SERVICE);
+				if (m != null) {
+					services.put(m.getId(), m);
+				}
 			}
 		}
 		logger.info(logKey, "Build MB Services success. Total:" + services.size());
