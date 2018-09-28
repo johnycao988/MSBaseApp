@@ -16,7 +16,8 @@ public enum ConfigConstant {
 	JMS_USER_NAME("USER_NAME"), JMS_USER_PWD("USER_PWD"), URI("URI"), JMS_QUEUE_NAME("QUEUE_NAME"),
 	LISTENER("listener"), MESSAGE_FILTER("messageFilter"), TRANS_CLASS("tranformClass"), MAX_PROCESS_THREADS(""),
 	SERVICES("services"), LOACL_SERVICE("local"), REMOTE_SERVICE("remote"), SENDER_ID("senderId"),
-	RECEIVER_ID("receiverId");
+	RECEIVER_ID("receiverId"), TIMEOUT("timeout"), JMS_CONNECTION_FACTORY_JNDI("CONN_FACTORY_JNDI"),
+	JMS_QUEUE_JNDI("QUEUE_JNDI");
 
 	private String value;
 

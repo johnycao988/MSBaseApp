@@ -32,8 +32,8 @@ public class BaseHttpClient {
 
 	private CloseableHttpClient http = HttpClients.createDefault();
 
-	public String post(String url, Map<String, String> headers, String jsonMessage) throws BaseAppException {
-		HttpPost post = new HttpPost(url);
+	public String post(String uri, Map<String, String> headers, String jsonMessage) throws BaseAppException {
+		HttpPost post = new HttpPost(uri);
 		CloseableHttpResponse response;
 		fillRequestHead(post, headers);
 		String jsonResponse = null;
@@ -44,17 +44,17 @@ public class BaseHttpClient {
 			if (response.getStatusLine().getStatusCode() == (HttpStatus.SC_OK)) {
 				jsonResponse = EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
 			} else {
-				throw new BaseAppException(new Exception(), LogInfoMgr.getErrorInfo("ERR_0016", url, jsonMessage,
+				throw new BaseAppException(new Exception(), LogInfoMgr.getErrorInfo("ERR_0016", uri, jsonMessage,
 						response.getStatusLine().getStatusCode()));
 			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0017", url, jsonMessage));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("", uri, jsonMessage));
 		}
 		return jsonResponse;
 	}
 
-	public InputStream get(String url) throws BaseAppException {
-		HttpGet get = new HttpGet(url);
+	public InputStream getReturnIs(String uri) throws BaseAppException {
+		HttpGet get = new HttpGet(uri);
 		CloseableHttpResponse response;
 		try {
 			response = this.http.execute(get);
@@ -62,7 +62,18 @@ public class BaseHttpClient {
 			response.getEntity().writeTo(bos);
 			return new ByteArrayInputStream(bos.toByteArray());
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0017", url));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("", uri));
+		}
+	}
+
+	public String get(String uri) throws BaseAppException {
+		HttpGet get = new HttpGet(uri);
+		CloseableHttpResponse response;
+		try {
+			response = this.http.execute(get);
+			return EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
+		} catch (Exception e) {
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0017", uri));
 		}
 	}
 

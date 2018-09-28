@@ -9,7 +9,6 @@ import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 
 /**
  * @author Donald.Wang
@@ -48,8 +47,7 @@ public class MSMessageSender implements Sender {
 	}
 
 	@Override
-	public MessageResponse sendSyncMessage(TranslationMessage requestMsg)
-			throws BaseAppException, MessageException, InterruptedException {
+	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException {
 		return this.sender.sendSyncMessage(requestMsg);
 	}
 

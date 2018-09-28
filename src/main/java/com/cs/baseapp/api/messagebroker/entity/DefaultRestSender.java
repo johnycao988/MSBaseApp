@@ -13,7 +13,6 @@ import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.httpclient.BaseHttpClient;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.log.logs.LogInfoMgr;
 
@@ -39,13 +38,23 @@ public class DefaultRestSender extends MessageSender {
 	}
 
 	@Override
-	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException, MessageException {
-		String url = requestMsg.getProperty(ConfigConstant.URI.getValue());
-		if (StringUtils.isEmpty(url)) {
-			url = super.getProperty(ConfigConstant.URI.getValue());
-		}
+	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException {
+		String uri = requestMsg.getProperty(ConfigConstant.URI.getValue());
 		BaseHttpClient http = new BaseHttpClient();
-		return MessageFactory.getResopnseMessage(http.post(url, null, requestMsg.getOutboundString()));
+		MessageResponse resp = null;
+		if (StringUtils.isEmpty(uri)) {
+			uri = super.getProperty(ConfigConstant.URI.getValue());
+		}
+		try {
+			if ("GET".equalsIgnoreCase(super.getProperty(ConfigConstant.REST_METHOD.getValue()))) {
+				resp = MessageFactory.getResopnseMessage(http.get(uri));
+			} else {
+				resp = MessageFactory.getResopnseMessage(http.post(uri, null, requestMsg.getOutboundString()));
+			}
+		} catch (Exception e) {
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+		}
+		return resp;
 	}
 
 	@Override

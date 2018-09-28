@@ -33,4 +33,8 @@ public abstract class MessageReceiver implements Receiver {
 		return StringUtils.isEmpty(value) ? this.prop.getProperty(key) : value;
 	}
 
+	public String getProperty(String key) {
+		return this.prop.getProperty(key);
+	}
+
 }

@@ -5,7 +5,6 @@ package com.cs.baseapp.api.messagebroker;
 
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 
 /**
  * @author Donald.Wang
@@ -21,7 +20,6 @@ public interface Sender {
 
 	public void close() throws BaseAppException;
 
-	public MessageResponse sendSyncMessage(TranslationMessage requestMsg)
-			throws BaseAppException, MessageException, InterruptedException;
+	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException;
 
 }
