@@ -16,7 +16,6 @@ import com.cs.baseapp.utils.RequestMessageUtils;
 import com.cs.baseapp.utils.ResponseMessageUtils;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 import com.cs.log.logs.LogInfoMgr;
 
 /**
@@ -31,7 +30,7 @@ public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 
 	@Override
 	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
-			throws BaseAppException, MessageException {
+			throws BaseAppException {
 		List<MessageResponse> responses = new ArrayList<>();
 		List<MessageRequest> subRequests = RequestMessageUtils.demergeMultipleReqMsg(csReqMsg);
 		for (MessageRequest r : subRequests) {
@@ -42,14 +41,13 @@ public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 					.write(ResponseMessageUtils.mergeResponse(csReqMsg, responses).getJsonString().getBytes());
 			response.flushBuffer();
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0004"));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0005", csReqMsg.getJsonString()));
 		}
 	}
 
 	@Override
 	public void doListenerFilter(MessageRequest requestMsg) throws BaseAppException {
-		throw new BaseAppException(new UnsupportedOperationException(),
-				LogInfoMgr.getErrorInfo("ERR_0005", requestMsg.getJsonString()));
+		// do nothing
 	}
 
 }

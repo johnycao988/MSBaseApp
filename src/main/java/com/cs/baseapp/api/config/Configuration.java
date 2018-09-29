@@ -56,7 +56,7 @@ public class Configuration {
 			this.mbRemoteServicesConfig = (List<Map<String, Object>>) serviceConfig
 					.get(ConfigConstant.REMOTE_SERVICE.getValue());
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0003"));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0004"));
 		}
 	}
 

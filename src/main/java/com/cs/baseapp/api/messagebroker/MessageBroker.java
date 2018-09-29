@@ -10,7 +10,6 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 
 /**
  * @author Donald.Wang
@@ -18,11 +17,11 @@ import com.cs.cloud.message.domain.errorhandling.MessageException;
  */
 public interface MessageBroker {
 
-	public MSMessageSender getSender(String id) throws BaseAppException, InterruptedException;
+	public MSMessageSender getSender(String id) throws BaseAppException;
 
 	public void releaseSender(MSMessageSender sender);
 
-	public MSMessageReceiver getReceiver(String id) throws BaseAppException, InterruptedException;
+	public MSMessageReceiver getReceiver(String id) throws BaseAppException;
 
 	public void releaseReceiver(MSMessageReceiver receiver);
 
@@ -34,7 +33,7 @@ public interface MessageBroker {
 
 	public MBService getService(String id);
 
-	public MessageResponse invokeService(MessageRequest req) throws BaseAppException, MessageException;
+	public MessageResponse invokeService(MessageRequest req) throws BaseAppException;
 
 	public void shutdown();
 

@@ -2,91 +2,208 @@
 <root>
 	<info>
 		<code>ERR_0001</code>
-		<msg>Something error when init the Base Application!Please check the configuration file: %1$s
-		</msg>
+		<msg>The request message is null!</msg>
 		<action></action>
 	</info>
 	<info>
 		<code>ERR_0002</code>
-		<msg>Something error when do web filter! RequestMsg: %1$s</msg>
+		<msg>Failed to load the configuration file!Please check the file in:
+			%1$s</msg>
 		<action></action>
 	</info>
 	<info>
 		<code>ERR_0003</code>
-		<msg>Something error when parse the configuration!</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0004</code>
-		<msg>Something error when fill the content into response!</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0005</code>
-		<msg>The web filter can not do listener! Request Msg: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0006</code>
-		<msg>Something error when build web filter! FilterId: %2$s ImplementClass: %2$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0007</code>
-		<msg>Something error when build listener filter! ImplementClass: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0008</code>
-		<msg>Something error when build message sender! Id: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0009</code>
-		<msg>Something error when build message receiver! Id: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0010</code>
-		<msg>Something error when build message listener! Id: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0011</code>
-		<msg>The default rest sender can not send async message! Message: %1$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0012</code>
-		<msg>Something error when invoke service! ServiceId: %1$s Request Msg: %2$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0013</code>
-		<msg>Something error when get the constructor for business service! ServiceId: %1$s
-			ImplementClass: %2$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0014</code>
-		<msg>Something error when get the translation message! ServiceId: %1$s ,ImplementClass: %2$s
-			Request Message: %3$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0015</code>
-		<msg>Something error when get the bussiness service! ServiceId:%1$s Request Message:%2$s</msg>
-		<action></action>
-	</info>
-	<info>
-		<code>ERR_0016</code>
-		<msg>The rest response contains the exception status code!URL:%1$s RequestMsg:%2$s StatusCode:%3$s
+		<msg>The Application Base configuration is Empty! Please check the
+			configuration file!
 		</msg>
 		<action></action>
 	</info>
 	<info>
+		<code>ERR_0004</code>
+		<msg>Parse the configuration fail! Please check the configuration!
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0005</code>
+		<msg>Failed process response message! RequestMessage: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0006</code>
+		<msg>Failed to merge response message! The request message is null or
+			the response message is empty!
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0007</code>
+		<msg>Failed to build web filter! FilterID: %1$s implement Class:
+			%2$s
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0008</code>
+		<msg>Filed to build listener message filter!Implement
+			Class: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0009</code>
+		<msg>Failed to build message receiver! ReceiverId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0010</code>
+		<msg>The receiver configuration is empty!Please check configuration!
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0011</code>
+		<msg>Failed to create receiver! ReceiverId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0012</code>
+		<msg>The sender configuration is empty!Please check configuration!
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0013</code>
+		<msg>Failed to create sender! SenderId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0014</code>
+		<msg>Can not find the match service! RequestMessage: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0015</code>
+		<msg>Failed to process request message! RequestMessage: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0016</code>
+		<msg>Failed to build message listener! ListenerId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
 		<code>ERR_0017</code>
-		<msg>Something error when rest a post reqeust! URL:%1$s RequestMsg:%2$s </msg>
+		<msg>Failed to build service! ServiceId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0018</code>
+		<msg>Failed to initialize Default JMS receiver! ReceiverId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0019</code>
+		<msg>Failed to receive the response message! ReceiverId: %1$s
+			RequestMessage: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0020</code>
+		<msg>Failed to close connection! ReceiverId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0021</code>
+		<msg>Failed to close Session! ReceiverId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0022</code>
+		<msg>Failed to close Session! SenderId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0023</code>
+		<msg>Failed to send message! SenderId: %1$s ,RequestMessage:
+			%2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0024</code>
+		<msg>Failed to receive response message! SenderId: %1$s
+			,RequestMessage: %2$s
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0025</code>
+		<msg>Failed to close connection! SenderId: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0026</code>
+		<msg>Failed to send http request message! SenderId: %1$s
+			,RequestMessage: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0027</code>
+		<msg>Failed to get translation message! ServiceId: %1$s,
+			transformClass: %2$s,ReqeustMessage: %3$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0028</code>
+		<msg>Failed to get translation message constructor! ServiceId: %1$s,
+			transformClass: %2$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0029</code>
+		<msg>Failed to get Object from Object pool!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0030</code>
+		<msg>The response message has the error return code! Url: %1$s
+			,RequestMessage: %2$s
+			,ReturnCode: %3$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0031</code>
+		<msg>Failed to send get http request! Url: %1$s</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0032</code>
+		<msg>Failed to send http post request! Url: %1$s, RequestMessage: %2$s
+		</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0033</code>
+		<msg>Failed to do web filter!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0034</code>
+		<msg>The CS_ROOT_PATH is empty! Please set the path first!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0035</code>
+		<msg>Failed to initialize MSBaseAPP!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code>ERR_0036</code>
+		<msg>Failed to get JsonMessage from http Request!</msg>
+		<action></action>
+	</info>
+	<info>
+		<code></code>
+		<msg></msg>
 		<action></action>
 	</info>
 </root>

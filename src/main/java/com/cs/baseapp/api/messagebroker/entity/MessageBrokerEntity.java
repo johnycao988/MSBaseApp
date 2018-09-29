@@ -16,7 +16,6 @@ import com.cs.baseapp.api.messagebroker.MessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 
 /**
  * @author Donald.Wang
@@ -33,7 +32,7 @@ public class MessageBrokerEntity implements MessageBroker {
 	private ServiceManager serviceManager;
 
 	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
-			Map<String, MessageListener> listeners, Map<String, MBService> services) throws BaseAppException {
+			Map<String, MessageListener> listeners, Map<String, MBService> services) {
 		this.senderManager = new SenderManager(sendersConfig);
 		this.receiverManager = new ReceiverManager(receiverConfig);
 		this.listenerManager = new ListenerManager(listeners);
@@ -41,12 +40,12 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public MSMessageSender getSender(String id) throws BaseAppException, InterruptedException {
+	public MSMessageSender getSender(String id) throws BaseAppException {
 		return this.senderManager.getSender(id);
 	}
 
 	@Override
-	public MSMessageReceiver getReceiver(String id) throws BaseAppException, InterruptedException {
+	public MSMessageReceiver getReceiver(String id) throws BaseAppException {
 		return this.receiverManager.getById(id);
 	}
 
@@ -71,7 +70,7 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public MessageResponse invokeService(MessageRequest req) throws BaseAppException, MessageException {
+	public MessageResponse invokeService(MessageRequest req) throws BaseAppException {
 		return this.serviceManager.invokeService(req);
 	}
 

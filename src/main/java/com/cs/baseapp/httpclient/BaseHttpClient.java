@@ -44,11 +44,11 @@ public class BaseHttpClient {
 			if (response.getStatusLine().getStatusCode() == (HttpStatus.SC_OK)) {
 				jsonResponse = EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
 			} else {
-				throw new BaseAppException(new Exception(), LogInfoMgr.getErrorInfo("ERR_0016", uri, jsonMessage,
+				throw new BaseAppException(new Exception(), LogInfoMgr.getErrorInfo("ERR_0030", uri, jsonMessage,
 						response.getStatusLine().getStatusCode()));
 			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("", uri, jsonMessage));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0032", uri, jsonMessage));
 		}
 		return jsonResponse;
 	}
@@ -62,7 +62,7 @@ public class BaseHttpClient {
 			response.getEntity().writeTo(bos);
 			return new ByteArrayInputStream(bos.toByteArray());
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("", uri));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0031", uri));
 		}
 	}
 
@@ -73,7 +73,7 @@ public class BaseHttpClient {
 			response = this.http.execute(get);
 			return EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0017", uri));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0031", uri));
 		}
 	}
 

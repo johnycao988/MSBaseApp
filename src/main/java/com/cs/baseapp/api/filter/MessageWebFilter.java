@@ -1,6 +1,7 @@
 package com.cs.baseapp.api.filter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -12,18 +13,24 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringUtils;
+import org.w3c.dom.Document;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
+import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 @WebFilter("/*")
 public class MessageWebFilter implements Filter {
 
-	private static final String APP_CONFIG_FILE = "APP_CONFIG_FILE";
+	private static final String CSMSBASEAPP_ROOT_PATH = "CSMSBASEAPP_ROOT_PATH";
+	Logger logger = Logger.getLogger("SYSTEM");
 
 	public void destroy() {
 		// Do nothing
@@ -31,31 +38,36 @@ public class MessageWebFilter implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
+		MessageRequest csReqeust = null;
 		try {
-			MSBaseApplication.doWebFilters(
-					MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream())), request,
-					response);
+			csReqeust = MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream()));
+			MSBaseApplication.doWebFilters(csReqeust, request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0033"));
+			logger.error(LogManager.getServiceLogKey(csReqeust), ex);
 		}
 	}
 
 	public void init(FilterConfig fConfig) throws ServletException {
 		try {
-			String appConfigFile = System.getenv().get(APP_CONFIG_FILE);
+			String appConfigFile = System.getenv().get(CSMSBASEAPP_ROOT_PATH);
 			if (StringUtils.isEmpty(appConfigFile)) {
-				appConfigFile = System.getProperty(APP_CONFIG_FILE);
+				appConfigFile = System.getProperty(CSMSBASEAPP_ROOT_PATH);
 			}
 			if (StringUtils.isEmpty(appConfigFile)) {
-				throw new BaseAppException(LogInfoMgr.getErrorInfo(""));
+				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0034"));
 			}
-			MSBaseApplication.init(appConfigFile);
+			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
+			Document logconfig = d.newDocumentBuilder().parse(new File(appConfigFile + "/sys_para/baseAppLogInfo.xml"));
+			LogInfoMgr.initByDoc("EN", logconfig);
+			MSBaseApplication.init(appConfigFile + "/sys_para/baseAppConfig.yaml");
 		} catch (Exception e) {
-			e.printStackTrace();
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
+			logger.error(LogManager.getServiceLogKey(), ex);
 		}
 	}
 
-	private String convertStreamToString(InputStream is) {
+	private String convertStreamToString(InputStream is) throws BaseAppException {
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is));) {
@@ -63,7 +75,7 @@ public class MessageWebFilter implements Filter {
 				sb.append(line);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0036"));
 		}
 		return sb.toString();
 	}

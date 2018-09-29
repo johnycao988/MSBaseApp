@@ -13,9 +13,11 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -25,19 +27,27 @@ public class ReceiverManager {
 
 	private Map<String, ObjectPool<MSMessageReceiver>> pooledReceivers = new HashMap<>();
 
+	private Logger logger = Logger.getLogger("SYSTEM");
+
 	public ReceiverManager(List<Map<String, Object>> configs) {
+		logger.info(LogManager.getServiceLogKey(), "Start to init the receiver manager!");
 		try {
+			if (configs == null || configs.isEmpty()) {
+				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0010"));
+			}
 			for (Map<String, Object> config : configs) {
 				ObjectPool<MSMessageReceiver> pool = new ObjectPool<>(
 						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new ReceiverFactory(config));
-				pooledReceivers.put((String) config.get(ConfigConstant.ID.getValue()), pool);
+				String receiverId = (String) config.get(ConfigConstant.ID.getValue());
+				pooledReceivers.put(receiverId, pool);
+				logger.info(LogManager.getServiceLogKey(), "Build receiver pool success! ReceiverID:" + receiverId);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(LogManager.getServiceLogKey(), e);
 		}
 	}
 
-	public MSMessageReceiver getById(String id) throws BaseAppException, InterruptedException {
+	public MSMessageReceiver getById(String id) throws BaseAppException {
 		return this.pooledReceivers.get(id).getObject();
 	}
 
@@ -75,7 +85,7 @@ class ReceiverFactory implements PoolObjectFactory<MSMessageReceiver> {
 
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0009", singleConfig.get(ConfigConstant.ID.getValue())));
+					LogInfoMgr.getErrorInfo("ERR_0011", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return receiver;
 	}

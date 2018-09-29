@@ -55,7 +55,7 @@ public class MSBaseApplication {
 		try (FileInputStream fis = new FileInputStream(new File(configFile))) {
 			init(fis);
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_00001", configFile));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0002", configFile));
 		}
 	}
 
@@ -91,7 +91,7 @@ public class MSBaseApplication {
 	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException {
 		if (csReqMsg == null) {
-			throw new BaseAppException(LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0001"));
 		}
 		logger.debug(LogManager.getServiceLogKey(csReqMsg),
 				"Start to do web filter. RequestMsg:" + csReqMsg.getJsonObject());

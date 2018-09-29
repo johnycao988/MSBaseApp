@@ -84,18 +84,18 @@ public class ServiceEntity implements MBService {
 					.newInstance(this.prop, req);
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0014", this.id, this.tranformClass, req.getJsonString()));
+					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, req.getJsonString()));
 		}
 		return (TranslationMessage) instance;
 	}
 
 	@Override
-	public MSMessageSender getSender() throws BaseAppException, InterruptedException {
+	public MSMessageSender getSender() throws BaseAppException {
 		return MSBaseApplication.getMessageBroker().getSender(this.senderId);
 	}
 
 	@Override
-	public MSMessageReceiver getReceiver() throws BaseAppException, InterruptedException {
+	public MSMessageReceiver getReceiver() throws BaseAppException {
 		return MSBaseApplication.getMessageBroker().getReceiver(this.receiverId);
 	}
 
@@ -109,7 +109,7 @@ public class ServiceEntity implements MBService {
 			this.businessServiceConstructor = Class.forName(this.implementClass).getConstructor(MessageRequest.class,
 					Properties.class);
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0013", this.id, this.implementClass));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0028", this.id, this.implementClass));
 		}
 	}
 

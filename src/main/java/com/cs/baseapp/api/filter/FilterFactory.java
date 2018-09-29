@@ -3,7 +3,6 @@
  */
 package com.cs.baseapp.api.filter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,17 +32,16 @@ public class FilterFactory {
 
 	public static List<MessageFilter> buildWebFilters(List<Map<String, Object>> filtersConfig) {
 		List<MessageFilter> filters = new ArrayList<>();
-		try {
-			if (filtersConfig == null || filtersConfig.isEmpty()) {
-				return filters;
+		if (filtersConfig == null || filtersConfig.isEmpty()) {
+			return filters;
+		}
+		logger.info(logKey, "Start to build WebFilters.");
+		for (Map<String, Object> singleConfig : filtersConfig) {
+			BaseMessageFilter filter = buildWebFilter(singleConfig);
+			if (filter == null) {
+				continue;
 			}
-			logger.info(logKey, "Start to build WebFilters.");
-			for (Map<String, Object> singleConfig : filtersConfig) {
-				filters.add(buildWebFilter(singleConfig));
-			}
-
-		} catch (Exception e) {
-			logger.error(logKey, e);
+			filters.add(filter);
 		}
 		return filters;
 	}
@@ -51,20 +49,18 @@ public class FilterFactory {
 	@SuppressWarnings("unchecked")
 	private static BaseMessageFilter buildWebFilter(Map<String, Object> filterConfig) {
 		Object instance = null;
+		String filterId = (String) filterConfig.get(ConfigConstant.ID.getValue());
+		String implClass = (String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		try {
-			instance = Class.forName((String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
-					.getConstructor(String.class, String.class, Properties.class)
-					.newInstance(filterConfig.get(ConfigConstant.ID.getValue()),
+			instance = Class.forName((String) filterConfig.get(implClass))
+					.getConstructor(String.class, String.class, Properties.class).newInstance(filterId,
 							filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
 							PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
-			logger.info(logKey, "Build web filter success. FilterId:" + filterConfig.get("id") + " ImplementClass:"
-					+ filterConfig.get(ConfigConstant.IMPL_CLASS.getValue()));
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-				| NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+			logger.info(logKey, "Build web filter success. FilterId:" + filterId + " ImplementClass:" + implClass);
+		} catch (Exception e) {
 			BaseAppException baseAppException = new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0006", filterConfig.get(ConfigConstant.ID.getValue()),
-							filterConfig.get(ConfigConstant.IMPL_CLASS.getValue())));
+					LogInfoMgr.getErrorInfo("ERR_0007", filterId, implClass));
 			logger.error(logKey, baseAppException);
 		}
 		return (BaseMessageFilter) instance;
@@ -74,15 +70,14 @@ public class FilterFactory {
 	public static BaseMessageFilter buildListenerFilter(Map<String, Object> listenerConfig) throws BaseAppException {
 		Object instance = null;
 		try {
-
-			instance = Class.forName((String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue()))
-					.getConstructor(Properties.class).newInstance(PropertiesUtils
-							.convertMapToProperties((Map<String, String>) listenerConfig.get("parameters")));
-			logger.info(logKey, "Build listener filter succsess. ListenerId:" + listenerConfig.get("id")
-					+ " ImplementClass:" + listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue()));
+			String filterClass = (String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue());
+			instance = Class.forName(filterClass).getConstructor(Properties.class)
+					.newInstance(PropertiesUtils.convertMapToProperties(
+							(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())));
+			logger.info(logKey, "Build listener filter succsess. ImplementClass:" + filterClass);
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0007", listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue())));
+					LogInfoMgr.getErrorInfo("ERR_0008", listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue())));
 		}
 		return (BaseMessageFilter) instance;
 	}

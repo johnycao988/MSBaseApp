@@ -53,7 +53,7 @@ public class MessageBrokerFactory {
 			throws BaseAppException {
 		logger.info(logKey, "Start to build MB Listener.");
 		Map<String, MessageListener> listeners = new HashMap<>();
-		if (listeners == null || listeners.isEmpty()) {
+		if (listenersConfig == null || listenersConfig.isEmpty()) {
 			return listeners;
 		}
 		for (Map<String, Object> singleConfig : listenersConfig) {
@@ -72,22 +72,19 @@ public class MessageBrokerFactory {
 		if (singleConfig == null || singleConfig.isEmpty()) {
 			return listener;
 		}
+		String implClass = (String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue());
+		String listenerId = (String) singleConfig.get(ConfigConstant.ID.getValue());
 		try {
-			listener = (MessageListener) Class.forName((String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()))
+			listener = (MessageListener) Class.forName(implClass)
 					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class)
-					.newInstance((String) singleConfig.get(ConfigConstant.ID.getValue()),
-							(int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
+					.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
 							(Properties) PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
 							FilterFactory.buildListenerFilter(singleConfig));
-			logger.info(logKey,
-					"Build MB Listener success. ListenerId:" + singleConfig.get(ConfigConstant.ID.getValue())
-							+ ConfigConstant.IMPL_CLASS.getValue() + ":"
-							+ singleConfig.get(ConfigConstant.IMPL_CLASS.getValue()) + " MaxProcessThreads:"
-							+ singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()));
+			logger.info(logKey, "Build MB Listener success. ListenerId:" + listenerId
+					+ ConfigConstant.IMPL_CLASS.getValue() + ":" + implClass);
 		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0010", singleConfig.get(ConfigConstant.ID.getValue())));
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", listenerId));
 			logger.error(logKey, ex);
 		}
 		return listener;
@@ -134,7 +131,8 @@ public class MessageBrokerFactory {
 		try {
 			serviceEntity = new ServiceEntity(config, prop);
 		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			BaseAppException ex = new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0017", serviceConfig.get(ConfigConstant.ID.getValue())));
 			logger.error(logKey, ex);
 		}
 		return serviceEntity;

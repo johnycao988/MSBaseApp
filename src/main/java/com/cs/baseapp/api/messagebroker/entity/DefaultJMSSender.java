@@ -22,9 +22,11 @@ import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageResponse;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -35,6 +37,8 @@ public class DefaultJMSSender extends MessageSender {
 	private Connection connection = null;
 
 	private Queue queue = null;
+
+	private Logger logger = Logger.getLogger("SYSTEM");
 
 	public DefaultJMSSender(String id, Properties prop) {
 		super(id, prop);
@@ -69,14 +73,16 @@ public class DefaultJMSSender extends MessageSender {
 			messageProducer.send(textMsg);
 			session.commit();
 		} catch (JMSException e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0023", super.getId(), requestMsg.getRequestMsg().getJsonString()));
 		} finally {
 			try {
 				if (session != null) {
 					session.close();
 				}
 			} catch (JMSException e) {
-				e.printStackTrace();
+				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0022", super.getId()));
+				logger.error(LogManager.getServiceLogKey(requestMsg.getRequestMsg()), ex);
 			}
 		}
 	}
@@ -89,7 +95,7 @@ public class DefaultJMSSender extends MessageSender {
 			resp = MSBaseApplication.getMessageBroker()
 					.getService(requestMsg.getRequestMsg().getServices().get(0).getId()).getReceiver().recv(requestMsg);
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0024"));
 		}
 		return resp;
 	}
@@ -101,7 +107,7 @@ public class DefaultJMSSender extends MessageSender {
 				this.connection.close();
 			}
 		} catch (JMSException e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0025"));
 		}
 	}
 

@@ -26,15 +26,19 @@ public class ObjectPool<T> {
 		return this.poolSize;
 	}
 
-	public synchronized T getObject() throws InterruptedException, BaseAppException {
+	public synchronized T getObject() throws BaseAppException {
 
-		T rtnObj = null;
-		while (true) {
-			rtnObj = this.getLockObject();
-			if (rtnObj != null)
-				return rtnObj;
-			else
-				wait();
+		try {
+			T rtnObj = null;
+			while (true) {
+				rtnObj = this.getLockObject();
+				if (rtnObj != null)
+					return rtnObj;
+				else
+					wait();
+			}
+		} catch (Exception e) {
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
 		}
 	}
 
@@ -53,7 +57,7 @@ public class ObjectPool<T> {
 				return this.poolObjectFactory.createPoolObject();
 			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0029"));
 		}
 		return null;
 	}

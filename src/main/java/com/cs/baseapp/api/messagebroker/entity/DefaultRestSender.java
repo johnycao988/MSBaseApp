@@ -33,8 +33,7 @@ public class DefaultRestSender extends MessageSender {
 
 	@Override
 	public void sendAsyncMessage(TranslationMessage requestMsg) throws BaseAppException {
-		throw new BaseAppException(new UnsupportedOperationException(),
-				LogInfoMgr.getErrorInfo("ERR_0011", requestMsg.getOutboundString()));
+		// do nothing
 	}
 
 	@Override
@@ -52,7 +51,8 @@ public class DefaultRestSender extends MessageSender {
 				resp = MessageFactory.getResopnseMessage(http.post(uri, null, requestMsg.getOutboundString()));
 			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0026", super.getId(), requestMsg.getRequestMsg().getJsonString()));
 		}
 		return resp;
 	}

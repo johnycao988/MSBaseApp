@@ -13,9 +13,11 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -24,15 +26,23 @@ import com.cs.log.logs.LogInfoMgr;
 public class SenderManager {
 
 	private Map<String, ObjectPool<MSMessageSender>> pooledSenders = new HashMap<>();
+	private Logger logger = Logger.getLogger("SYSTEM");
 
 	public SenderManager(List<Map<String, Object>> sendersConfig) {
-		for (Map<String, Object> config : sendersConfig) {
-			pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), new ObjectPool<MSMessageSender>(
-					(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config)));
+		try {
+			if (sendersConfig == null) {
+				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0012"));
+			}
+			for (Map<String, Object> config : sendersConfig) {
+				pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), new ObjectPool<MSMessageSender>(
+						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config)));
+			}
+		} catch (Exception e) {
+			logger.error(LogManager.getServiceLogKey(), e);
 		}
 	}
 
-	public MSMessageSender getSender(String id) throws InterruptedException, BaseAppException {
+	public MSMessageSender getSender(String id) throws BaseAppException {
 		return this.pooledSenders.get(id).getObject();
 	}
 
@@ -69,7 +79,7 @@ class SenderFactory implements PoolObjectFactory<MSMessageSender> {
 									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())));
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0008", singleConfig.get(ConfigConstant.ID.getValue())));
+					LogInfoMgr.getErrorInfo("ERR_0013", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return sender;
 	}

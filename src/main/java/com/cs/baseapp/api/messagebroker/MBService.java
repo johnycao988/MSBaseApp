@@ -28,9 +28,9 @@ public interface MBService {
 
 	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException;
 
-	public MSMessageSender getSender() throws BaseAppException, InterruptedException;
+	public MSMessageSender getSender() throws BaseAppException;
 
-	public MSMessageReceiver getReceiver() throws BaseAppException, InterruptedException;
+	public MSMessageReceiver getReceiver() throws BaseAppException;
 
 	public String getImplementClass();
 

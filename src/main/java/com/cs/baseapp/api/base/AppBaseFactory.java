@@ -21,7 +21,7 @@ public class AppBaseFactory {
 
 	public static Base buildBase(Map<String, String> baseConfig) throws BaseAppException {
 		if (baseConfig == null || baseConfig.isEmpty()) {
-			throw new BaseAppException(LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0003"));
 		}
 		return new BaseEntity(baseConfig);
 	}

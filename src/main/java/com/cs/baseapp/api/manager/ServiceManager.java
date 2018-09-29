@@ -18,7 +18,6 @@ import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
-import com.cs.cloud.message.domain.errorhandling.MessageException;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
 
@@ -48,20 +47,17 @@ public class ServiceManager {
 		return list;
 	}
 
-	public MessageResponse invokeService(MessageRequest req) throws BaseAppException, MessageException {
+	public MessageResponse invokeService(MessageRequest req) throws BaseAppException {
 		MessageResponse resp = null;
 		MBService service = this.services.get(req.getServices().get(0).getId());
 		logger.debug(LogManager.getServiceLogKey(req),
 				"Start to process invoke Service. RequestMsg: " + req.getJsonString());
 		if (service == null) {
-			logger.warn(LogManager.getServiceLogKey(req),
-					"Can not get the information of this service.  RequestMsg:" + req.getJsonString());
-			return resp;
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0014", req.getJsonString()));
 		}
 		MSMessageSender sender = null;
 		MSMessageReceiver receiver = null;
 		try {
-
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
 				resp = service.getBusinessService(req).process();
 			} else {
@@ -71,6 +67,7 @@ public class ServiceManager {
 					if (resp == null) {
 						receiver = service.getReceiver();
 						resp = receiver.recv(service.getTranslationMessage(req));
+
 					}
 				} else {
 					sender = service.getSender();
@@ -78,7 +75,8 @@ public class ServiceManager {
 				}
 			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0012", service.getId(), req.getJsonString()));
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));
+			logger.error(LogManager.getServiceLogKey(req), ex);
 		} finally {
 			if (sender != null) {
 				sender.close();

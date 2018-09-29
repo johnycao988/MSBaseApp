@@ -19,9 +19,11 @@ import org.apache.commons.lang3.StringUtils;
 import com.cs.baseapp.api.messagebroker.MessageReceiver;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageResponse;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -32,6 +34,8 @@ public class DefaultJMSReceiver extends MessageReceiver {
 	private Connection connection = null;
 
 	private Queue queue = null;
+
+	private Logger logger = Logger.getLogger("SYSTEM");
 
 	public DefaultJMSReceiver(String id, Properties prop) {
 		super(id, prop);
@@ -48,7 +52,7 @@ public class DefaultJMSReceiver extends MessageReceiver {
 			this.connection = connFactory.createConnection();
 			this.connection.start();
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0018", super.getId()));
 		}
 	}
 
@@ -63,14 +67,16 @@ public class DefaultJMSReceiver extends MessageReceiver {
 			long timeout = Long.parseLong(!StringUtils.isEmpty(strTimeout) ? strTimeout : "6000");
 			messageConsumer.receive(timeout);
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0019", super.getId(), msgRequest.getRequestMsg().getJsonString()));
 		} finally {
 			try {
 				if (session != null) {
 					session.close();
 				}
 			} catch (JMSException e) {
-				e.printStackTrace();
+				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0021", super.getId()));
+				logger.error(LogManager.getServiceLogKey(msgRequest.getRequestMsg()), ex);
 			}
 		}
 		return null;
@@ -83,7 +89,7 @@ public class DefaultJMSReceiver extends MessageReceiver {
 				this.connection.close();
 			}
 		} catch (JMSException e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo(""));
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0020", super.getId()));
 		}
 	}
 
