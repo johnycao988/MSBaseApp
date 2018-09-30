@@ -60,7 +60,7 @@ public class MessageWebFilter implements Filter {
 			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
 			Document logconfig = d.newDocumentBuilder().parse(new File(appConfigFile + "/sys_para/baseAppLogInfo.xml"));
 			LogInfoMgr.initByDoc("EN", logconfig);
-			MSBaseApplication.init(appConfigFile + "/sys_para/baseAppConfig.yaml");
+			MSBaseApplication.init(appConfigFile + "/sys_para/baseAppConfig.yml");
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
 			logger.write(LogManager.getServiceLogKey(), ex);
