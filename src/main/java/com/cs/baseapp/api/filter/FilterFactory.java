@@ -52,9 +52,8 @@ public class FilterFactory {
 		String filterId = (String) filterConfig.get(ConfigConstant.ID.getValue());
 		String implClass = (String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		try {
-			instance = Class.forName((String) filterConfig.get(implClass))
-					.getConstructor(String.class, String.class, Properties.class).newInstance(filterId,
-							filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
+			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class)
+					.newInstance(filterId, filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
 							PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
 			logger.info(logKey, "Build web filter success. FilterId:" + filterId + " ImplementClass:" + implClass);
