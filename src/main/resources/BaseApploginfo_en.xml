@@ -238,8 +238,8 @@
 		<level>ERROR</level>
 	</info>
 	<info>
-		<code />
-		<msg />
+		<code>ERR_0036</code>
+		<msg>Failed to initialize MSBaseApp</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
