@@ -63,7 +63,7 @@ public class MSBaseApplication {
 		return appEnv;
 	}
 
-	public static void init(InputStream is) {
+	public static void init(InputStream is) throws BaseAppException {
 		try {
 			Configuration config = new Configuration();
 			config.load(is);
@@ -80,7 +80,7 @@ public class MSBaseApplication {
 					config.getMbRemoteServicesConfig());
 			logger.info(logKey, "Build Message Broker Success.");
 		} catch (Exception e) {
-			logger.error(logKey, e);
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035"));
 		}
 	}
 
@@ -101,7 +101,7 @@ public class MSBaseApplication {
 			} catch (Exception e) {
 				BaseAppException ex = new BaseAppException(e,
 						LogInfoMgr.getErrorInfo("ERR_00002", csReqMsg.getJsonString()));
-				logger.error(logKey, ex);
+				logger.write(logKey, ex);
 			}
 		}
 	}

@@ -82,7 +82,7 @@ public class DefaultJMSSender extends MessageSender {
 				}
 			} catch (JMSException e) {
 				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0022", super.getId()));
-				logger.error(LogManager.getServiceLogKey(requestMsg.getRequestMsg()), ex);
+				logger.write(LogManager.getServiceLogKey(requestMsg.getRequestMsg()), ex);
 			}
 		}
 	}

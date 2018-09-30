@@ -76,7 +76,7 @@ public class ServiceManager {
 			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));
-			logger.error(LogManager.getServiceLogKey(req), ex);
+			logger.write(LogManager.getServiceLogKey(req), ex);
 		} finally {
 			if (sender != null) {
 				sender.close();

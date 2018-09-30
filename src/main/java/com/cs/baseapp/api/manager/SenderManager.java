@@ -37,8 +37,8 @@ public class SenderManager {
 				pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), new ObjectPool<MSMessageSender>(
 						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config)));
 			}
-		} catch (Exception e) {
-			logger.error(LogManager.getServiceLogKey(), e);
+		} catch (BaseAppException e) {
+			logger.write(LogManager.getServiceLogKey(), e);
 		}
 	}
 

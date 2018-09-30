@@ -61,7 +61,7 @@ public class FilterFactory {
 		} catch (Exception e) {
 			BaseAppException baseAppException = new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0007", filterId, implClass));
-			logger.error(logKey, baseAppException);
+			logger.write(logKey, baseAppException);
 		}
 		return (BaseMessageFilter) instance;
 	}

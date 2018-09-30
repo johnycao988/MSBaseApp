@@ -85,7 +85,7 @@ public class MessageBrokerFactory {
 					+ ConfigConstant.IMPL_CLASS.getValue() + ":" + implClass);
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", listenerId));
-			logger.error(logKey, ex);
+			logger.write(logKey, ex);
 		}
 		return listener;
 	}
@@ -133,7 +133,7 @@ public class MessageBrokerFactory {
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0017", serviceConfig.get(ConfigConstant.ID.getValue())));
-			logger.error(logKey, ex);
+			logger.write(logKey, ex);
 		}
 		return serviceEntity;
 	}

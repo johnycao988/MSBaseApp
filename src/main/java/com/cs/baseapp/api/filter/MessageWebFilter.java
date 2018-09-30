@@ -44,7 +44,7 @@ public class MessageWebFilter implements Filter {
 			MSBaseApplication.doWebFilters(csReqeust, request, response);
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0033"));
-			logger.error(LogManager.getServiceLogKey(csReqeust), ex);
+			logger.write(LogManager.getServiceLogKey(csReqeust), ex);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class MessageWebFilter implements Filter {
 			MSBaseApplication.init(appConfigFile + "/sys_para/baseAppConfig.yaml");
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
-			logger.error(LogManager.getServiceLogKey(), ex);
+			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 	}
 

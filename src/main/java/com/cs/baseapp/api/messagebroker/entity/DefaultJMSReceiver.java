@@ -76,7 +76,7 @@ public class DefaultJMSReceiver extends MessageReceiver {
 				}
 			} catch (JMSException e) {
 				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0021", super.getId()));
-				logger.error(LogManager.getServiceLogKey(msgRequest.getRequestMsg()), ex);
+				logger.write(LogManager.getServiceLogKey(msgRequest.getRequestMsg()), ex);
 			}
 		}
 		return null;
