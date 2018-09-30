@@ -30,7 +30,7 @@ import com.cs.log.logs.bean.Logger;
 public class MessageWebFilter implements Filter {
 
 	private static final String CSMSBASEAPP_ROOT_PATH = "CSMSBASEAPP_ROOT_PATH";
-	Logger logger = Logger.getLogger("SYSTEM");
+	Logger logger = LogManager.getSystemLog();
 
 	public void destroy() {
 		// Do nothing

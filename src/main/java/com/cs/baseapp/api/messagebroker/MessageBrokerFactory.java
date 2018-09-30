@@ -34,7 +34,7 @@ public class MessageBrokerFactory {
 
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
-	private static final Logger logger = Logger.getLogger("SYSTEM");
+	private static final Logger logger = LogManager.getSystemLog();
 
 	public static final int LOCAL_SERVICE = 0;
 

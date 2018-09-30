@@ -28,7 +28,7 @@ import com.cs.log.logs.bean.Logger;
 public class ServiceManager {
 	private Map<String, MBService> services = new HashMap<>();
 
-	private Logger logger = Logger.getLogger("SYSTEM");
+	private Logger logger = LogManager.getSystemLog();
 
 	public ServiceManager(Map<String, MBService> services) {
 		this.services = services;

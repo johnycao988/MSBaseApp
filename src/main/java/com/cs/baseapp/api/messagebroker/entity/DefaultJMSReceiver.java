@@ -35,7 +35,7 @@ public class DefaultJMSReceiver extends MessageReceiver {
 
 	private Queue queue = null;
 
-	private Logger logger = Logger.getLogger("SYSTEM");
+	private Logger logger = LogManager.getSystemLog();
 
 	public DefaultJMSReceiver(String id, Properties prop) {
 		super(id, prop);

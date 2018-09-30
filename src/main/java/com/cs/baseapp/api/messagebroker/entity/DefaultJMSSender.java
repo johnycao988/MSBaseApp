@@ -38,7 +38,7 @@ public class DefaultJMSSender extends MessageSender {
 
 	private Queue queue = null;
 
-	private Logger logger = Logger.getLogger("SYSTEM");
+	private Logger logger = LogManager.getSystemLog();
 
 	public DefaultJMSSender(String id, Properties prop) {
 		super(id, prop);

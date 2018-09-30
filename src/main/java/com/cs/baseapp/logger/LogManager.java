@@ -6,6 +6,7 @@ package com.cs.baseapp.logger;
 import java.util.Date;
 
 import com.cs.cloud.message.api.MessageRequest;
+import com.cs.log.logs.bean.Logger;
 import com.cs.log.logs.bean.ServiceLogKey;
 
 /**
@@ -39,6 +40,14 @@ public class LogManager {
 
 	public static ServiceLogKey getServiceLogKey(MessageRequest req) {
 		return getServiceLogKey(req.getTransaction().getReferenceNo(), req.getTransaction().getTransactionNo());
+	}
+
+	public static Logger getSystemLog() {
+		return Logger.getLogger("SYSTEM");
+	}
+
+	public static Logger getSQLLog() {
+		return Logger.getLogger("SQL");
 	}
 
 }

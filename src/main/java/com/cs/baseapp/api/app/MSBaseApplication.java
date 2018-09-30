@@ -45,7 +45,7 @@ public class MSBaseApplication {
 
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
-	private static final Logger logger = Logger.getLogger("SYSTEM");
+	private static final Logger logger = LogManager.getSystemLog();
 
 	private MSBaseApplication() {
 	}

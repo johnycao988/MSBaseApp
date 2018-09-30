@@ -26,7 +26,7 @@ import com.cs.log.logs.bean.Logger;
 public class SenderManager {
 
 	private Map<String, ObjectPool<MSMessageSender>> pooledSenders = new HashMap<>();
-	private Logger logger = Logger.getLogger("SYSTEM");
+	private Logger logger = LogManager.getSystemLog();
 
 	public SenderManager(List<Map<String, Object>> sendersConfig) {
 		try {
