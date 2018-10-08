@@ -42,8 +42,9 @@ public class ReceiverManager {
 				pooledReceivers.put(receiverId, pool);
 				logger.info(LogManager.getServiceLogKey(), "Build receiver pool success! ReceiverID:" + receiverId);
 			}
-		} catch (BaseAppException e) {
-			logger.write(LogManager.getServiceLogKey(), e);
+		} catch (Exception e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0010"));
+			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 	}
 
