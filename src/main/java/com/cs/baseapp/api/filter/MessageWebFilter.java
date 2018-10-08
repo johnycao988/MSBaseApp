@@ -49,6 +49,10 @@ public class MessageWebFilter implements Filter {
 	}
 
 	public void init(FilterConfig fConfig) throws ServletException {
+		initBaseApp();
+	}
+
+	public void initBaseApp() {
 		try {
 			String appConfigFile = System.getenv().get(CSMSBASEAPP_ROOT_PATH);
 			if (StringUtils.isEmpty(appConfigFile)) {
