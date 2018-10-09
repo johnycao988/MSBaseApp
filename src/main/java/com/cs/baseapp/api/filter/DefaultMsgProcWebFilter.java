@@ -37,6 +37,7 @@ public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 			responses.add(MSBaseApplication.getMessageBroker().invokeService(r));
 		}
 		try {
+			response.setContentType("application/json");
 			response.getOutputStream()
 					.write(ResponseMessageUtils.mergeResponse(csReqMsg, responses).getJsonString().getBytes());
 			response.flushBuffer();
