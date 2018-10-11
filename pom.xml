@@ -73,6 +73,11 @@
 			<artifactId>logstash-logback-encoder</artifactId>
 			<version>4.11</version>
 		</dependency>
+		<dependency>
+			<groupId>com.cs</groupId>
+			<artifactId>commons-jdbc</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<!-- <finalName>cloud.msbaseapplication</finalName> -->
