@@ -3,6 +3,7 @@
  */
 package com.cs.baseapp.api.messagebroker;
 
+import java.util.List;
 import java.util.Properties;
 
 import com.cs.baseapp.api.filter.MessageFilter;
@@ -21,13 +22,13 @@ public abstract class MessageListener {
 
 	protected Properties prop;
 
-	protected MessageFilter filter;
+	protected List<MessageFilter> filters;
 
-	public MessageListener(String id, int maxProcessThreads, Properties prop, MessageFilter filter) {
+	public MessageListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters) {
 		this.id = id;
 		this.maxProcessThreads = maxProcessThreads;
 		this.prop = prop;
-		this.filter = filter;
+		this.filters = filters;
 	}
 
 	public abstract void initialize() throws BaseAppException;
@@ -41,7 +42,9 @@ public abstract class MessageListener {
 	}
 
 	public void doListenerFilter(MessageRequest reqMessage) throws BaseAppException {
-		this.filter.doListenerFilter(reqMessage);
+		for (MessageFilter filter : this.filters) {
+			filter.doListenerFilter(reqMessage);
+		}
 	}
 
 	public int getMaxProcessThreads() {
@@ -56,8 +59,8 @@ public abstract class MessageListener {
 		return this.prop.getProperty(key);
 	}
 
-	public MessageFilter getMessageFilter() {
-		return this.filter;
+	public List<MessageFilter> getMessageFilters() {
+		return this.filters;
 	}
 
 }

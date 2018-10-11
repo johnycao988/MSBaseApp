@@ -24,8 +24,8 @@ import com.cs.log.logs.LogInfoMgr;
  */
 public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 
-	public DefaultMsgProcWebFilter(String id, String urlPattern, Properties prop) {
-		super(id, urlPattern, prop);
+	public DefaultMsgProcWebFilter(String id, String urlPattern, Properties prop, int sequence) {
+		super(id, urlPattern, prop, sequence);
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import java.util.Date;
 import org.slf4j.LoggerFactory;
 
 import com.cs.cloud.message.api.MessageRequest;
+import com.cs.log.logs.bean.Log;
 import com.cs.log.logs.bean.Logger;
 import com.cs.log.logs.bean.ServiceLogKey;
 
@@ -55,8 +56,16 @@ public class LogManager {
 		return Logger.getLogger("SYSTEM");
 	}
 
-	public static Logger getSQLLog() {
+	public static Logger getSQLLogger() {
 		return Logger.getLogger("SQL");
+	}
+
+	public static Log getSQLLog(MessageRequest req) {
+		return new Log(getSQLLogger(), "EN", getServiceLogKey(req));
+	}
+
+	public static Log getSQLLog() {
+		return new Log(getSQLLogger(), "EN", getServiceLogKey());
 	}
 
 	public static void initLogback(String externalConfigFileLocation) throws IOException, JoranException {

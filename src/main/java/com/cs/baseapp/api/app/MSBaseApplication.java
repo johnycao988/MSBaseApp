@@ -17,12 +17,15 @@ import com.cs.baseapp.api.appenv.AppEnvFactory;
 import com.cs.baseapp.api.base.AppBaseFactory;
 import com.cs.baseapp.api.base.Base;
 import com.cs.baseapp.api.config.Configuration;
+import com.cs.baseapp.api.filter.BaseMessageFilter;
 import com.cs.baseapp.api.filter.FilterFactory;
 import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.repository.BaseMessageRepository;
+import com.cs.baseapp.repository.MessageRepositoryFactory;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.log.logs.LogInfoMgr;
@@ -37,11 +40,13 @@ public class MSBaseApplication {
 
 	private static Base base;
 
-	private static List<MessageFilter> filters = new ArrayList<>();
+	private static List<BaseMessageFilter> filters = new ArrayList<>();
 
 	private static MessageBroker mb;
 
 	private static AppEnv appEnv;
+
+	private static BaseMessageRepository repository;
 
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
@@ -66,9 +71,15 @@ public class MSBaseApplication {
 	public static void init(InputStream is) throws BaseAppException {
 		try {
 			Configuration config = new Configuration();
+			logger.info(logKey, "Start to parse the configuration.");
 			config.load(is);
 			LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
-			logger.info(logKey, "Start to parse the configuration.");
+			logger.info(logKey, "Init LogManager success.");
+			repository = MessageRepositoryFactory.buildMessageRepository(config.getRepositoryConfig());
+			if (repository != null) {
+				repository.init();
+			}
+			logger.info(logKey, "build Message Repository success.");
 			base = AppBaseFactory.buildBase(config.getBaseConfig());
 			logger.info(logKey, "Build Base success.");
 			appEnv = AppEnvFactory.build(config.getEnvConfig());
@@ -112,6 +123,10 @@ public class MSBaseApplication {
 
 	public static void shutdown() {
 		mb.shutdown();
+	}
+
+	public static BaseMessageRepository getMsgRepository() {
+		return repository;
 	}
 
 }

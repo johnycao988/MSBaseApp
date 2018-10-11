@@ -9,6 +9,7 @@ import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -21,6 +22,8 @@ public interface MBService {
 	public String getId();
 
 	public Properties getProperties();
+
+	public boolean isAudit();
 
 	public String getProperty(String key);
 

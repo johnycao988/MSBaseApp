@@ -5,6 +5,8 @@ package com.cs.baseapp.api.filter;
 
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author Donald.Wang
  *
@@ -17,14 +19,38 @@ public abstract class BaseMessageFilter implements MessageFilter {
 
 	protected Properties prop;
 
-	public BaseMessageFilter(String id, String urlPattern, Properties prop) {
+	protected int sequence;
+
+	public BaseMessageFilter(String id, String urlPattern, Properties prop, int sequence) {
 		this.id = id;
 		this.urlPattern = urlPattern;
 		this.prop = prop;
+		this.sequence = sequence;
 	}
 
-	public BaseMessageFilter(Properties prop) {
+	public BaseMessageFilter(String id, Properties prop, int sequence) {
+		this.id = id;
 		this.prop = prop;
+		this.sequence = sequence;
+	}
+
+	public String getId() {
+		return this.id;
+	}
+
+	public String getUrlPattern() {
+		return this.urlPattern;
+	}
+
+	public String getProperty(String key) {
+		if (this.prop != null && !StringUtils.isEmpty(key)) {
+			return this.prop.getProperty(key);
+		}
+		return null;
+	}
+
+	public int getSequence() {
+		return this.sequence;
 	}
 
 }

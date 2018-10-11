@@ -36,11 +36,14 @@ public class ServiceEntity implements MBService {
 
 	private String implementClass;
 
+	private boolean audit;
+
 	private Constructor<?> businessServiceConstructor;
 
 	public ServiceEntity(Map<String, String> serviceConfig, Properties prop) throws BaseAppException {
 		this.type = Integer.parseInt(serviceConfig.get("serviceType"));
 		this.id = serviceConfig.get(ConfigConstant.ID.getValue());
+		this.audit = "TRUE".equalsIgnoreCase(serviceConfig.get(ConfigConstant.AUDIT.getValue()));
 		this.prop = prop;
 		this.tranformClass = serviceConfig.get(ConfigConstant.TRANS_CLASS.getValue());
 		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());
@@ -125,6 +128,15 @@ public class ServiceEntity implements MBService {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0015", this.id, req.getJsonString()));
 		}
 		return bs;
+	}
+
+	public void setAudit(boolean audit) {
+		this.audit = audit;
+	}
+
+	@Override
+	public boolean isAudit() {
+		return this.audit;
 	}
 
 }

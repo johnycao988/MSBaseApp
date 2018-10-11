@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
@@ -58,6 +59,9 @@ public class ServiceManager {
 		MSMessageSender sender = null;
 		MSMessageReceiver receiver = null;
 		try {
+			if (service.isAudit()) {
+				MSBaseApplication.getMsgRepository().storeMessage(req);
+			}
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
 				resp = service.getBusinessService(req).process();
 			} else {
@@ -73,6 +77,9 @@ public class ServiceManager {
 					sender = service.getSender();
 					sender.sendAsyncMessage(service.getTranslationMessage(req));
 				}
+			}
+			if (service.isAudit()) {
+				MSBaseApplication.getMsgRepository().storeMessage(resp);
 			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));

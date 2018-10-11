@@ -80,7 +80,8 @@ public class MessageBrokerFactory {
 					.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
 							(Properties) PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
-							FilterFactory.buildListenerFilter(singleConfig));
+							FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
+									.get(ConfigConstant.MESSAGE_FILTER.getValue())));
 			logger.info(logKey, "Build MB Listener success. ListenerId:" + listenerId
 					+ ConfigConstant.IMPL_CLASS.getValue() + ":" + implClass);
 		} catch (Exception e) {
