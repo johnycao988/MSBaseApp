@@ -16,7 +16,6 @@ import javax.servlet.annotation.WebFilter;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
@@ -24,13 +23,9 @@ import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.domain.factory.MessageFactory;
+import com.cs.commons.jdbc.DSManager;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.joran.JoranConfigurator;
-import ch.qos.logback.core.joran.spi.JoranException;
-import ch.qos.logback.core.util.StatusPrinter;
 
 @WebFilter("/*")
 public class MessageWebFilter implements Filter {
@@ -67,11 +62,15 @@ public class MessageWebFilter implements Filter {
 			if (StringUtils.isEmpty(appConfigFile)) {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0034"));
 			}
+
 			LogManager.initLogback(appConfigFile + "/baseConfig/logback.xml");
 			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
-			Document logconfig = d.newDocumentBuilder()
+			Document logConfig = d.newDocumentBuilder()
 					.parse(new File(appConfigFile + "/baseConfig/baseAppLogInfo.xml"));
-			LogInfoMgr.initByDoc("EN", logconfig);
+			LogInfoMgr.initByDoc("EN", logConfig);
+			DocumentBuilderFactory doc = DocumentBuilderFactory.newInstance();
+			Document dsConfig = doc.newDocumentBuilder().parse(new File(appConfigFile + "/baseConfig/dsConfig.xml"));
+			DSManager.initByDoc(dsConfig);
 			MSBaseApplication.init(appConfigFile + "/baseConfig/baseAppConfig.yml");
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
