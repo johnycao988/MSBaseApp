@@ -60,7 +60,7 @@ public class MessageRepositoryDao {
 	}
 
 	private String getTableName(String unitCode) {
-		return DSManager.getSchema(unitCode) + "." + RepositoryConstant.TB_BASE_APP_MSG.getValue();
+		return DSManager.getSchema(DSManager.getDs(unitCode)) + "." + RepositoryConstant.TB_BASE_APP_MSG.getValue();
 	}
 
 	public Map<String, Integer> getColumns(String unitCode) throws LogException {
