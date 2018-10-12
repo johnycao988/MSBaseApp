@@ -18,7 +18,9 @@ import com.cs.cloud.message.api.MessageHeadConsumer;
 import com.cs.cloud.message.api.MessageHeadService;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
+import com.cs.commons.jdbc.DSManager;
 import com.cs.commons.jdbc.IJdbcExec;
+import com.cs.commons.jdbc.JdbcStatement;
 import com.cs.log.common.logbean.LogException;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -36,20 +38,25 @@ public class MessageRepositoryDao {
 		IJdbcExec exec = DSManager.getJdbcExec(unitCode);
 		try {
 			String sql = buildSQL(buildParaMap(request));
-			exec.update(LogManager.getSQLLog(request), null);
+			JdbcStatement stat = new JdbcStatement(sql);
+			exec.update(LogManager.getSQLLog(request), stat);
 		} catch (LogException e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0038", request.getJsonString()));
 			logger.write(LogManager.getServiceLogKey(request), ex);
 		}
 	}
 
+	public void storeMessage(MessageResponse res) {
+
+	}
+
 	private String getTableName(String unitCode) {
 		return DSManager.getSchema(unitCode) + "." + RepositoryConstant.TB_BASE_APP_MSG.getValue();
 	}
 
-	public Map<String, Integer> getColumns() throws LogException {
+	public Map<String, Integer> getColumns(String unitCode) throws LogException {
 		IJdbcExec exec = DSManager.getDefaultJdbcExec();
-		return exec.getColumns(LogManager.getSQLLog(), DSManager.getDefaultSchema(),
+		return exec.getColumns(LogManager.getSQLLog(), DSManager.getSchema(DSManager.getDs(unitCode)),
 				RepositoryConstant.TB_BASE_APP_MSG.getValue());
 	}
 

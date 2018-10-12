@@ -43,7 +43,7 @@ public class ServiceEntity implements MBService {
 	public ServiceEntity(Map<String, String> serviceConfig, Properties prop) throws BaseAppException {
 		this.type = Integer.parseInt(serviceConfig.get("serviceType"));
 		this.id = serviceConfig.get(ConfigConstant.ID.getValue());
-		this.audit = "TRUE".equalsIgnoreCase(serviceConfig.get(ConfigConstant.AUDIT.getValue()));
+		this.audit = "T".equalsIgnoreCase(serviceConfig.get(ConfigConstant.AUDIT.getValue()));
 		this.prop = prop;
 		this.tranformClass = serviceConfig.get(ConfigConstant.TRANS_CLASS.getValue());
 		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());

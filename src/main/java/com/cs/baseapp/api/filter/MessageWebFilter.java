@@ -62,16 +62,23 @@ public class MessageWebFilter implements Filter {
 			if (StringUtils.isEmpty(appConfigFile)) {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0034"));
 			}
-
 			LogManager.initLogback(appConfigFile + "/baseConfig/logback.xml");
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading log config file success. FilePath:" + appConfigFile + "/baseConfig/logback.xml");
 			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
 			Document logConfig = d.newDocumentBuilder()
 					.parse(new File(appConfigFile + "/baseConfig/baseAppLogInfo.xml"));
 			LogInfoMgr.initByDoc("EN", logConfig);
+			logger.info(LogManager.getServiceLogKey(), "Loading Log information config file success. FilePath:"
+					+ appConfigFile + "/baseConfig/baseAppLogInfo.xml");
 			DocumentBuilderFactory doc = DocumentBuilderFactory.newInstance();
 			Document dsConfig = doc.newDocumentBuilder().parse(new File(appConfigFile + "/baseConfig/dsConfig.xml"));
 			DSManager.initByDoc(dsConfig);
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading Data Source congfig file success. FilePath:" + appConfigFile + "/baseConfig/dsConfig.xml");
 			MSBaseApplication.init(appConfigFile + "/baseConfig/baseAppConfig.yml");
+			logger.info(LogManager.getServiceLogKey(), "Loading Base Application config File success. FilePath:"
+					+ appConfigFile + "/baseConfig/baseAppConfig.yml");
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
 			logger.write(LogManager.getServiceLogKey(), ex);
