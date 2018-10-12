@@ -79,7 +79,7 @@ public class ServiceManager {
 				}
 			}
 			if (service.isAudit()) {
-				MSBaseApplication.getMsgRepository().storeMessage(resp);
+				MSBaseApplication.getMsgRepository().storeMessage(req, resp);
 			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));

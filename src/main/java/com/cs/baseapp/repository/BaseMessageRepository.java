@@ -26,7 +26,7 @@ public abstract class BaseMessageRepository {
 
 	public abstract void storeMessage(MessageRequest req) throws BaseAppException;
 
-	public abstract void storeMessage(MessageResponse res) throws BaseAppException;
+	public abstract void storeMessage(MessageRequest req, MessageResponse res) throws BaseAppException;
 
 	public Properties getProperties() {
 		return this.prop;

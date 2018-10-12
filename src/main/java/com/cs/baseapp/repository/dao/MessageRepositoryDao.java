@@ -46,8 +46,17 @@ public class MessageRepositoryDao {
 		}
 	}
 
-	public void storeMessage(MessageResponse res) {
-
+	public void storeMessage(MessageRequest request, MessageResponse response) {
+		String unitCode = request.getTransaction().getUnitCode();
+		IJdbcExec exec = DSManager.getJdbcExec(unitCode);
+		try {
+			String sql = buildSQL(buildParaMap(request, response));
+			JdbcStatement stat = new JdbcStatement(sql);
+			exec.update(LogManager.getSQLLog(request), stat);
+		} catch (LogException e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0038", request.getJsonString()));
+			logger.write(LogManager.getServiceLogKey(request), ex);
+		}
 	}
 
 	private String getTableName(String unitCode) {
@@ -120,23 +129,46 @@ public class MessageRepositoryDao {
 		return paraMap;
 	}
 
-	private Map<String, String> buildParaMap(MessageResponse resp) {
+	private Map<String, String> buildParaMap(MessageRequest request, MessageResponse response) {
 		Map<String, String> paraMap = new HashMap<>();
-		if (!StringUtils.isEmpty(resp.getBase().getId())) {
-			paraMap.put(RepositoryConstant.COL_MESSAGE_ID.getValue(), resp.getBase().getId());
+		if (!StringUtils.isEmpty(response.getBase().getId())) {
+			paraMap.put(RepositoryConstant.COL_MESSAGE_ID.getValue(), response.getBase().getId());
 		}
-		if (!StringUtils.isEmpty(resp.getFirstBodyService().getId())) {
-			paraMap.put(RepositoryConstant.COL_SERVICE_ID.getValue(), resp.getFirstBodyService().getId());
+		if (!StringUtils.isEmpty(response.getFirstBodyService().getId())) {
+			paraMap.put(RepositoryConstant.COL_SERVICE_ID.getValue(), response.getFirstBodyService().getId());
 		}
-		if (!StringUtils.isEmpty(resp.getFirstBodyService().getAppliactionId())) {
-			paraMap.put(RepositoryConstant.COL_APP_ID.getValue(), resp.getFirstBodyService().getAppliactionId());
+		if (!StringUtils.isEmpty(response.getFirstBodyService().getAppliactionId())) {
+			paraMap.put(RepositoryConstant.COL_APP_ID.getValue(), response.getFirstBodyService().getAppliactionId());
 		}
-		if (!StringUtils.isEmpty(resp.getBase().getCorrelationId())) {
-			paraMap.put(RepositoryConstant.COL_CORRELATION_ID.getValue(), resp.getBase().getCorrelationId());
+		if (!StringUtils.isEmpty(response.getBase().getCorrelationId())) {
+			paraMap.put(RepositoryConstant.COL_CORRELATION_ID.getValue(), response.getBase().getCorrelationId());
 		}
-		if (!StringUtils.isEmpty(resp.getFirstBodyService().getUserId())) {
-			paraMap.put(RepositoryConstant.COL_USER_ID.getValue(), resp.getFirstBodyService().getUserId());
+		if (!StringUtils.isEmpty(response.getFirstBodyService().getUserId())) {
+			paraMap.put(RepositoryConstant.COL_USER_ID.getValue(), response.getFirstBodyService().getUserId());
 		}
+		if (!StringUtils.isEmpty(request.getTransaction().getUnitCode())) {
+			paraMap.put(RepositoryConstant.COL_UNIT_CODE.getValue(), request.getTransaction().getUnitCode());
+		}
+		if (!StringUtils.isEmpty(request.getTransaction().getFunctionId())) {
+			paraMap.put(RepositoryConstant.COL_FUNC_ID.getValue(), request.getTransaction().getFunctionId());
+		}
+		if (!StringUtils.isEmpty(request.getTransaction().getTransactionNo())) {
+			paraMap.put(RepositoryConstant.COL_TRX_NO.getValue(), request.getTransaction().getTransactionNo());
+		}
+		if (!StringUtils.isEmpty(request.getTransaction().getReferenceNo())) {
+			paraMap.put(RepositoryConstant.COL_REF_NO.getValue(), request.getTransaction().getReferenceNo());
+		}
+		if (!StringUtils.isEmpty(response.getFirstBodyService().getAppliactionId())
+				&& !StringUtils.isEmpty(response.getFirstBodyService().getId())) {
+			paraMap.put(RepositoryConstant.COL_FROM_SERVICE.getValue(),
+					response.getFirstBodyService().getAppliactionId() + "/" + response.getFirstBodyService().getId());
+		}
+		if (!StringUtils.isEmpty(request.getConsumer().getClientId())
+				&& !StringUtils.isEmpty(request.getConsumer().getId())) {
+			paraMap.put(RepositoryConstant.COL_TO_SERVICE.getValue(),
+					request.getConsumer().getClientId() + "/" + request.getConsumer().getId());
+		}
+		paraMap.put(RepositoryConstant.COL_MESSAGE_CONTENT.getValue(), response.getJsonString());
 		return paraMap;
 	}
 

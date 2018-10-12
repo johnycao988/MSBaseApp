@@ -6,6 +6,7 @@ package com.cs.baseapp.repository;
 import java.util.Properties;
 
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.repository.dao.MessageRepositoryDao;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
 
@@ -21,17 +22,19 @@ public class DefaultMessageRepository extends BaseMessageRepository {
 
 	@Override
 	public void init() throws BaseAppException {
-
+		// do nothing
 	}
 
 	@Override
 	public void storeMessage(MessageRequest req) throws BaseAppException {
-
+		MessageRepositoryDao dao = new MessageRepositoryDao();
+		dao.storeMessage(req);
 	}
 
 	@Override
-	public void storeMessage(MessageResponse res) throws BaseAppException {
-
+	public void storeMessage(MessageRequest req, MessageResponse res) throws BaseAppException {
+		MessageRepositoryDao dao = new MessageRepositoryDao();
+		dao.storeMessage(req, res);
 	}
 
 }

@@ -26,10 +26,15 @@ public class MessageRepositoryFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static BaseMessageRepository buildMessageRepository(Map<String, Object> repositoryConfig) {
-		String implClass = (String) repositoryConfig.get(ConfigConstant.IMPL_CLASS.getValue());
+	public static BaseMessageRepository buildMessageRepository(Map<String, Object> repositoryConfig)
+			throws BaseAppException {
+		String implClass = "";
 		BaseMessageRepository instance = null;
 		try {
+			if (repositoryConfig == null || repositoryConfig.isEmpty()) {
+				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0040"));
+			}
+			implClass = (String) repositoryConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 			instance = (BaseMessageRepository) Class.forName(implClass).getConstructor(Properties.class)
 					.newInstance(PropertiesUtils.convertMapToProperties(
 							(Map<String, String>) repositoryConfig.get(ConfigConstant.PARAMETERS.getValue())));
