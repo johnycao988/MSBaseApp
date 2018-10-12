@@ -243,4 +243,29 @@
 		<action />
 		<level>ERROR</level>
 	</info>
+	<info>
+		<code>ERR_0037</code>
+		<msg>Failed to initialize DS! JndiName: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0038</code>
+		<msg>Failed to store message to DataBase! MessageContent: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0039</code>
+		<msg>Failed to build Message Repository! ImplClass: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0040</code>
+		<msg>Failed to build Message Repository! The configuration is empty!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
 </root>
