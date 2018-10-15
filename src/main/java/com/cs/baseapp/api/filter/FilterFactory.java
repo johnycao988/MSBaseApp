@@ -52,7 +52,7 @@ public class FilterFactory {
 		String filterId = (String) filterConfig.get(ConfigConstant.ID.getValue());
 		String implClass = (String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		try {
-			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class, int.class)
+			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class)
 					.newInstance(filterId, filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
 							PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
@@ -84,7 +84,7 @@ public class FilterFactory {
 		try {
 			String filterId = (String) listenerConfig.get(ConfigConstant.ID.getValue());
 			String filterClass = (String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue());
-			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class, int.class)
+			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class)
 					.newInstance(filterId, PropertiesUtils.convertMapToProperties(
 							(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())));
 			logger.info(logKey, "Build listener filter succsess. Id: " + filterId + " ImplementClass:" + filterClass);
