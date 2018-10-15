@@ -36,14 +36,14 @@ public class ServiceEntity implements MBService {
 
 	private String implementClass;
 
-	private boolean audit;
+	private boolean storeMsg;
 
 	private Constructor<?> businessServiceConstructor;
 
-	public ServiceEntity(Map<String, String> serviceConfig, Properties prop) throws BaseAppException {
+	public ServiceEntity(Map<String, String> serviceConfig, Properties prop, boolean storeMsg) throws BaseAppException {
 		this.type = Integer.parseInt(serviceConfig.get("serviceType"));
 		this.id = serviceConfig.get(ConfigConstant.ID.getValue());
-		this.audit = "T".equalsIgnoreCase(serviceConfig.get(ConfigConstant.AUDIT.getValue()));
+		this.storeMsg = storeMsg;
 		this.prop = prop;
 		this.tranformClass = serviceConfig.get(ConfigConstant.TRANS_CLASS.getValue());
 		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());
@@ -130,13 +130,13 @@ public class ServiceEntity implements MBService {
 		return bs;
 	}
 
-	public void setAudit(boolean audit) {
-		this.audit = audit;
+	public void setStoreMsg(boolean storeMsg) {
+		this.storeMsg = storeMsg;
 	}
 
 	@Override
-	public boolean isAudit() {
-		return this.audit;
+	public boolean isStoreMsg() {
+		return this.storeMsg;
 	}
 
 }

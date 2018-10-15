@@ -37,7 +37,7 @@ public class Configuration {
 
 	private List<Map<String, Object>> mbRemoteServicesConfig = new ArrayList<>();
 
-	private Map<String, Object> repositoryConfig = new HashMap<>();
+	private Map<String, String> repositoryConfig = new HashMap<>();
 
 	@SuppressWarnings("unchecked")
 	public void load(InputStream is) throws BaseAppException {
@@ -57,7 +57,9 @@ public class Configuration {
 					.get(ConfigConstant.LOACL_SERVICE.getValue());
 			this.mbRemoteServicesConfig = (List<Map<String, Object>>) serviceConfig
 					.get(ConfigConstant.REMOTE_SERVICE.getValue());
-			this.repositoryConfig = (Map<String, Object>) mbConfig.get(ConfigConstant.REPOSITORY.getValue());
+			Map<String, Object> repositoryConfigs = (Map<String, Object>) mbConfig
+					.get(ConfigConstant.REPOSITORY.getValue());
+			this.repositoryConfig = (Map<String, String>) repositoryConfigs.get(ConfigConstant.PARAMETERS.getValue());
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0004"));
 		}
@@ -95,7 +97,7 @@ public class Configuration {
 		return this.mbRemoteServicesConfig;
 	}
 
-	public Map<String, Object> getRepositoryConfig() {
+	public Map<String, String> getRepositoryConfig() {
 		return this.repositoryConfig;
 	}
 

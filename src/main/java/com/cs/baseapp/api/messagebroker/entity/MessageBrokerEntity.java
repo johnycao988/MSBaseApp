@@ -14,6 +14,7 @@ import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.MessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
 
@@ -31,12 +32,15 @@ public class MessageBrokerEntity implements MessageBroker {
 
 	private ServiceManager serviceManager;
 
+	private BaseMessageRepository baseMessageRepository;
+
 	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
-			Map<String, MessageListener> listeners, Map<String, MBService> services) {
+			Map<String, MessageListener> listeners, Map<String, MBService> services, BaseMessageRepository repository) {
 		this.senderManager = new SenderManager(sendersConfig);
 		this.receiverManager = new ReceiverManager(receiverConfig);
 		this.listenerManager = new ListenerManager(listeners);
 		this.serviceManager = new ServiceManager(services);
+		this.baseMessageRepository = repository;
 	}
 
 	@Override
@@ -88,6 +92,11 @@ public class MessageBrokerEntity implements MessageBroker {
 	public void releaseReceiver(MSMessageReceiver receiver) {
 		this.receiverManager.release(receiver);
 
+	}
+
+	@Override
+	public BaseMessageRepository getMessageRepository() {
+		return this.baseMessageRepository;
 	}
 
 }

@@ -59,7 +59,7 @@ public class ServiceManager {
 		MSMessageSender sender = null;
 		MSMessageReceiver receiver = null;
 		try {
-			if (service.isAudit()) {
+			if (service.isStoreMsg()) {
 				MSBaseApplication.getMsgRepository().storeMessage(req);
 			}
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
@@ -78,7 +78,7 @@ public class ServiceManager {
 					sender.sendAsyncMessage(service.getTranslationMessage(req));
 				}
 			}
-			if (service.isAudit()) {
+			if (service.isStoreMsg()) {
 				MSBaseApplication.getMsgRepository().storeMessage(req, resp);
 			}
 		} catch (Exception e) {

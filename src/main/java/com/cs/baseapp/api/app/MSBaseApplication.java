@@ -25,8 +25,8 @@ import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.repository.BaseMessageRepository;
-import com.cs.baseapp.repository.MessageRepositoryFactory;
 import com.cs.baseapp.utils.ConfigConstant;
+import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -45,8 +45,6 @@ public class MSBaseApplication {
 	private static MessageBroker mb;
 
 	private static AppEnv appEnv;
-
-	private static BaseMessageRepository repository;
 
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
@@ -75,10 +73,6 @@ public class MSBaseApplication {
 			config.load(is);
 			LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
 			logger.info(logKey, "Init LogManager success.");
-			repository = MessageRepositoryFactory.buildMessageRepository(config.getRepositoryConfig());
-			if (repository != null) {
-				repository.init();
-			}
 			logger.info(logKey, "build Message Repository success.");
 			base = AppBaseFactory.buildBase(config.getBaseConfig());
 			logger.info(logKey, "Build Base success.");
@@ -88,7 +82,8 @@ public class MSBaseApplication {
 			logger.info(logKey, "Build Web Filters success. Total:" + filters.size());
 			mb = MessageBrokerFactory.buildMsgBroker(config.getMbSendersConfig(), config.getMbReceiversConfig(),
 					config.getMbListenersConfig(), config.getMbLocalServicesConfig(),
-					config.getMbRemoteServicesConfig());
+					config.getMbRemoteServicesConfig(),
+					PropertiesUtils.convertMapToProperties(config.getRepositoryConfig()));
 			logger.info(logKey, "Build Message Broker Success.");
 		} catch (Exception e) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035"));
@@ -126,7 +121,7 @@ public class MSBaseApplication {
 	}
 
 	public static BaseMessageRepository getMsgRepository() {
-		return repository;
+		return mb.getMessageRepository();
 	}
 
 }
