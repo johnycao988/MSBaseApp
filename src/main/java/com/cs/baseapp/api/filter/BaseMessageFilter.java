@@ -19,19 +19,15 @@ public abstract class BaseMessageFilter implements MessageFilter {
 
 	protected Properties prop;
 
-	protected int sequence;
-
-	public BaseMessageFilter(String id, String urlPattern, Properties prop, int sequence) {
+	public BaseMessageFilter(String id, String urlPattern, Properties prop) {
 		this.id = id;
 		this.urlPattern = urlPattern;
 		this.prop = prop;
-		this.sequence = sequence;
 	}
 
-	public BaseMessageFilter(String id, Properties prop, int sequence) {
+	public BaseMessageFilter(String id, Properties prop) {
 		this.id = id;
 		this.prop = prop;
-		this.sequence = sequence;
 	}
 
 	public String getId() {
@@ -47,10 +43,6 @@ public abstract class BaseMessageFilter implements MessageFilter {
 			return this.prop.getProperty(key);
 		}
 		return null;
-	}
-
-	public int getSequence() {
-		return this.sequence;
 	}
 
 }

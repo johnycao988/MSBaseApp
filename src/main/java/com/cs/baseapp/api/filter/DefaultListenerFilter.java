@@ -18,8 +18,8 @@ import com.cs.cloud.message.domain.errorhandling.MessageException;
  */
 public class DefaultListenerFilter extends BaseMessageFilter {
 
-	public DefaultListenerFilter(String id, Properties prop, int sequence) {
-		super(id, prop, sequence);
+	public DefaultListenerFilter(String id, Properties prop) {
+		super(id, prop);
 	}
 
 	@Override

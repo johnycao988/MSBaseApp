@@ -4,8 +4,6 @@
 package com.cs.baseapp.api.filter;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -45,7 +43,6 @@ public class FilterFactory {
 			}
 			filters.add(filter);
 		}
-		sortFilterBySequence(filters);
 		return filters;
 	}
 
@@ -54,15 +51,12 @@ public class FilterFactory {
 		Object instance = null;
 		String filterId = (String) filterConfig.get(ConfigConstant.ID.getValue());
 		String implClass = (String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue());
-		int sequence = (int) filterConfig.get(ConfigConstant.FILTER_SEQUENCE.getValue());
 		try {
 			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class, int.class)
 					.newInstance(filterId, filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
 							PropertiesUtils.convertMapToProperties(
-									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())),
-							sequence);
-			logger.info(logKey, "Build web filter success. FilterId:" + filterId + " ImplementClass:" + implClass
-					+ " Sequence:" + sequence);
+									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
+			logger.info(logKey, "Build web filter success. FilterId:" + filterId + " ImplementClass:" + implClass);
 		} catch (Exception e) {
 			BaseAppException baseAppException = new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0007", filterId, implClass));
@@ -81,7 +75,6 @@ public class FilterFactory {
 		for (Map<String, Object> config : configs) {
 			filters.add(buildListenerFilter(config));
 		}
-		sortFilterBySequence(filters);
 		return filters;
 	}
 
@@ -91,25 +84,15 @@ public class FilterFactory {
 		try {
 			String filterId = (String) listenerConfig.get(ConfigConstant.ID.getValue());
 			String filterClass = (String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue());
-			int sequence = (int) listenerConfig.get(ConfigConstant.FILTER_SEQUENCE.getValue());
 			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class, int.class)
-					.newInstance(filterId,
-							PropertiesUtils.convertMapToProperties(
-									(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())),
-							sequence);
-			logger.info(logKey, "Build listener filter succsess. Id: " + filterId + " ImplementClass:" + filterClass
-					+ " Sequence:" + sequence);
+					.newInstance(filterId, PropertiesUtils.convertMapToProperties(
+							(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())));
+			logger.info(logKey, "Build listener filter succsess. Id: " + filterId + " ImplementClass:" + filterClass);
 		} catch (Exception e) {
 			throw new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0008", listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue())));
 		}
 		return (BaseMessageFilter) instance;
-	}
-
-	public static List<BaseMessageFilter> sortFilterBySequence(List<BaseMessageFilter> filters) {
-		Comparator<BaseMessageFilter> comparator = (filter1, filter2) -> filter1.getSequence() - filter2.getSequence();
-		Collections.sort(filters, comparator);
-		return filters;
 	}
 
 }
