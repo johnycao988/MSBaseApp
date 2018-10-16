@@ -34,8 +34,9 @@ public class SenderManager {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0012"));
 			}
 			for (Map<String, Object> config : sendersConfig) {
-				pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), new ObjectPool<MSMessageSender>(
-						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config)));
+				ObjectPool<MSMessageSender> pool = new ObjectPool<>(
+						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config));
+				pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), pool);
 			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0012"));
@@ -57,14 +58,20 @@ class SenderFactory implements PoolObjectFactory<MSMessageSender> {
 
 	private Map<String, Object> config;
 
+	private ObjectPool<MSMessageSender> pool;
+
 	public SenderFactory(Map<String, Object> config) {
 		this.config = config;
+	}
+
+	public void setPool(ObjectPool<MSMessageSender> pool) {
+		this.pool = pool;
 	}
 
 	@Override
 	public MSMessageSender createPoolObject() throws BaseAppException {
 		boolean isPooled = (int) this.config.get(ConfigConstant.POOL_SZIE.getValue()) > 1;
-		MSMessageSender msMsgSendernew = new MSMessageSender(buildSingleMsgSender(this.config), isPooled);
+		MSMessageSender msMsgSendernew = new MSMessageSender(buildSingleMsgSender(this.config), isPooled, this.pool);
 		msMsgSendernew.initialize();
 		return msMsgSendernew;
 	}

@@ -25,7 +25,7 @@ public class DefaultListenerFilter extends BaseMessageFilter {
 	@Override
 	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException, MessageException {
-
+		// do nothing
 	}
 
 	@Override

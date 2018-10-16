@@ -268,4 +268,42 @@
 		<action />
 		<level>ERROR</level>
 	</info>
+	<info>
+		<code>ERR_0041</code>
+		<msg>Failed to get JMS Connection from context by JndiName! JNDIName:
+			%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0042</code>
+		<msg>Failed to close the listener connection! ListenerId: %1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0043</code>
+		<msg>Failed to initialize Message Listener. ListenerId: %1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0044</code>
+		<msg>Failed to start Message Listener. ListenerId: %1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0045</code>
+		<msg>Failed to process JMS message by Listener. MsgContent: %1$s
+			ListenerId: %2$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+
 </root>

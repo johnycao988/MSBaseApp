@@ -3,10 +3,10 @@
  */
 package com.cs.baseapp.api.messagebroker.entity;
 
-import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
+import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageResponse;
 
@@ -20,10 +20,12 @@ public class MSMessageSender implements Sender {
 
 	private boolean isPooled;
 
-	public MSMessageSender(MessageSender sender, boolean isPooled) {
+	private ObjectPool<MSMessageSender> pool;
+
+	public MSMessageSender(MessageSender sender, boolean isPooled, ObjectPool<MSMessageSender> pool) {
 		this.sender = sender;
 		this.isPooled = isPooled;
-
+		this.pool = pool;
 	}
 
 	@Override
@@ -39,7 +41,7 @@ public class MSMessageSender implements Sender {
 	@Override
 	public void close() throws BaseAppException {
 		if (this.isPooled) {
-			MSBaseApplication.getMessageBroker().releaseSender(this);
+			this.pool.releaseObject(this);
 			return;
 		}
 		this.sender.close();

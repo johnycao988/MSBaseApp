@@ -51,15 +51,15 @@ public class MessageBrokerFactory {
 				buildServices(localServiceConfig, remoteServiceConfig), buildMessageRepository(repositoryConfig));
 	}
 
-	private static Map<String, MessageListener> buildListeners(List<Map<String, Object>> listenersConfig)
+	private static Map<String, BaseMessageListener> buildListeners(List<Map<String, Object>> listenersConfig)
 			throws BaseAppException {
 		logger.info(logKey, "Start to build MB Listener.");
-		Map<String, MessageListener> listeners = new HashMap<>();
+		Map<String, BaseMessageListener> listeners = new HashMap<>();
 		if (listenersConfig == null || listenersConfig.isEmpty()) {
 			return listeners;
 		}
 		for (Map<String, Object> singleConfig : listenersConfig) {
-			MessageListener l = buildSingleListener(singleConfig);
+			BaseMessageListener l = buildSingleListener(singleConfig);
 			if (l != null) {
 				listeners.put(l.getId(), l);
 			}
@@ -69,15 +69,15 @@ public class MessageBrokerFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static MessageListener buildSingleListener(Map<String, Object> singleConfig) throws BaseAppException {
-		MessageListener listener = null;
+	private static BaseMessageListener buildSingleListener(Map<String, Object> singleConfig) throws BaseAppException {
+		BaseMessageListener listener = null;
 		if (singleConfig == null || singleConfig.isEmpty()) {
 			return listener;
 		}
 		String implClass = (String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		String listenerId = (String) singleConfig.get(ConfigConstant.ID.getValue());
 		try {
-			listener = (MessageListener) Class.forName(implClass)
+			listener = (BaseMessageListener) Class.forName(implClass)
 					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class)
 					.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
 							(Properties) PropertiesUtils.convertMapToProperties(
@@ -120,22 +120,23 @@ public class MessageBrokerFactory {
 
 	@SuppressWarnings("unchecked")
 	private static MBService buildService(Map<String, Object> serviceConfig, int serviceType) {
-		Map<String, String> config = new HashMap<>();
-		config.put("serviceType", String.valueOf(serviceType));
-		Set<Entry<String, Object>> set = serviceConfig.entrySet();
-		Properties prop = PropertiesUtils
-				.convertMapToProperties((Map<String, String>) serviceConfig.get(ConfigConstant.PARAMETERS.getValue()));
-		serviceConfig.remove(ConfigConstant.PARAMETERS.getValue());
-		serviceConfig.remove(ConfigConstant.STORE_MSG.getValue());
-		for (Entry<String, Object> e : set) {
-			config.put(e.getKey(), (String) e.getValue());
-		}
 		ServiceEntity serviceEntity = null;
+		Map<String, String> config = new HashMap<>();
 		try {
+			config.put("serviceType", String.valueOf(serviceType));
+			Properties prop = PropertiesUtils.convertMapToProperties(
+					(Map<String, String>) serviceConfig.get(ConfigConstant.PARAMETERS.getValue()));
 			boolean storeMsg = serviceConfig.get(ConfigConstant.STORE_MSG.getValue()) != null
 					&& (boolean) serviceConfig.get(ConfigConstant.STORE_MSG.getValue());
+			serviceConfig.remove(ConfigConstant.PARAMETERS.getValue());
+			serviceConfig.remove(ConfigConstant.STORE_MSG.getValue());
+			Set<Entry<String, Object>> set = serviceConfig.entrySet();
+			for (Entry<String, Object> e : set) {
+				config.put(e.getKey(), String.valueOf(e.getValue()));
+			}
 			serviceEntity = new ServiceEntity(config, prop, storeMsg);
-			logger.info(logKey, "Build MB Service success. ServiceId:" + serviceConfig.get(ConfigConstant.ID.getValue()));
+			logger.info(logKey,
+					"Build MB Service success. ServiceId:" + serviceConfig.get(ConfigConstant.ID.getValue()));
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e,
 					LogInfoMgr.getErrorInfo("ERR_0017", serviceConfig.get(ConfigConstant.ID.getValue())));

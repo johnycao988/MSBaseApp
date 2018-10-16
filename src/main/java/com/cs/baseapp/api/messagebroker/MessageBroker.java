@@ -26,9 +26,9 @@ public interface MessageBroker {
 
 	public void releaseReceiver(MSMessageReceiver receiver);
 
-	public List<MessageListener> getListeners();
+	public List<BaseMessageListener> getListeners();
 
-	public MessageListener getListener(String id);
+	public BaseMessageListener getListener(String id);
 
 	public List<MBService> getServices();
 

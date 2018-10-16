@@ -10,9 +10,9 @@ import com.cs.baseapp.api.manager.ListenerManager;
 import com.cs.baseapp.api.manager.ReceiverManager;
 import com.cs.baseapp.api.manager.SenderManager;
 import com.cs.baseapp.api.manager.ServiceManager;
+import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
-import com.cs.baseapp.api.messagebroker.MessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.cloud.message.api.MessageRequest;
@@ -35,7 +35,8 @@ public class MessageBrokerEntity implements MessageBroker {
 	private BaseMessageRepository baseMessageRepository;
 
 	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
-			Map<String, MessageListener> listeners, Map<String, MBService> services, BaseMessageRepository repository) {
+			Map<String, BaseMessageListener> listeners, Map<String, MBService> services,
+			BaseMessageRepository repository) {
 		this.senderManager = new SenderManager(sendersConfig);
 		this.receiverManager = new ReceiverManager(receiverConfig);
 		this.listenerManager = new ListenerManager(listeners);
@@ -54,12 +55,12 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public List<MessageListener> getListeners() {
+	public List<BaseMessageListener> getListeners() {
 		return this.listenerManager.getAll();
 	}
 
 	@Override
-	public MessageListener getListener(String id) {
+	public BaseMessageListener getListener(String id) {
 		return this.listenerManager.getById(id);
 	}
 

@@ -36,8 +36,10 @@ public class ReceiverManager {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0010"));
 			}
 			for (Map<String, Object> config : configs) {
+				ReceiverFactory f = new ReceiverFactory(config);
 				ObjectPool<MSMessageReceiver> pool = new ObjectPool<>(
-						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new ReceiverFactory(config));
+						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), f);
+				f.setPool(pool);
 				String receiverId = (String) config.get(ConfigConstant.ID.getValue());
 				pooledReceivers.put(receiverId, pool);
 				logger.info(LogManager.getServiceLogKey(), "Build receiver pool success! ReceiverID:" + receiverId);
@@ -62,14 +64,20 @@ class ReceiverFactory implements PoolObjectFactory<MSMessageReceiver> {
 
 	private Map<String, Object> config;
 
+	private ObjectPool<MSMessageReceiver> pool;
+
 	public ReceiverFactory(Map<String, Object> config) {
 		this.config = config;
+	}
+
+	public void setPool(ObjectPool<MSMessageReceiver> pool) {
+		this.pool = pool;
 	}
 
 	@Override
 	public MSMessageReceiver createPoolObject() throws BaseAppException {
 		boolean isPooled = (int) this.config.get(ConfigConstant.POOL_SZIE.getValue()) > 1;
-		MSMessageReceiver receiver = new MSMessageReceiver(buildSingleReceiver(this.config), isPooled);
+		MSMessageReceiver receiver = new MSMessageReceiver(buildSingleReceiver(this.config), isPooled, this.pool);
 		receiver.initialize();
 		return receiver;
 	}

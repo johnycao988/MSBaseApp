@@ -6,15 +6,18 @@ package com.cs.baseapp.api.messagebroker;
 import java.util.List;
 import java.util.Properties;
 
+import javax.jms.MessageListener;
+
 import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
+import com.cs.log.logs.LogInfoMgr;
 
 /**
  * @author Donald.Wang
  *
  */
-public abstract class MessageListener {
+public abstract class BaseMessageListener implements MessageListener {
 
 	protected String id;
 
@@ -24,11 +27,18 @@ public abstract class MessageListener {
 
 	protected List<MessageFilter> filters;
 
-	public MessageListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters) {
+	protected int connections;
+
+	protected String tranformClass;
+
+	public BaseMessageListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters,
+			int connections, String tranformClass) {
 		this.id = id;
 		this.maxProcessThreads = maxProcessThreads;
 		this.prop = prop;
 		this.filters = filters;
+		this.connections = connections;
+		this.tranformClass = tranformClass;
 	}
 
 	public abstract void initialize() throws BaseAppException;
@@ -61,6 +71,22 @@ public abstract class MessageListener {
 
 	public List<MessageFilter> getMessageFilters() {
 		return this.filters;
+	}
+
+	public int getConnections() {
+		return this.connections;
+	}
+	
+	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException {
+		Object instance = null;
+		try {
+			instance = Class.forName(this.tranformClass).getConstructor(Properties.class, MessageRequest.class)
+					.newInstance(this.prop, req);
+		} catch (Exception e) {
+			throw new BaseAppException(e,
+					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, req.getJsonString()));
+		}
+		return (TranslationMessage) instance;
 	}
 
 }

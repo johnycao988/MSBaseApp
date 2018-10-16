@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.cs.baseapp.api.messagebroker.MessageListener;
+import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
 
 /**
@@ -19,19 +19,19 @@ import com.cs.baseapp.errorhandling.BaseAppException;
  */
 public class ListenerManager {
 
-	private Map<String, MessageListener> listeners = new HashMap<>();
+	private Map<String, BaseMessageListener> listeners = new HashMap<>();
 
-	public ListenerManager(Map<String, MessageListener> listeners) {
+	public ListenerManager(Map<String, BaseMessageListener> listeners) {
 		this.listeners = listeners;
 	}
 
-	public MessageListener getById(String id) {
+	public BaseMessageListener getById(String id) {
 		return listeners.get(id);
 	}
 
-	public List<MessageListener> getAll() {
-		List<MessageListener> list = new ArrayList<>();
-		Iterator<Entry<String, MessageListener>> it = this.listeners.entrySet().iterator();
+	public List<BaseMessageListener> getAll() {
+		List<BaseMessageListener> list = new ArrayList<>();
+		Iterator<Entry<String, BaseMessageListener>> it = this.listeners.entrySet().iterator();
 		while (it.hasNext()) {
 			list.add(it.next().getValue());
 		}

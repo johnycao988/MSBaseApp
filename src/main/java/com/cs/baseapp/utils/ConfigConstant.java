@@ -18,7 +18,7 @@ public enum ConfigConstant {
 	SERVICES("services"), LOACL_SERVICE("local"), REMOTE_SERVICE("remote"), SENDER_ID("senderId"),
 	RECEIVER_ID("receiverId"), TIMEOUT("timeout"), JMS_CONNECTION_FACTORY_JNDI("CONN_FACTORY_JNDI"),
 	JMS_QUEUE_JNDI("QUEUE_JNDI"),  REPOSITORY("repository"), DATA_SOURCE("dataSource"),
-	SCHEMAS("schemas"), STORE_MSG("msgStore"), LOG_NAME("logName");
+	SCHEMAS("schemas"), STORE_MSG("storeMsg"), LOG_NAME("logName"),CONNECTIONS("connections");
 
 	private String value;
 
