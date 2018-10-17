@@ -11,6 +11,7 @@ import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageConsumer;
+import javax.jms.MessageListener;
 import javax.jms.Queue;
 import javax.jms.Session;
 import javax.jms.TextMessage;
@@ -19,6 +20,7 @@ import javax.naming.InitialContext;
 
 import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
+import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
@@ -31,7 +33,7 @@ import com.cs.log.logs.bean.Logger;
  * @author Donald.Wang
  *
  */
-public class DefaultJMSListener extends BaseMessageListener {
+public class DefaultJMSListener extends BaseMessageListener implements MessageListener {
 
 	private Connection connection = null;
 
@@ -98,15 +100,38 @@ public class DefaultJMSListener extends BaseMessageListener {
 	public void onMessage(Message message) {
 		try {
 			MessageRequest request = MessageFactory.getRequestMessage(((TextMessage) message).getText());
-			super.getTranslationMessage(request);
-			List<MessageFilter> filters = super.getMessageFilters();
-			for (MessageFilter filter : filters) {
-				filter.doListenerFilter(request);
-			}
+			super.doMessage(new MessageProcessor(super.getTranslationMessage(request), super.getMessageFilters()));
 		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0045", message.toString(), super.getId()));
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0045", message.toString(), ""));
 			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 	}
+}
+
+class MessageProcessor implements Runnable {
+
+	private TranslationMessage req;
+
+	private List<MessageFilter> filters;
+
+	private static Logger logger = LogManager.getSystemLog();
+
+	public MessageProcessor(TranslationMessage req, List<MessageFilter> filters) {
+		this.req = req;
+		this.filters = filters;
+	}
+
+	@Override
+	public void run() {
+		for (MessageFilter filter : this.filters) {
+			try {
+				filter.doListenerFilter(this.req.getRequestMsg());
+			} catch (BaseAppException e) {
+				BaseAppException ex = new BaseAppException(e,
+						LogInfoMgr.getErrorInfo("ERR_0045", this.req.getRequestMsg().toString(), ""));
+				logger.write(LogManager.getServiceLogKey(), ex);
+			}
+		}
+	}
+
 }

@@ -33,24 +33,16 @@ public class MessageRepositoryDao {
 
 	private Logger logger = LogManager.getSQLLogger();
 
-	public void storeMessage(MessageRequest request) {
-		String unitCode = request.getTransaction().getUnitCode();
-		IJdbcExec exec = DSManager.getJdbcExec(unitCode);
-		try {
-			String sql = buildSQL(buildParaMap(request));
-			JdbcStatement stat = new JdbcStatement(sql);
-			exec.update(LogManager.getSQLLog(request), stat);
-		} catch (LogException e) {
-			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0038", request.getJsonString()));
-			logger.write(LogManager.getServiceLogKey(request), ex);
-		}
-	}
-
 	public void storeMessage(MessageRequest request, MessageResponse response) {
-		String unitCode = request.getTransaction().getUnitCode();
-		IJdbcExec exec = DSManager.getJdbcExec(unitCode);
 		try {
-			String sql = buildSQL(buildParaMap(request, response));
+			String unitCode = request.getTransaction().getUnitCode();
+			IJdbcExec exec = DSManager.getJdbcExec(unitCode);
+			String sql;
+			if (response != null) {
+				sql = buildSQL(buildParaMap(request, response));
+			} else {
+				sql = buildSQL(buildParaMap(request));
+			}
 			JdbcStatement stat = new JdbcStatement(sql);
 			exec.update(LogManager.getSQLLog(request), stat);
 		} catch (LogException e) {

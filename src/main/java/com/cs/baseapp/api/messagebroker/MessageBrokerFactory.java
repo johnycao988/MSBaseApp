@@ -78,12 +78,15 @@ public class MessageBrokerFactory {
 		String listenerId = (String) singleConfig.get(ConfigConstant.ID.getValue());
 		try {
 			listener = (BaseMessageListener) Class.forName(implClass)
-					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class)
+					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class, int.class,
+							String.class)
 					.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
 							(Properties) PropertiesUtils.convertMapToProperties(
 									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
 							FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
-									.get(ConfigConstant.MESSAGE_FILTER.getValue())));
+									.get(ConfigConstant.MESSAGE_FILTER.getValue())),
+							(int) singleConfig.get(ConfigConstant.CONNECTIONS.getValue()),
+							(String) singleConfig.get(ConfigConstant.TRANS_CLASS.getValue()));
 			logger.info(logKey, "Build MB Listener success. ListenerId:" + listenerId
 					+ ConfigConstant.IMPL_CLASS.getValue() + ":" + implClass);
 		} catch (Exception e) {

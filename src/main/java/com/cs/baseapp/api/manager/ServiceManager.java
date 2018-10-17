@@ -50,40 +50,49 @@ public class ServiceManager {
 
 	public MessageResponse invokeService(MessageRequest req) throws BaseAppException {
 		MessageResponse resp = null;
+
 		MBService service = this.services.get(req.getServices().get(0).getId());
 		logger.debug(LogManager.getServiceLogKey(req),
 				"Start to process invoke Service. RequestMsg: " + req.getJsonString());
 		if (service == null) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0014", req.getJsonString()));
 		}
-		MSMessageSender sender = null;
-		MSMessageReceiver receiver = null;
 		try {
-			if (service.isStoreMsg()) {
-				MSBaseApplication.getMsgRepository().storeMessage(req);
-			}
+			storeRequestMsg(service, req);
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
 				resp = service.getBusinessService(req).process();
 			} else {
-				if (req.getServices().get(0).isSycn()) {
-					sender = service.getSender();
-					resp = sender.sendSyncMessage(service.getTranslationMessage(req));
-					if (resp == null) {
-						receiver = service.getReceiver();
-						resp = receiver.recv(service.getTranslationMessage(req));
-
-					}
-				} else {
-					sender = service.getSender();
-					sender.sendAsyncMessage(service.getTranslationMessage(req));
-				}
+				invokeRemoteService(service, req);
 			}
-			if (service.isStoreMsg()) {
-				MSBaseApplication.getMsgRepository().storeMessage(req, resp);
-			}
+			storeResponseMsg(service, req, resp);
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));
 			logger.write(LogManager.getServiceLogKey(req), ex);
+		}
+		logger.debug(LogManager.getServiceLogKey(req),
+				"Invoke Service success. RespMsg:" + (resp == null ? "" : resp.getJsonString()));
+		return resp;
+	}
+
+	private MessageResponse invokeRemoteService(MBService service, MessageRequest req) throws BaseAppException {
+		MSMessageSender sender = null;
+		MSMessageReceiver receiver = null;
+		MessageResponse resp = null;
+		try {
+			if (req.getServices().get(0).isSycn()) {
+				sender = service.getSender();
+				resp = sender.sendSyncMessage(service.getTranslationMessage(req));
+				if (resp == null) {
+					receiver = service.getReceiver();
+					resp = receiver.recv(service.getTranslationMessage(req));
+
+				}
+			} else {
+				sender = service.getSender();
+				sender.sendAsyncMessage(service.getTranslationMessage(req));
+			}
+		} catch (Exception e) {
+			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", req.getJsonString()));
 		} finally {
 			if (sender != null) {
 				sender.close();
@@ -92,9 +101,20 @@ public class ServiceManager {
 				receiver.close();
 			}
 		}
-		logger.debug(LogManager.getServiceLogKey(req),
-				"Invoke Service success. RespMsg:" + (resp == null ? "" : resp.getJsonString()));
 		return resp;
+	}
+
+	private void storeRequestMsg(MBService service, MessageRequest request) throws BaseAppException {
+		if (service.isStoreMsg()) {
+			MSBaseApplication.getMsgRepository().storeRequestMessage(request);
+		}
+	}
+
+	private void storeResponseMsg(MBService service, MessageRequest request, MessageResponse response)
+			throws BaseAppException {
+		if (service.isStoreMsg()) {
+			MSBaseApplication.getMsgRepository().storeResponseMessage(request, response);
+		}
 	}
 
 }

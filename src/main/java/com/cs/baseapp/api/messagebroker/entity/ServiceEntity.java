@@ -10,6 +10,7 @@ import java.util.Properties;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.BusinessService;
 import com.cs.baseapp.api.messagebroker.MBService;
+import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.utils.ConfigConstant;
@@ -49,8 +50,8 @@ public class ServiceEntity implements MBService {
 		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());
 		this.receiverId = serviceConfig.get(ConfigConstant.RECEIVER_ID.getValue());
 		this.implementClass = serviceConfig.get(ConfigConstant.IMPL_CLASS.getValue());
-		if (this.type == 0) {
-			this.getBusinessServiceConstructor();
+		if (this.type == MessageBrokerFactory.LOCAL_SERVICE) {
+			this.getLocalBusinessServiceConstructor();
 		}
 	}
 
@@ -107,7 +108,7 @@ public class ServiceEntity implements MBService {
 		return this.implementClass;
 	}
 
-	private void getBusinessServiceConstructor() throws BaseAppException {
+	private void getLocalBusinessServiceConstructor() throws BaseAppException {
 		try {
 			this.businessServiceConstructor = Class.forName(this.implementClass).getConstructor(MessageRequest.class,
 					Properties.class);
@@ -120,9 +121,6 @@ public class ServiceEntity implements MBService {
 	public BusinessService getBusinessService(MessageRequest req) throws BaseAppException {
 		BusinessService bs = null;
 		try {
-			if (this.businessServiceConstructor == null) {
-				getBusinessServiceConstructor();
-			}
 			bs = (BusinessService) this.businessServiceConstructor.newInstance(req, this.prop);
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0015", this.id, req.getJsonString()));

@@ -5,8 +5,8 @@ package com.cs.baseapp.api.messagebroker;
 
 import java.util.List;
 import java.util.Properties;
-
-import javax.jms.MessageListener;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -17,7 +17,7 @@ import com.cs.log.logs.LogInfoMgr;
  * @author Donald.Wang
  *
  */
-public abstract class BaseMessageListener implements MessageListener {
+public abstract class BaseMessageListener {
 
 	protected String id;
 
@@ -31,6 +31,8 @@ public abstract class BaseMessageListener implements MessageListener {
 
 	protected String tranformClass;
 
+	protected ExecutorService threadPool;
+	
 	public BaseMessageListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters,
 			int connections, String tranformClass) {
 		this.id = id;
@@ -39,6 +41,7 @@ public abstract class BaseMessageListener implements MessageListener {
 		this.filters = filters;
 		this.connections = connections;
 		this.tranformClass = tranformClass;
+		this.threadPool = Executors.newFixedThreadPool(this.maxProcessThreads);
 	}
 
 	public abstract void initialize() throws BaseAppException;
@@ -76,7 +79,7 @@ public abstract class BaseMessageListener implements MessageListener {
 	public int getConnections() {
 		return this.connections;
 	}
-	
+
 	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException {
 		Object instance = null;
 		try {
@@ -87,6 +90,10 @@ public abstract class BaseMessageListener implements MessageListener {
 					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, req.getJsonString()));
 		}
 		return (TranslationMessage) instance;
+	}
+
+	public void doMessage(Runnable exec) {
+		this.threadPool.execute(exec);
 	}
 
 }

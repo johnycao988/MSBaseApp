@@ -26,13 +26,13 @@ public class DefaultMessageRepository extends BaseMessageRepository {
 	}
 
 	@Override
-	public void storeMessage(MessageRequest req) throws BaseAppException {
+	public void storeRequestMessage(MessageRequest req) throws BaseAppException {
 		MessageRepositoryDao dao = new MessageRepositoryDao();
-		dao.storeMessage(req);
+		dao.storeMessage(req, null);
 	}
 
 	@Override
-	public void storeMessage(MessageRequest req, MessageResponse res) throws BaseAppException {
+	public void storeResponseMessage(MessageRequest req, MessageResponse res) throws BaseAppException {
 		MessageRepositoryDao dao = new MessageRepositoryDao();
 		dao.storeMessage(req, res);
 	}
