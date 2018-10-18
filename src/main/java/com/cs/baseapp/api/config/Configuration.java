@@ -12,8 +12,10 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -39,8 +41,10 @@ public class Configuration {
 
 	private Map<String, String> repositoryConfig = new HashMap<>();
 
+	private Logger logger = LogManager.getSystemLog();
+
 	@SuppressWarnings("unchecked")
-	public void load(InputStream is) throws BaseAppException {
+	public void load(InputStream is) {
 		try {
 			Yaml yamlConfig = new Yaml();
 			Map<String, Object> m = yamlConfig.load(is);
@@ -59,9 +63,12 @@ public class Configuration {
 					.get(ConfigConstant.REMOTE_SERVICE.getValue());
 			Map<String, Object> repositoryConfigs = (Map<String, Object>) mbConfig
 					.get(ConfigConstant.REPOSITORY.getValue());
-			this.repositoryConfig = (Map<String, String>) repositoryConfigs.get(ConfigConstant.PARAMETERS.getValue());
+			if (repositoryConfigs != null) {
+				this.repositoryConfig = (Map<String, String>) repositoryConfigs
+						.get(ConfigConstant.PARAMETERS.getValue());
+			}
 		} catch (Exception e) {
-			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0004"));
+			logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0004")));
 		}
 	}
 

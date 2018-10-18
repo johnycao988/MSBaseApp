@@ -4,6 +4,7 @@
 package com.cs.baseapp.api.messagebroker;
 
 import java.util.List;
+import java.util.Map;
 
 import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
@@ -20,15 +21,11 @@ public interface MessageBroker {
 
 	public MSMessageSender getSender(String id) throws BaseAppException;
 
-	public void releaseSender(MSMessageSender sender);
-
 	public MSMessageReceiver getReceiver(String id) throws BaseAppException;
 
-	public void releaseReceiver(MSMessageReceiver receiver);
+	public Map<String,List<BaseMessageListener>> getListeners();
 
-	public List<BaseMessageListener> getListeners();
-
-	public BaseMessageListener getListener(String id);
+	public List<BaseMessageListener> getListener(String id);
 
 	public List<MBService> getServices();
 

@@ -5,8 +5,6 @@ package com.cs.baseapp.api.messagebroker;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -31,8 +29,6 @@ public abstract class BaseMessageListener {
 
 	protected String tranformClass;
 
-	protected ExecutorService threadPool;
-	
 	public BaseMessageListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters,
 			int connections, String tranformClass) {
 		this.id = id;
@@ -41,7 +37,6 @@ public abstract class BaseMessageListener {
 		this.filters = filters;
 		this.connections = connections;
 		this.tranformClass = tranformClass;
-		this.threadPool = Executors.newFixedThreadPool(this.maxProcessThreads);
 	}
 
 	public abstract void initialize() throws BaseAppException;
@@ -90,10 +85,6 @@ public abstract class BaseMessageListener {
 					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, req.getJsonString()));
 		}
 		return (TranslationMessage) instance;
-	}
-
-	public void doMessage(Runnable exec) {
-		this.threadPool.execute(exec);
 	}
 
 }

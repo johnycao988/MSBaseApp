@@ -47,7 +47,7 @@ public class MessageBrokerFactory {
 			List<Map<String, Object>> localServiceConfig, List<Map<String, Object>> remoteServiceConfig,
 			Properties repositoryConfig) throws BaseAppException {
 		logger.info(logKey, "Start to build Base App MessageBroker.");
-		return new MessageBrokerEntity(senderConfig, receiverConfig, buildListeners(listenerConfig),
+		return new MessageBrokerEntity(senderConfig, receiverConfig, listenerConfig,
 				buildServices(localServiceConfig, remoteServiceConfig), buildMessageRepository(repositoryConfig));
 	}
 

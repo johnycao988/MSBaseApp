@@ -5,13 +5,21 @@ package com.cs.baseapp.api.manager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import com.cs.baseapp.api.filter.FilterFactory;
+import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.ConfigConstant;
+import com.cs.baseapp.utils.PropertiesUtils;
+import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 
 /**
  * @author Donald.Wang
@@ -19,27 +27,68 @@ import com.cs.baseapp.errorhandling.BaseAppException;
  */
 public class ListenerManager {
 
-	private Map<String, BaseMessageListener> listeners = new HashMap<>();
+	private Logger logger = LogManager.getSystemLog();
 
-	public ListenerManager(Map<String, BaseMessageListener> listeners) {
-		this.listeners = listeners;
+	private static Map<String, ExecutorService> threadPools = new HashMap<>();
+
+	private static Map<String, List<BaseMessageListener>> listeners = new HashMap<>();
+
+	public ListenerManager(List<Map<String, Object>> listenersConfig) {
+		for (Map<String, Object> singleConfig : listenersConfig) {
+			List<BaseMessageListener> listener = buildSingleListener(singleConfig);
+			listeners.put(listener.get(0).getId(), listener);
+			threadPools.put(listener.get(0).getId(), Executors.newFixedThreadPool(listener.get(0).getConnections()));
+		}
 	}
 
-	public BaseMessageListener getById(String id) {
+	public static void doMessage(String listenerId, Runnable task) {
+		threadPools.get(listenerId).execute(task);
+	}
+
+	public List<BaseMessageListener> getById(String id) {
 		return listeners.get(id);
 	}
 
-	public List<BaseMessageListener> getAll() {
-		List<BaseMessageListener> list = new ArrayList<>();
-		Iterator<Entry<String, BaseMessageListener>> it = this.listeners.entrySet().iterator();
-		while (it.hasNext()) {
-			list.add(it.next().getValue());
-		}
-		return list;
+	public Map<String, List<BaseMessageListener>> getAll() {
+		return listeners;
 	}
 
 	public void stop(String id) throws BaseAppException {
-		this.listeners.get(id).stop();
+		List<BaseMessageListener> listenerList = getById(id);
+		for (BaseMessageListener listener : listenerList) {
+			listener.stop();
+		}
+		listenerList.clear();
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<BaseMessageListener> buildSingleListener(Map<String, Object> singleConfig) {
+		List<BaseMessageListener> liteners = new ArrayList<>();
+		if (singleConfig == null || singleConfig.isEmpty()) {
+			return liteners;
+		}
+		String implClass = (String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue());
+		String listenerId = (String) singleConfig.get(ConfigConstant.ID.getValue());
+		int connections = (int) singleConfig.get(ConfigConstant.CONNECTIONS.getValue());
+		try {
+			for (int i = 0; i < connections; i++) {
+				BaseMessageListener listener = (BaseMessageListener) Class.forName(implClass)
+						.getConstructor(String.class, int.class, Properties.class, MessageFilter.class, int.class,
+								String.class)
+						.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
+								(Properties) PropertiesUtils.convertMapToProperties(
+										(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
+								FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
+										.get(ConfigConstant.MESSAGE_FILTER.getValue())),
+								connections, (String) singleConfig.get(ConfigConstant.TRANS_CLASS.getValue()));
+				liteners.add(listener);
+			}
+
+		} catch (Exception e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", listenerId));
+			logger.write(LogManager.getServiceLogKey(), ex);
+		}
+		return liteners;
 	}
 
 }

@@ -19,6 +19,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import com.cs.baseapp.api.filter.MessageFilter;
+import com.cs.baseapp.api.manager.ListenerManager;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -100,9 +101,10 @@ public class DefaultJMSListener extends BaseMessageListener implements MessageLi
 	public void onMessage(Message message) {
 		try {
 			MessageRequest request = MessageFactory.getRequestMessage(((TextMessage) message).getText());
-			super.doMessage(new MessageProcessor(super.getTranslationMessage(request), super.getMessageFilters()));
+			ListenerManager.doMessage(super.getId(),
+					new MessageProcessor(super.getTranslationMessage(request), super.getMessageFilters()));
 		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0045", message.toString(), ""));
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0045", message.toString()));
 			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 	}

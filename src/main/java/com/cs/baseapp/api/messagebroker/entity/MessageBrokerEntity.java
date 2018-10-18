@@ -35,11 +35,11 @@ public class MessageBrokerEntity implements MessageBroker {
 	private BaseMessageRepository baseMessageRepository;
 
 	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
-			Map<String, BaseMessageListener> listeners, Map<String, MBService> services,
+			List<Map<String, Object>> listenerConfig, Map<String, MBService> services,
 			BaseMessageRepository repository) {
 		this.senderManager = new SenderManager(sendersConfig);
 		this.receiverManager = new ReceiverManager(receiverConfig);
-		this.listenerManager = new ListenerManager(listeners);
+		this.listenerManager = new ListenerManager(listenerConfig);
 		this.serviceManager = new ServiceManager(services);
 		this.baseMessageRepository = repository;
 	}
@@ -55,12 +55,12 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public List<BaseMessageListener> getListeners() {
+	public Map<String, List<BaseMessageListener>> getListeners() {
 		return this.listenerManager.getAll();
 	}
 
 	@Override
-	public BaseMessageListener getListener(String id) {
+	public List<BaseMessageListener> getListener(String id) {
 		return this.listenerManager.getById(id);
 	}
 
@@ -81,17 +81,6 @@ public class MessageBrokerEntity implements MessageBroker {
 
 	@Override
 	public void shutdown() {
-
-	}
-
-	@Override
-	public void releaseSender(MSMessageSender sender) {
-		this.senderManager.releaseSender(sender);
-	}
-
-	@Override
-	public void releaseReceiver(MSMessageReceiver receiver) {
-		this.receiverManager.release(receiver);
 
 	}
 

@@ -32,17 +32,19 @@ public class BaseHttpClient {
 
 	private CloseableHttpClient http = HttpClients.createDefault();
 
+	private static final String UTF_8 = "UTF-8";
+
 	public String post(String uri, Map<String, String> headers, String jsonMessage) throws BaseAppException {
 		HttpPost post = new HttpPost(uri);
 		CloseableHttpResponse response;
 		fillRequestHead(post, headers);
 		String jsonResponse = null;
 		try {
-			StringEntity entity = new StringEntity(jsonMessage, Charset.forName("UTF-8"));
+			StringEntity entity = new StringEntity(jsonMessage, Charset.forName(UTF_8));
 			post.setEntity(entity);
 			response = this.http.execute(post);
 			if (response.getStatusLine().getStatusCode() == (HttpStatus.SC_OK)) {
-				jsonResponse = EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
+				jsonResponse = EntityUtils.toString(response.getEntity(), Charset.forName(UTF_8));
 			} else {
 				throw new BaseAppException(new Exception(), LogInfoMgr.getErrorInfo("ERR_0030", uri, jsonMessage,
 						response.getStatusLine().getStatusCode()));
@@ -71,7 +73,7 @@ public class BaseHttpClient {
 		CloseableHttpResponse response;
 		try {
 			response = this.http.execute(get);
-			return EntityUtils.toString(response.getEntity(), Charset.forName("UTF-8"));
+			return EntityUtils.toString(response.getEntity(), Charset.forName(UTF_8));
 		} catch (Exception e) {
 			throw new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0031", uri));
 		}
