@@ -23,7 +23,7 @@
 	</info>
 	<info>
 		<code>ERR_0004</code>
-		<msg>Parse the configuration fail! Please check the configuration!
+		<msg>The Configuration error! Please check the Configuration file.
 		</msg>
 		<action />
 		<level>ERROR</level>
