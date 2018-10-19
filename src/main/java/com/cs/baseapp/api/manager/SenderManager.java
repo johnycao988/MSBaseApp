@@ -34,8 +34,10 @@ public class SenderManager {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0012"));
 			}
 			for (Map<String, Object> config : sendersConfig) {
+				SenderFactory senderFactory = new SenderFactory(config);
 				ObjectPool<MSMessageSender> pool = new ObjectPool<>(
-						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), new SenderFactory(config));
+						(int) config.get(ConfigConstant.POOL_SZIE.getValue()), senderFactory);
+				senderFactory.setPool(pool);
 				pooledSenders.put((String) config.get(ConfigConstant.ID.getValue()), pool);
 			}
 		} catch (Exception e) {
