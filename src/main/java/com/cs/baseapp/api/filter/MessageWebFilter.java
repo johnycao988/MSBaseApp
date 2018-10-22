@@ -41,8 +41,12 @@ public class MessageWebFilter implements Filter {
 			throws IOException, ServletException {
 		MessageRequest csReqeust = null;
 		try {
-			csReqeust = MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream()));
-			MSBaseApplication.doWebFilters(csReqeust, request, response);
+			if ("application/json".equals(request.getContentType())) {
+				csReqeust = MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream()));
+				MSBaseApplication.doWebFilters(csReqeust, request, response);
+			} else {
+				//do other service
+			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0033"));
 			logger.write(LogManager.getServiceLogKey(csReqeust), ex);

@@ -13,6 +13,8 @@ import com.cs.baseapp.api.manager.ServiceManager;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
+import com.cs.baseapp.api.messagebroker.Receiver;
+import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.cloud.message.api.MessageRequest;
@@ -45,12 +47,12 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public MSMessageSender getSender(String id) throws BaseAppException {
+	public Sender getSender(String id) throws BaseAppException {
 		return this.senderManager.getSender(id);
 	}
 
 	@Override
-	public MSMessageReceiver getReceiver(String id) throws BaseAppException {
+	public Receiver getReceiver(String id) throws BaseAppException {
 		return this.receiverManager.getById(id);
 	}
 
@@ -80,8 +82,11 @@ public class MessageBrokerEntity implements MessageBroker {
 	}
 
 	@Override
-	public void shutdown() {
-
+	public void shutdown() throws BaseAppException {
+		this.serviceManager.stop();
+		this.senderManager.stop();
+		this.receiverManager.stop();
+		this.listenerManager.stopAll();
 	}
 
 	@Override

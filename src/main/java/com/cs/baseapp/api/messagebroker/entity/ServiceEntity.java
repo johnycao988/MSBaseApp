@@ -11,6 +11,10 @@ import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.BusinessService;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
+import com.cs.baseapp.api.messagebroker.MessageReceiver;
+import com.cs.baseapp.api.messagebroker.MessageSender;
+import com.cs.baseapp.api.messagebroker.Receiver;
+import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.utils.ConfigConstant;
@@ -94,12 +98,12 @@ public class ServiceEntity implements MBService {
 	}
 
 	@Override
-	public MSMessageSender getSender() throws BaseAppException {
+	public Sender getSender() throws BaseAppException {
 		return MSBaseApplication.getMessageBroker().getSender(this.senderId);
 	}
 
 	@Override
-	public MSMessageReceiver getReceiver() throws BaseAppException {
+	public Receiver getReceiver() throws BaseAppException {
 		return MSBaseApplication.getMessageBroker().getReceiver(this.receiverId);
 	}
 

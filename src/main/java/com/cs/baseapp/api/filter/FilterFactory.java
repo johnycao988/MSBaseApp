@@ -83,7 +83,7 @@ public class FilterFactory {
 		Object instance = null;
 		try {
 			String filterId = (String) listenerConfig.get(ConfigConstant.ID.getValue());
-			String filterClass = (String) listenerConfig.get(ConfigConstant.MESSAGE_FILTER.getValue());
+			String filterClass = (String) listenerConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class)
 					.newInstance(filterId, PropertiesUtils.convertMapToProperties(
 							(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())));

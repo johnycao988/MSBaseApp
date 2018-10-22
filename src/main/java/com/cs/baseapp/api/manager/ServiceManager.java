@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
-import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
-import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
+import com.cs.baseapp.api.messagebroker.Receiver;
+import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageRequest;
@@ -48,6 +48,10 @@ public class ServiceManager {
 		return list;
 	}
 
+	public void stop() {
+		this.services = new HashMap<>();
+	}
+
 	public MessageResponse invokeService(MessageRequest req) throws BaseAppException {
 		MessageResponse resp = null;
 
@@ -75,8 +79,8 @@ public class ServiceManager {
 	}
 
 	private MessageResponse invokeRemoteService(MBService service, MessageRequest req) throws BaseAppException {
-		MSMessageSender sender = null;
-		MSMessageReceiver receiver = null;
+		Sender sender = null;
+		Receiver receiver = null;
 		MessageResponse resp = null;
 		try {
 			if (req.getServices().get(0).isSycn()) {

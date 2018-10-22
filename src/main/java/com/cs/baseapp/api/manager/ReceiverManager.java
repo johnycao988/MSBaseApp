@@ -6,8 +6,11 @@ package com.cs.baseapp.api.manager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MessageReceiver;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageReceiver;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
@@ -15,6 +18,7 @@ import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
+import com.cs.baseapp.utils.MSBaseAppStatus;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -51,11 +55,26 @@ public class ReceiverManager {
 	}
 
 	public MSMessageReceiver getById(String id) throws BaseAppException {
-		return this.pooledReceivers.get(id).getObject();
+		if (MSBaseApplication.getStatus() == MSBaseAppStatus.RUNNING.getValue()) {
+			return this.pooledReceivers.get(id).getObject();
+		}
+		throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0046"));
 	}
 
-	public void release(MSMessageReceiver receiver) {
+	public void release(MSMessageReceiver receiver) throws BaseAppException {
 		this.pooledReceivers.get(receiver.getId()).releaseObject(receiver);
+	}
+
+	public void stop() {
+		Set<Entry<String, ObjectPool<MSMessageReceiver>>> entry = pooledReceivers.entrySet();
+		for (Entry<String, ObjectPool<MSMessageReceiver>> e : entry) {
+			try {
+				e.getValue().clear();
+			} catch (BaseAppException e1) {
+				logger.write(LogManager.getServiceLogKey(), e1);
+			}
+		}
+		this.pooledReceivers = new HashMap<>();
 	}
 
 }
@@ -97,6 +116,16 @@ class ReceiverFactory implements PoolObjectFactory<MSMessageReceiver> {
 					LogInfoMgr.getErrorInfo("ERR_0011", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return receiver;
+	}
+
+	@Override
+	public void destroy(MSMessageReceiver receiver) throws BaseAppException {
+		receiver.getReceiver().close();
+	}
+
+	@Override
+	public boolean verifyReleasedObject(MSMessageReceiver t) throws BaseAppException {
+		return true;
 	}
 
 }

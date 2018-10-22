@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletRequest;
@@ -26,6 +27,7 @@ import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.baseapp.utils.ConfigConstant;
+import com.cs.baseapp.utils.MSBaseAppStatus;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.log.logs.LogInfoMgr;
@@ -40,7 +42,7 @@ public class MSBaseApplication {
 
 	private static Base base;
 
-	private static List<BaseMessageFilter> filters = new ArrayList<>();
+	private static List<BaseMessageFilter> filters = Collections.synchronizedList(new ArrayList<BaseMessageFilter>());
 
 	private static MessageBroker mb;
 
@@ -48,7 +50,9 @@ public class MSBaseApplication {
 
 	private static ServiceLogKey logKey = LogManager.getServiceLogKey();
 
-	private static final Logger logger = LogManager.getSystemLog();
+	private static Logger logger = LogManager.getSystemLog();
+
+	private static int status;
 
 	private MSBaseApplication() {
 	}
@@ -84,6 +88,7 @@ public class MSBaseApplication {
 					config.getMbListenersConfig(), config.getMbLocalServicesConfig(),
 					config.getMbRemoteServicesConfig(),
 					PropertiesUtils.convertMapToProperties(config.getRepositoryConfig()));
+			status = MSBaseAppStatus.RUNNING.getValue();
 			logger.info(logKey, "Build Message Broker Success.");
 		} catch (Exception e) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035"));
@@ -92,6 +97,10 @@ public class MSBaseApplication {
 
 	public static Base getBaseInfo() {
 		return base;
+	}
+
+	public static int getStatus() {
+		return status;
 	}
 
 	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
@@ -116,7 +125,9 @@ public class MSBaseApplication {
 		return mb;
 	}
 
-	public static void shutdown() {
+	public static void shutdown() throws BaseAppException {
+		status = MSBaseAppStatus.STOPPING.getValue();
+		filters.clear();
 		mb.shutdown();
 	}
 

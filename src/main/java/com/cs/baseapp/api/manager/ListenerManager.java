@@ -8,11 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.cs.baseapp.api.filter.FilterFactory;
-import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
@@ -37,7 +38,8 @@ public class ListenerManager {
 		for (Map<String, Object> singleConfig : listenersConfig) {
 			List<BaseMessageListener> listener = buildSingleListener(singleConfig);
 			listeners.put(listener.get(0).getId(), listener);
-			threadPools.put(listener.get(0).getId(), Executors.newFixedThreadPool(listener.get(0).getConnections()));
+			threadPools.put(listener.get(0).getId(),
+					Executors.newFixedThreadPool(listener.get(0).getMaxProcessThreads()));
 		}
 	}
 
@@ -58,7 +60,31 @@ public class ListenerManager {
 		for (BaseMessageListener listener : listenerList) {
 			listener.stop();
 		}
+		ExecutorService pool = threadPools.get(id);
+		pool.shutdown();
+		try {
+			if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+				pool.shutdownNow();
+				if (!pool.awaitTermination(60, TimeUnit.SECONDS)) {
+					throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0047"));
+				}
+			}
+		} catch (InterruptedException e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0048"));
+			logger.write(LogManager.getServiceLogKey(), ex);
+			Thread.currentThread().interrupt();
+		}
 		listenerList.clear();
+		listeners.remove(id);
+		threadPools.remove(id);
+	}
+
+	public void stopAll() throws BaseAppException {
+		Set<String> keys = listeners.keySet();
+		for (String key : keys) {
+			stop(key);
+		}
+		listeners.clear();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -73,14 +99,15 @@ public class ListenerManager {
 		try {
 			for (int i = 0; i < connections; i++) {
 				BaseMessageListener listener = (BaseMessageListener) Class.forName(implClass)
-						.getConstructor(String.class, int.class, Properties.class, MessageFilter.class, int.class,
-								String.class)
+						.getConstructor(String.class, int.class, Properties.class, List.class, int.class, String.class)
 						.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
 								(Properties) PropertiesUtils.convertMapToProperties(
 										(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
 								FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
 										.get(ConfigConstant.MESSAGE_FILTER.getValue())),
 								connections, (String) singleConfig.get(ConfigConstant.TRANS_CLASS.getValue()));
+				listener.initialize();
+				listener.start();
 				liteners.add(listener);
 			}
 

@@ -6,8 +6,11 @@ package com.cs.baseapp.api.manager;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MessageSender;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
@@ -15,6 +18,7 @@ import com.cs.baseapp.api.messagebroker.pool.PoolObjectFactory;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
+import com.cs.baseapp.utils.MSBaseAppStatus;
 import com.cs.baseapp.utils.PropertiesUtils;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
@@ -47,11 +51,26 @@ public class SenderManager {
 	}
 
 	public MSMessageSender getSender(String id) throws BaseAppException {
-		return this.pooledSenders.get(id).getObject();
+		if (MSBaseApplication.getStatus() == MSBaseAppStatus.RUNNING.getValue()) {
+			return this.pooledSenders.get(id).getObject();
+		}
+		throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0046"));
 	}
 
-	public void releaseSender(MSMessageSender sender) {
+	public void releaseSender(MSMessageSender sender) throws BaseAppException {
 		this.pooledSenders.get(sender.getId()).releaseObject(sender);
+	}
+
+	public void stop() {
+		Set<Entry<String, ObjectPool<MSMessageSender>>> entry = pooledSenders.entrySet();
+		for (Entry<String, ObjectPool<MSMessageSender>> e : entry) {
+			try {
+				e.getValue().clear();
+			} catch (BaseAppException e1) {
+				logger.write(LogManager.getServiceLogKey(), e1);
+			}
+		}
+		this.pooledSenders = new HashMap<>();
 	}
 
 }
@@ -92,6 +111,16 @@ class SenderFactory implements PoolObjectFactory<MSMessageSender> {
 					LogInfoMgr.getErrorInfo("ERR_0013", singleConfig.get(ConfigConstant.ID.getValue())));
 		}
 		return sender;
+	}
+
+	@Override
+	public void destroy(MSMessageSender sender) throws BaseAppException {
+		sender.getSender().close();
+	}
+
+	@Override
+	public boolean verifyReleasedObject(MSMessageSender t) throws BaseAppException {
+		return true;
 	}
 
 }

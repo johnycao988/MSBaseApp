@@ -305,5 +305,18 @@
 		<action />
 		<level>ERROR</level>
 	</info>
-
+	<info>
+		<code>ERR_0046</code>
+		<msg>The MS Base Application not in running status!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0047</code>
+		<msg>The Listener thread pool can not terminate after waiting 120 seconds!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
 </root>

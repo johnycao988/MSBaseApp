@@ -58,4 +58,8 @@ public class MSMessageSender implements Sender {
 		return this.sender.getId();
 	}
 
+	public MessageSender getSender() {
+		return this.sender;
+	}
+
 }

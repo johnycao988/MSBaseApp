@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MBService;
+import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.api.messagebroker.entity.MSMessageSender;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 
@@ -47,7 +48,7 @@ class GetSender extends Thread {
 	@Override
 	public void run() {
 		try {
-			MSMessageSender sender = MSBaseApplication.getMessageBroker().getService("std-country").getSender();
+			Sender sender = MSBaseApplication.getMessageBroker().getService("std-country").getSender();
 			Thread.sleep(100);
 			sender.sendSyncMessage(null);
 			sender.close();

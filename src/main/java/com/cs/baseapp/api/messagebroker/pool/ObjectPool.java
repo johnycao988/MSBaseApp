@@ -26,6 +26,14 @@ public class ObjectPool<T> {
 		return this.poolSize;
 	}
 
+	public void clear() throws BaseAppException {
+		if (this.poolSize == this.createdObjSize && this.poolSize == this.lockObjList.size()) {
+			for (T t : this.lockObjList) {
+				this.poolObjectFactory.destroy(t);
+			}
+		}
+	}
+
 	public synchronized T getObject() throws BaseAppException {
 
 		try {
@@ -62,12 +70,17 @@ public class ObjectPool<T> {
 		return null;
 	}
 
-	public synchronized void releaseObject(T obj) {
+	public synchronized void releaseObject(T obj) throws BaseAppException {
 
-		if (this.poolSize <= 0)
+		if (this.poolSize <= 0 || this.lockObjList.size() >= this.poolSize)
 			return;
-		lockObjList.add(obj);
-		this.notifyAll();
+		if (this.poolObjectFactory.verifyReleasedObject(obj)) {
+			lockObjList.add(obj);
+			this.notifyAll();
+		} else {
+			this.poolObjectFactory.destroy(obj);
+			this.createdObjSize--;
+		}
 	}
 
 }

@@ -52,4 +52,8 @@ public class MSMessageReceiver implements Receiver {
 
 	}
 
+	public MessageReceiver getReceiver() {
+		return this.receiver;
+	}
+
 }
