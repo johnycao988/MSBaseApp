@@ -52,7 +52,9 @@ public class MSBaseApplication {
 
 	private static Logger logger = LogManager.getSystemLog();
 
-	private static int status;
+	private static int status = MSBaseAppStatus.STOPPED.getValue();
+
+	private static final String ERR_CODE_0051 = "ERR_0051";
 
 	private MSBaseApplication() {
 	}
@@ -66,11 +68,19 @@ public class MSBaseApplication {
 		}
 	}
 
-	public static AppEnv getAppEnv() {
+	public static AppEnv getAppEnv() throws BaseAppException {
+		if (status != MSBaseAppStatus.RUNNING.getValue()) {
+			BaseAppException ex = new BaseAppException(LogInfoMgr.getErrorInfo(ERR_CODE_0051));
+			logger.write(logKey, ex);
+			throw ex;
+		}
 		return appEnv;
 	}
 
 	public static void init(InputStream is) throws BaseAppException {
+		if (status == MSBaseAppStatus.RUNNING.getValue()) {
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0050"));
+		}
 		try {
 			Configuration config = new Configuration();
 			logger.info(logKey, "Start to parse the configuration.");
@@ -95,7 +105,12 @@ public class MSBaseApplication {
 		}
 	}
 
-	public static Base getBaseInfo() {
+	public static Base getBaseInfo() throws BaseAppException {
+		if (status != MSBaseAppStatus.RUNNING.getValue()) {
+			BaseAppException ex = new BaseAppException(LogInfoMgr.getErrorInfo(ERR_CODE_0051));
+			logger.write(logKey, ex);
+			throw ex;
+		}
 		return base;
 	}
 
@@ -105,6 +120,11 @@ public class MSBaseApplication {
 
 	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException {
+		if (status != MSBaseAppStatus.RUNNING.getValue()) {
+			BaseAppException ex = new BaseAppException(LogInfoMgr.getErrorInfo(ERR_CODE_0051));
+			logger.write(logKey, ex);
+			throw ex;
+		}
 		if (csReqMsg == null) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0001"));
 		}
@@ -121,17 +141,35 @@ public class MSBaseApplication {
 		}
 	}
 
-	public static MessageBroker getMessageBroker() {
+	public static MessageBroker getMessageBroker() throws BaseAppException {
+		if (status != MSBaseAppStatus.RUNNING.getValue()) {
+			BaseAppException ex = new BaseAppException(LogInfoMgr.getErrorInfo(ERR_CODE_0051));
+			logger.write(logKey, ex);
+			throw ex;
+		}
 		return mb;
 	}
 
 	public static void shutdown() throws BaseAppException {
+		if (status == MSBaseAppStatus.STOPPED.getValue() || status == MSBaseAppStatus.STOPPING.getValue()) {
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0052"));
+		}
+		logger.info(logKey, "Start to stopping the MSBaseApplication!");
 		status = MSBaseAppStatus.STOPPING.getValue();
 		filters.clear();
+		logger.info(logKey, "The message filter stop success!");
 		mb.shutdown();
+		logger.info(logKey, "The message broker stop success!");
+		status = MSBaseAppStatus.STOPPED.getValue();
+		logger.info(logKey, "MSBaseApplication stop success!");
 	}
 
-	public static BaseMessageRepository getMsgRepository() {
+	public static BaseMessageRepository getMsgRepository() throws BaseAppException {
+		if (status != MSBaseAppStatus.RUNNING.getValue()) {
+			BaseAppException ex = new BaseAppException(LogInfoMgr.getErrorInfo(ERR_CODE_0051));
+			logger.write(logKey, ex);
+			throw ex;
+		}
 		return mb.getMessageRepository();
 	}
 

@@ -62,15 +62,19 @@ public class SenderManager {
 	}
 
 	public void stop() {
+		logger.info(LogManager.getServiceLogKey(), "Start to stop Sender Manager.");
 		Set<Entry<String, ObjectPool<MSMessageSender>>> entry = pooledSenders.entrySet();
 		for (Entry<String, ObjectPool<MSMessageSender>> e : entry) {
 			try {
 				e.getValue().clear();
-			} catch (BaseAppException e1) {
-				logger.write(LogManager.getServiceLogKey(), e1);
+				logger.info(LogManager.getServiceLogKey(), "Stop Sender success. Sender Id: " + e.getKey());
+			} catch (Exception e1) {
+				BaseAppException ex = new BaseAppException(e1, LogInfoMgr.getErrorInfo("ERR_0048", e.getKey()));
+				logger.write(LogManager.getServiceLogKey(), ex);
 			}
 		}
 		this.pooledSenders = new HashMap<>();
+		logger.info(LogManager.getServiceLogKey(), "Stop Sender Manager finish.");
 	}
 
 }

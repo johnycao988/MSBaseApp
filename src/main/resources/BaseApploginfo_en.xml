@@ -314,7 +314,45 @@
 	</info>
 	<info>
 		<code>ERR_0047</code>
-		<msg>The Listener thread pool can not terminate after waiting 120 seconds!
+		<msg>The Listener thread pool can not terminate after waiting 120
+			seconds!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0048</code>
+		<msg>Stop Sender Manager error! SenderId:%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0049</code>
+		<msg>Stop Receiver Manager error! ReceiverId:%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0050</code>
+		<msg>MSBaseApplication is already running! Please stop first!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0051</code>
+		<msg>MSBaseApplication is not running or is stopped! Please run init
+			first!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0052</code>
+		<msg>MSBaseApplication is already stop or is stopping! Please do not
+			stop again!
 		</msg>
 		<action />
 		<level>ERROR</level>

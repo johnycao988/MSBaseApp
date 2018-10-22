@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
+import com.cs.baseapp.errorhandling.BaseAppException;
 
 /**
  * @author Donald.Wang
@@ -24,7 +25,7 @@ class TestBaseInfoAndEnv {
 	}
 
 	@Test
-	void test() {
+	void test() throws BaseAppException {
 		String appId = MSBaseApplication.getBaseInfo().getAppId();
 		String version = MSBaseApplication.getBaseInfo().getVersion();
 		String name = MSBaseApplication.getBaseInfo().getName();

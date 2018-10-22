@@ -9,7 +9,7 @@ package com.cs.baseapp.utils;
  */
 public enum MSBaseAppStatus {
 
-	RUNNING(0), STOPPING(1), STOPED(2);
+	RUNNING(0), STOPPING(1), STOPPED(2);
 
 	private int status = 0;
 

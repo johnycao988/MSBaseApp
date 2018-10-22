@@ -66,15 +66,18 @@ public class ReceiverManager {
 	}
 
 	public void stop() {
+		logger.info(LogManager.getServiceLogKey(), "Start to stop Receiver Manager!");
 		Set<Entry<String, ObjectPool<MSMessageReceiver>>> entry = pooledReceivers.entrySet();
 		for (Entry<String, ObjectPool<MSMessageReceiver>> e : entry) {
 			try {
 				e.getValue().clear();
-			} catch (BaseAppException e1) {
-				logger.write(LogManager.getServiceLogKey(), e1);
+			} catch (Exception e1) {
+				BaseAppException ex = new BaseAppException(e1, LogInfoMgr.getErrorInfo("ERR_0049", e.getKey()));
+				logger.write(LogManager.getServiceLogKey(), ex);
 			}
 		}
 		this.pooledReceivers = new HashMap<>();
+		logger.info(LogManager.getServiceLogKey(), "Stop Receiver Manager finish!");
 	}
 
 }

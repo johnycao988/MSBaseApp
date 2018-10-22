@@ -71,8 +71,8 @@ public class ListenerManager {
 			}
 		} catch (InterruptedException e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0048"));
-			logger.write(LogManager.getServiceLogKey(), ex);
 			Thread.currentThread().interrupt();
+			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 		listenerList.clear();
 		listeners.remove(id);
@@ -80,11 +80,13 @@ public class ListenerManager {
 	}
 
 	public void stopAll() throws BaseAppException {
+		logger.info(LogManager.getServiceLogKey(), "Start to stop Listener Manager!");
 		Set<String> keys = listeners.keySet();
 		for (String key : keys) {
 			stop(key);
 		}
 		listeners.clear();
+		logger.info(LogManager.getServiceLogKey(), "Stop Listener Manager finish!");
 	}
 
 	@SuppressWarnings("unchecked")

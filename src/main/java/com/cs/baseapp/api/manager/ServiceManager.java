@@ -49,7 +49,9 @@ public class ServiceManager {
 	}
 
 	public void stop() {
+		logger.info(LogManager.getServiceLogKey(), "Start to stop Service Manager.");
 		this.services = new HashMap<>();
+		logger.info(LogManager.getServiceLogKey(), "Stop Service Manager success!");
 	}
 
 	public MessageResponse invokeService(MessageRequest req) throws BaseAppException {
