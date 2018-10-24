@@ -81,7 +81,7 @@ public class BaseHttpClient {
 
 	private void fillRequestHead(HttpEntityEnclosingRequestBase base, Map<String, String> header) {
 		if (header == null || header.isEmpty()) {
-			base.setHeader("contentType", "application/json");
+			base.setHeader("Content-Type", "application/json");
 			return;
 		}
 		Set<Entry<String, String>> set = header.entrySet();

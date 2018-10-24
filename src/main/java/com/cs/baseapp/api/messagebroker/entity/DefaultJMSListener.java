@@ -46,6 +46,8 @@ public class DefaultJMSListener extends BaseMessageListener implements MessageLi
 
 	private static Logger logger = LogManager.getSystemLog();
 
+	private static final String JNDI_NAME_PREFIX = "java:comp/env/";
+
 	public DefaultJMSListener(String id, int maxProcessThreads, Properties prop, List<MessageFilter> filters,
 			int connections, String tranformClass) {
 		super(id, maxProcessThreads, prop, filters, connections, tranformClass);
@@ -55,9 +57,10 @@ public class DefaultJMSListener extends BaseMessageListener implements MessageLi
 	public void initialize() throws BaseAppException {
 		try {
 			Context context = new InitialContext();
-			ConnectionFactory connFactory = (ConnectionFactory) context
-					.lookup(super.getProperty(ConfigConstant.JMS_CONNECTION_FACTORY_JNDI.getValue()));
-			this.queue = (Queue) context.lookup(super.getProperty(ConfigConstant.JMS_QUEUE_JNDI.getValue()));
+			ConnectionFactory connFactory = (ConnectionFactory) context.lookup(
+					JNDI_NAME_PREFIX + super.getProperty(ConfigConstant.JMS_CONNECTION_FACTORY_JNDI.getValue()));
+			this.queue = (Queue) context
+					.lookup(JNDI_NAME_PREFIX + super.getProperty(ConfigConstant.JMS_QUEUE_JNDI.getValue()));
 			this.connection = connFactory.createConnection();
 			this.connection.start();
 		} catch (Exception e) {

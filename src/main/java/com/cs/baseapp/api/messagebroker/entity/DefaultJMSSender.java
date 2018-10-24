@@ -40,6 +40,8 @@ public class DefaultJMSSender extends MessageSender {
 
 	private Logger logger = LogManager.getSystemLog();
 
+	private static final String JNDI_NAME_PREFIX = "java:comp/env/";
+
 	public DefaultJMSSender(String id, Properties prop) {
 		super(id, prop);
 	}
@@ -48,9 +50,10 @@ public class DefaultJMSSender extends MessageSender {
 	public void initialize() throws BaseAppException {
 		try {
 			Context context = new InitialContext();
-			ConnectionFactory connFactory = (ConnectionFactory) context
-					.lookup(super.getProperty(ConfigConstant.JMS_CONNECTION_FACTORY_JNDI.getValue()));
-			this.queue = (Queue) context.lookup(super.getProperty(ConfigConstant.JMS_QUEUE_JNDI.getValue()));
+			ConnectionFactory connFactory = (ConnectionFactory) context.lookup(
+					JNDI_NAME_PREFIX + super.getProperty(ConfigConstant.JMS_CONNECTION_FACTORY_JNDI.getValue()));
+			this.queue = (Queue) context
+					.lookup(JNDI_NAME_PREFIX + super.getProperty(ConfigConstant.JMS_QUEUE_JNDI.getValue()));
 			this.connection = connFactory.createConnection();
 			this.connection.start();
 		} catch (Exception e) {

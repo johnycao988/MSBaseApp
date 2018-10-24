@@ -35,11 +35,18 @@ public class ListenerManager {
 	private static Map<String, List<BaseMessageListener>> listeners = new HashMap<>();
 
 	public ListenerManager(List<Map<String, Object>> listenersConfig) {
-		for (Map<String, Object> singleConfig : listenersConfig) {
-			List<BaseMessageListener> listener = buildSingleListener(singleConfig);
-			listeners.put(listener.get(0).getId(), listener);
-			threadPools.put(listener.get(0).getId(),
-					Executors.newFixedThreadPool(listener.get(0).getMaxProcessThreads()));
+		try {
+			if (listenersConfig == null || listenersConfig.isEmpty()) {
+				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0054"));
+			}
+			for (Map<String, Object> singleConfig : listenersConfig) {
+				List<BaseMessageListener> listener = buildSingleListener(singleConfig);
+				listeners.put(listener.get(0).getId(), listener);
+				threadPools.put(listener.get(0).getId(),
+						Executors.newFixedThreadPool(listener.get(0).getMaxProcessThreads()));
+			}
+		} catch (Exception e) {
+			logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0053")));
 		}
 	}
 

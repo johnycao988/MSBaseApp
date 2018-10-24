@@ -68,7 +68,7 @@ public class ServiceManager {
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
 				resp = service.getBusinessService(req).process();
 			} else {
-				invokeRemoteService(service, req);
+				resp = invokeRemoteService(service, req);
 			}
 			storeResponseMsg(service, req, resp);
 		} catch (Exception e) {
