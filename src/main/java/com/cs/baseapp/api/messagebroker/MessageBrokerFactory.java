@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import com.cs.baseapp.api.filter.FilterFactory;
-import com.cs.baseapp.api.filter.MessageFilter;
 import com.cs.baseapp.api.messagebroker.entity.MessageBrokerEntity;
 import com.cs.baseapp.api.messagebroker.entity.ServiceEntity;
 import com.cs.baseapp.errorhandling.BaseAppException;
@@ -49,51 +47,6 @@ public class MessageBrokerFactory {
 		logger.info(logKey, "Start to build Base App MessageBroker.");
 		return new MessageBrokerEntity(senderConfig, receiverConfig, listenerConfig,
 				buildServices(localServiceConfig, remoteServiceConfig), buildMessageRepository(repositoryConfig));
-	}
-
-	private static Map<String, BaseMessageListener> buildListeners(List<Map<String, Object>> listenersConfig)
-			throws BaseAppException {
-		logger.info(logKey, "Start to build MB Listener.");
-		Map<String, BaseMessageListener> listeners = new HashMap<>();
-		if (listenersConfig == null || listenersConfig.isEmpty()) {
-			return listeners;
-		}
-		for (Map<String, Object> singleConfig : listenersConfig) {
-			BaseMessageListener l = buildSingleListener(singleConfig);
-			if (l != null) {
-				listeners.put(l.getId(), l);
-			}
-		}
-		logger.info(logKey, "Build MB Listeners success. Total:" + listeners.size());
-		return listeners;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static BaseMessageListener buildSingleListener(Map<String, Object> singleConfig) throws BaseAppException {
-		BaseMessageListener listener = null;
-		if (singleConfig == null || singleConfig.isEmpty()) {
-			return listener;
-		}
-		String implClass = (String) singleConfig.get(ConfigConstant.IMPL_CLASS.getValue());
-		String listenerId = (String) singleConfig.get(ConfigConstant.ID.getValue());
-		try {
-			listener = (BaseMessageListener) Class.forName(implClass)
-					.getConstructor(String.class, int.class, Properties.class, MessageFilter.class, int.class,
-							String.class)
-					.newInstance(listenerId, (int) singleConfig.get(ConfigConstant.MAX_PROCESS_THREADS.getValue()),
-							(Properties) PropertiesUtils.convertMapToProperties(
-									(Map<String, String>) singleConfig.get(ConfigConstant.PARAMETERS.getValue())),
-							FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
-									.get(ConfigConstant.MESSAGE_FILTER.getValue())),
-							(int) singleConfig.get(ConfigConstant.CONNECTIONS.getValue()),
-							(String) singleConfig.get(ConfigConstant.TRANS_CLASS.getValue()));
-			logger.info(logKey, "Build MB Listener success. ListenerId:" + listenerId
-					+ ConfigConstant.IMPL_CLASS.getValue() + ":" + implClass);
-		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0016", listenerId));
-			logger.write(logKey, ex);
-		}
-		return listener;
 	}
 
 	private static Map<String, MBService> buildServices(List<Map<String, Object>> loaclServicesConfig,

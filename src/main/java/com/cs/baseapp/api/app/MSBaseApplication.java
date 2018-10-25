@@ -78,30 +78,36 @@ public class MSBaseApplication {
 	}
 
 	public static void init(InputStream is) throws BaseAppException {
+		String initProcessStep = "Check Status";
 		if (status == MSBaseAppStatus.RUNNING.getValue()) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0050"));
 		}
 		try {
 			Configuration config = new Configuration();
+			initProcessStep = "Parse config";
 			logger.info(logKey, "Start to parse the configuration.");
 			config.load(is);
+			initProcessStep = "Init LogManager";
 			LogManager.init(config.getBaseConfig().get(ConfigConstant.BASE_NAME.getValue()));
 			logger.info(logKey, "Init LogManager success.");
-			logger.info(logKey, "build Message Repository success.");
+			initProcessStep = "Init Base Info";
 			base = AppBaseFactory.buildBase(config.getBaseConfig());
 			logger.info(logKey, "Build Base success.");
+			initProcessStep = "Init Env";
 			appEnv = AppEnvFactory.build(config.getEnvConfig());
 			logger.info(logKey, "Build App Env success.");
+			initProcessStep = "Init Web Filters";
 			filters = FilterFactory.buildWebFilters(config.getFilterConfig());
-			logger.info(logKey, "Build Web Filters success. Total:" + filters.size());
+			logger.info(logKey, "Build Web Filters finish. Total:" + filters.size());
+			initProcessStep = "Init MessageBroker";
 			mb = MessageBrokerFactory.buildMsgBroker(config.getMbSendersConfig(), config.getMbReceiversConfig(),
 					config.getMbListenersConfig(), config.getMbLocalServicesConfig(),
 					config.getMbRemoteServicesConfig(),
 					PropertiesUtils.convertMapToProperties(config.getRepositoryConfig()));
 			status = MSBaseAppStatus.RUNNING.getValue();
-			logger.info(logKey, "Build Message Broker Success.");
+			logger.info(logKey, "Build Message Broker finish.");
 		} catch (Exception e) {
-			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035"));
+			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035", initProcessStep));
 		}
 	}
 

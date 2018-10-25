@@ -24,6 +24,7 @@ import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.commons.jdbc.DSManager;
+import com.cs.log.common.logbean.LogInfo;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
 
@@ -45,7 +46,7 @@ public class MessageWebFilter implements Filter {
 				csReqeust = MessageFactory.getRequestMessage(convertStreamToString(request.getInputStream()));
 				MSBaseApplication.doWebFilters(csReqeust, request, response);
 			} else {
-				//do other service
+				// do other service
 			}
 		} catch (Exception e) {
 			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0033"));
@@ -54,39 +55,82 @@ public class MessageWebFilter implements Filter {
 	}
 
 	public void init(FilterConfig fConfig) throws ServletException {
-		initBaseApp();
-	}
-
-	public void initBaseApp() {
 		try {
-			String appConfigFile = System.getenv().get(CSMSBASEAPP_ROOT_PATH);
-			if (StringUtils.isEmpty(appConfigFile)) {
-				appConfigFile = System.getProperty(CSMSBASEAPP_ROOT_PATH);
+			String rootPath = System.getenv().get(CSMSBASEAPP_ROOT_PATH);
+			if (StringUtils.isEmpty(rootPath)) {
+				rootPath = System.getProperty(CSMSBASEAPP_ROOT_PATH);
 			}
-			if (StringUtils.isEmpty(appConfigFile)) {
+			if (StringUtils.isEmpty(rootPath)) {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0034"));
 			}
-			LogManager.initLogback(appConfigFile + "/baseConfig/logback.xml");
-			logger.info(LogManager.getServiceLogKey(),
-					"Loading log config file success. FilePath:" + appConfigFile + "/baseConfig/logback.xml");
-			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
-			Document logConfig = d.newDocumentBuilder()
-					.parse(new File(appConfigFile + "/baseConfig/baseAppLogInfo.xml"));
-			LogInfoMgr.initByDoc("EN", logConfig);
-			logger.info(LogManager.getServiceLogKey(), "Loading Log information config file success. FilePath:"
-					+ appConfigFile + "/baseConfig/baseAppLogInfo.xml");
-			DocumentBuilderFactory doc = DocumentBuilderFactory.newInstance();
-			Document dsConfig = doc.newDocumentBuilder().parse(new File(appConfigFile + "/baseConfig/dsConfig.xml"));
-			DSManager.initByDoc(dsConfig);
-			logger.info(LogManager.getServiceLogKey(),
-					"Loading Data Source congfig file success. FilePath:" + appConfigFile + "/baseConfig/dsConfig.xml");
-			MSBaseApplication.init(appConfigFile + "/baseConfig/baseAppConfig.yml");
-			logger.info(LogManager.getServiceLogKey(), "Loading Base Application config File success. FilePath:"
-					+ appConfigFile + "/baseConfig/baseAppConfig.yml");
+			initLogback(rootPath);
+			initErrorInfo(rootPath);
+			initDSInfo(rootPath);
+			initBaseApp(rootPath);
 		} catch (Exception e) {
-			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0035"));
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0056"));
 			logger.write(LogManager.getServiceLogKey(), ex);
 		}
+	}
+
+	public void initBaseApp(String rootPath) {
+		String baseAppConfigFile = rootPath + "/baseConfig/baseAppConfig.yml";
+		try {
+			MSBaseApplication.init(baseAppConfigFile);
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading Base Application config File success. FilePath:" + baseAppConfigFile);
+		} catch (BaseAppException e) {
+			logger.write(LogManager.getServiceLogKey(), e);
+		}
+	}
+
+	private void initLogback(String rootPath) {
+		String logbackConfigFile = rootPath + "/baseConfig/logback.xml";
+		try {
+			LogManager.initLogback(logbackConfigFile);
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading log config file success. FilePath:" + logbackConfigFile);
+		} catch (Exception e) {
+			LogInfo logInfo = new LogInfo();
+			logInfo.setLevel("ERROR");
+			logInfo.setMsg("Fail to initialize the logback! FilePath:" + logbackConfigFile);
+			logInfo.setCode("ERR_0000");
+			BaseAppException ex = new BaseAppException(e, logInfo);
+			logger.write(LogManager.getServiceLogKey(), ex);
+		}
+	}
+
+	private void initErrorInfo(String rootPath) {
+		String logInfoConfigFile = rootPath + "/baseConfig/baseAppLogInfo.xml";
+		try {
+			DocumentBuilderFactory d = DocumentBuilderFactory.newInstance();
+			Document logConfig = d.newDocumentBuilder().parse(new File(logInfoConfigFile));
+			LogInfoMgr.initByDoc("EN", logConfig);
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading Log information config file success. FilePath:" + logInfoConfigFile);
+		} catch (Exception e) {
+			LogInfo logInfo = new LogInfo();
+			logInfo.setLevel("ERROR");
+			logInfo.setMsg("Fail to initialize the LogInfo Message! FilePath:" + logInfoConfigFile);
+			logInfo.setCode("ERR_0000");
+			BaseAppException ex = new BaseAppException(e, logInfo);
+			logger.write(LogManager.getServiceLogKey(), ex);
+		}
+	}
+
+	private void initDSInfo(String rootPath) {
+		String dsConfigFile = rootPath + "/baseConfig/dsConfig.xml";
+		try {
+			DocumentBuilderFactory doc = DocumentBuilderFactory.newInstance();
+			Document dsConfig = doc.newDocumentBuilder().parse(new File(dsConfigFile));
+			DSManager.initByDoc(dsConfig);
+			logger.info(LogManager.getServiceLogKey(),
+					"Loading Data Source congfig file success. FilePath:" + dsConfigFile);
+		} catch (Exception e) {
+			BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0055", dsConfigFile));
+			logger.write(LogManager.getServiceLogKey(), ex);
+		}
+
 	}
 
 	private String convertStreamToString(InputStream is) throws BaseAppException {

@@ -23,7 +23,8 @@
 	</info>
 	<info>
 		<code>ERR_0004</code>
-		<msg>The Configuration error! Please check the Configuration file.
+		<msg>The Configuration parse error! Please check the Configuration
+			file. ErrorElement: %1$s
 		</msg>
 		<action />
 		<level>ERROR</level>
@@ -195,8 +196,7 @@
 	<info>
 		<code>ERR_0030</code>
 		<msg>The response message has the error return code! Url: %1$s
-			,RequestMessage: %2$s
-			,ReturnCode: %3$s</msg>
+			,RequestMessage: %2$s ,ReturnCode: %3$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
@@ -227,7 +227,7 @@
 	</info>
 	<info>
 		<code>ERR_0035</code>
-		<msg>Failed to initialize MSBaseAPP!</msg>
+		<msg>Failed to initialize MSBaseAPP! Process Step: %1$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
@@ -343,8 +343,8 @@
 	</info>
 	<info>
 		<code>ERR_0051</code>
-		<msg>MSBaseApplication is not running or is stopped! Please run init
-			first!
+		<msg>MSBaseApplication is not running or is stopped! Please run
+			initialize first!
 		</msg>
 		<action />
 		<level>ERROR</level>
@@ -366,6 +366,20 @@
 	<info>
 		<code>ERR_0054</code>
 		<msg>The Listener configuration is Empty!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0055</code>
+		<msg>Fail to initialize Data Source by configuration file. FilePath:
+			%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0056</code>
+		<msg>MSBaseApplication initialize fail!</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
