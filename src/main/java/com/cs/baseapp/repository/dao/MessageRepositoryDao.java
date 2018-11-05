@@ -109,8 +109,8 @@ public class MessageRepositoryDao {
 		if (!StringUtils.isEmpty(request.getTransaction().getReferenceNo())) {
 			paraMap.put(RepositoryConstant.COL_REF_NO.getValue(), request.getTransaction().getReferenceNo());
 		}
-		if (!StringUtils.isEmpty(request.getConsumer().getUserId())) {
-			paraMap.put(RepositoryConstant.COL_USER_ID.getValue(), request.getConsumer().getUserId());
+		if (!StringUtils.isEmpty(request.getConsumer().getUserName())) {
+			paraMap.put(RepositoryConstant.COL_USER_NAME.getValue(), request.getConsumer().getUserName());
 		}
 		MessageHeadService service = request.getServices().get(0);
 		if (!StringUtils.isEmpty(service.getId()) && !StringUtils.isEmpty(service.getApplicationId())) {
@@ -135,8 +135,8 @@ public class MessageRepositoryDao {
 		if (!StringUtils.isEmpty(response.getBase().getCorrelationId())) {
 			paraMap.put(RepositoryConstant.COL_CORRELATION_ID.getValue(), response.getBase().getCorrelationId());
 		}
-		if (!StringUtils.isEmpty(response.getFirstBodyService().getUserId())) {
-			paraMap.put(RepositoryConstant.COL_USER_ID.getValue(), response.getFirstBodyService().getUserId());
+		if (!StringUtils.isEmpty(response.getFirstBodyService().getUserName())) {
+			paraMap.put(RepositoryConstant.COL_USER_NAME.getValue(), response.getFirstBodyService().getUserName());
 		}
 		if (!StringUtils.isEmpty(request.getTransaction().getUnitCode())) {
 			paraMap.put(RepositoryConstant.COL_UNIT_CODE.getValue(), request.getTransaction().getUnitCode());
