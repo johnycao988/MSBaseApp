@@ -5,6 +5,7 @@ package com.cs.baseapp.api.app;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,6 +16,8 @@ import javax.servlet.ServletResponse;
 
 import com.cs.baseapp.api.appenv.AppEnv;
 import com.cs.baseapp.api.appenv.AppEnvFactory;
+import com.cs.baseapp.api.auth.AuthException;
+import com.cs.baseapp.api.auth.AuthManager;
 import com.cs.baseapp.api.base.AppBaseFactory;
 import com.cs.baseapp.api.base.Base;
 import com.cs.baseapp.api.config.Configuration;
@@ -56,6 +59,8 @@ public class MSBaseApplication {
 
 	private static final String ERR_CODE_0051 = "ERR_0051";
 
+	private static AuthManager authManager;
+
 	private MSBaseApplication() {
 	}
 
@@ -95,6 +100,8 @@ public class MSBaseApplication {
 			logger.info(logKey, "Build Base success.");
 			initProcessStep = "Init Env";
 			appEnv = AppEnvFactory.build(config.getEnvConfig());
+			initProcessStep = "Init AuthRules";
+			authManager = new AuthManager(config.getAuthRulesConfig());
 			logger.info(logKey, "Build App Env success.");
 			initProcessStep = "Init Web Filters";
 			filters = FilterFactory.buildWebFilters(config.getFilterConfig());
@@ -106,6 +113,7 @@ public class MSBaseApplication {
 					PropertiesUtils.convertMapToProperties(config.getRepositoryConfig()));
 			status = MSBaseAppStatus.RUNNING.getValue();
 			logger.info(logKey, "Build Message Broker finish.");
+			authManager.start();
 		} catch (Exception e) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035", initProcessStep));
 		}
@@ -124,6 +132,10 @@ public class MSBaseApplication {
 		return status;
 	}
 
+	public static AuthManager getAuthManager() {
+		return authManager;
+	}
+
 	public static void doWebFilters(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException {
 		if (status != MSBaseAppStatus.RUNNING.getValue()) {
@@ -139,6 +151,14 @@ public class MSBaseApplication {
 		for (MessageFilter f : filters) {
 			try {
 				f.doWebFilter(csReqMsg, request, response);
+			} catch (AuthException authEx) {
+				try {
+					response.getOutputStream().print("No Permission!");
+					response.flushBuffer();
+					break;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			} catch (Exception e) {
 				BaseAppException ex = new BaseAppException(e,
 						LogInfoMgr.getErrorInfo("ERR_00002", csReqMsg.getJsonString()));

@@ -25,6 +25,8 @@ public interface MBService {
 	public String getProperty(String key);
 
 	public String getTranformClass();
+	
+	public String getRefreshTokenId();
 
 	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException;
 

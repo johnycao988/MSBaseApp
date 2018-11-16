@@ -39,6 +39,8 @@ public class ServiceEntity implements MBService {
 
 	private String implementClass;
 
+	private String refreshTokenId;
+
 	private boolean storeMsg;
 
 	private Constructor<?> businessServiceConstructor;
@@ -52,6 +54,7 @@ public class ServiceEntity implements MBService {
 		this.senderId = serviceConfig.get(ConfigConstant.SENDER_ID.getValue());
 		this.receiverId = serviceConfig.get(ConfigConstant.RECEIVER_ID.getValue());
 		this.implementClass = serviceConfig.get(ConfigConstant.IMPL_CLASS.getValue());
+		this.refreshTokenId = serviceConfig.get(ConfigConstant.REFRESH_TOKEN_ID.getValue());
 		if (this.type == MessageBrokerFactory.LOCAL_SERVICE) {
 			this.getLocalBusinessServiceConstructor();
 		}
@@ -137,6 +140,10 @@ public class ServiceEntity implements MBService {
 	@Override
 	public boolean isStoreMsg() {
 		return this.storeMsg;
+	}
+
+	public String getRefreshTokenId() {
+		return this.refreshTokenId;
 	}
 
 }

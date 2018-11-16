@@ -52,10 +52,11 @@ public class FilterFactory {
 		String filterId = (String) filterConfig.get(ConfigConstant.ID.getValue());
 		String implClass = (String) filterConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		try {
-			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class)
+			instance = Class.forName(implClass).getConstructor(String.class, String.class, Properties.class,String.class)
 					.newInstance(filterId, filterConfig.get(ConfigConstant.URLPATTERN.getValue()),
 							PropertiesUtils.convertMapToProperties(
-									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())));
+									(Map<String, String>) filterConfig.get(ConfigConstant.PARAMETERS.getValue())),
+							filterConfig.get(ConfigConstant.AUTH_RULE_ID.getValue()));
 			logger.info(logKey, "Build web filter success. FilterId:" + filterId + " ImplementClass:" + implClass);
 		} catch (Exception e) {
 			BaseAppException baseAppException = new BaseAppException(e,
@@ -84,9 +85,11 @@ public class FilterFactory {
 		try {
 			String filterId = (String) listenerConfig.get(ConfigConstant.ID.getValue());
 			String filterClass = (String) listenerConfig.get(ConfigConstant.IMPL_CLASS.getValue());
-			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class)
-					.newInstance(filterId, PropertiesUtils.convertMapToProperties(
-							(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())));
+			instance = Class.forName(filterClass).getConstructor(String.class, Properties.class, String.class)
+					.newInstance(filterId,
+							PropertiesUtils.convertMapToProperties(
+									(Map<String, String>) listenerConfig.get(ConfigConstant.PARAMETERS.getValue())),
+							listenerConfig.get(ConfigConstant.AUTH_RULE_ID.getValue()));
 			logger.info(logKey, "Build listener filter succsess. Id: " + filterId + " ImplementClass:" + filterClass);
 		} catch (Exception e) {
 			throw new BaseAppException(e,

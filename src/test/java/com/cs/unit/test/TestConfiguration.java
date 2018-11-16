@@ -15,7 +15,6 @@ import org.w3c.dom.Document;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
-import com.cs.log.common.logbean.LogInfo;
 import com.cs.log.logs.LogInfoMgr;
 
 /**
@@ -46,6 +45,8 @@ public class TestConfiguration {
 		Document logConfig = d.newDocumentBuilder().parse(new File(appConfigFile + "/baseConfig/baseAppLogInfo.xml"));
 		LogInfoMgr.initByDoc("EN", logConfig);
 		MSBaseApplication.init(appConfigFile + "/baseConfig/baseAppConfig.yml");
+		int s =111;
+		System.out.println(s);
 	}
 
 	private void initLogback(String rootPath) {

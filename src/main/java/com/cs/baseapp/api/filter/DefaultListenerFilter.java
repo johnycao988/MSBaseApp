@@ -26,8 +26,8 @@ public class DefaultListenerFilter extends BaseMessageFilter {
 
 	private Logger logger = LogManager.getSystemLog();
 
-	public DefaultListenerFilter(String id, Properties prop) {
-		super(id, prop);
+	public DefaultListenerFilter(String id, Properties prop, String authRuleId) {
+		super(id, prop, authRuleId);
 	}
 
 	@Override

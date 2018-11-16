@@ -29,6 +29,8 @@ public class Configuration {
 
 	private List<Map<String, Object>> filterConfig = new ArrayList<>();
 
+	private Map<String, Object> authRulesConfig = new HashMap<>();
+
 	private List<Map<String, Object>> mbSendersCondig = new ArrayList<>();
 
 	private List<Map<String, Object>> mbReceiversConfig = new ArrayList<>();
@@ -53,8 +55,10 @@ public class Configuration {
 			Map<String, Object> dtl = (Map<String, Object>) m.entrySet().iterator().next().getValue();
 			this.processKey = ConfigConstant.BASE.getValue();
 			this.baseConfig = (Map<String, String>) dtl.get(ConfigConstant.BASE.getValue());
-			this.processKey = ConfigConstant.EVN.getValue();
-			this.envConfig = (Map<String, String>) dtl.get(ConfigConstant.EVN.getValue());
+			this.processKey = ConfigConstant.ENV.getValue();
+			this.envConfig = (Map<String, String>) dtl.get(ConfigConstant.ENV.getValue());
+			this.processKey = ConfigConstant.AUTH_RULES.getValue();
+			this.authRulesConfig = (Map<String, Object>) dtl.get(ConfigConstant.AUTH_RULES.getValue());
 			this.processKey = ConfigConstant.WEB_MESSAGE_FILTER.getValue();
 			this.filterConfig = (List<Map<String, Object>>) dtl.get(ConfigConstant.WEB_MESSAGE_FILTER.getValue());
 			this.processKey = ConfigConstant.MESSAGE_BROKER.getValue();
@@ -120,6 +124,10 @@ public class Configuration {
 
 	public Map<String, String> getRepositoryConfig() {
 		return this.repositoryConfig == null ? new HashMap<>() : this.repositoryConfig;
+	}
+
+	public Map<String, Object> getAuthRulesConfig() {
+		return this.authRulesConfig == null ? new HashMap<>() : this.authRulesConfig;
 	}
 
 }
