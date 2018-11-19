@@ -20,6 +20,7 @@ import org.apache.http.message.BasicNameValuePair;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.filter.BaseMessageFilter;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
@@ -69,10 +70,10 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 		}
 	}
 
-	private void authorizationMessage(AuthRule rule, MessageRequest request) throws AuthException {
+	private void authorizationMessage(AuthRule rule, MessageRequest request) throws BaseAppException {
 		AuthClient authClient = rule.getAuthClient(request.getConsumer().getClientId());
 		List<String> needCheckRoles = authClient.getRoles();
-		Map<String, Object> tokenInfo = parseAccessTokenByJWT(authClient.getClientId(),
+		Map<String, Object> tokenInfo = parseAccessTokenByJWT(MSBaseApplication.getBaseInfo().getAppId(),
 				request.getConsumer().getToken());
 		if (needCheckRoles.contains(AuthConst.ROLE_USER) && !checkUser(tokenInfo, request)) {
 			throw new AuthException(LogInfoMgr.getErrorInfo("User Auth Fail!"));
@@ -141,7 +142,7 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 		boolean isPass = true;
 		List<MessageHeadService> services = request.getServices();
 		for (MessageHeadService s : services) {
-			isPass = isPass && ((Map<String, String>) tokenInfo.get(AuthConst.ROLE_FUNC)).containsKey(s.getId());
+			isPass = isPass && ((Map<String, String>) tokenInfo.get(AuthConst.ROLE_SERVICE)).containsKey(s.getId());
 		}
 		return isPass;
 	}

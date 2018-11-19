@@ -21,8 +21,8 @@ public enum ConfigConstant {
 	DATA_SOURCE("dataSource"), SCHEMAS("schemas"), STORE_MSG("storeMsg"), LOG_NAME("logName"),
 	CONNECTIONS("connections"), AUTH_RULES("authRules"), ROLES("roles"), IS_AUTH("isAuth"), ROLES_FUNC("func"),
 	ROLES_SERVICE("service"), ROLES_ORG_UNIT("orgUnit"), ROLES_USER("user"), CLIENT_ID("clientId"),
-	REFRESH_TOKEN("refreshToken"), RULES("rules"), REFRESH_TOKEN_ID("refreshTokenId"), CLIENTS("clients"),
-	AUTH_RULE_ID("authRuleId"),USERINFO_ENDPOINT("userinfo_endpoint");
+	AUTH_TOKEN("authToken"), RULES("rules"), AUTH_TOKEN_ID("authTokenId"), CLIENTS("clients"),
+	AUTH_RULE_ID("authRuleId"), USERINFO_ENDPOINT("userinfo_endpoint"), IS_DEFAULT("isDefault");
 
 	private String value;
 

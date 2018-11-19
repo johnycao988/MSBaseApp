@@ -23,10 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * @author Donald.Wang
  *
  */
-public class DefaultOauth2OidcRefreshTokenHandler extends RefreshTokenHandler {
+public class DefaultOauth2OidcRefreshTokenHandler extends AuthTokenHandler {
 
-	public DefaultOauth2OidcRefreshTokenHandler(String id, Properties prop) throws BaseAppException {
-		super(id, prop);
+	public DefaultOauth2OidcRefreshTokenHandler(String id, boolean isDefault, Properties prop) throws BaseAppException {
+		super(id, isDefault, prop);
 	}
 
 	private String refreshToken = "";

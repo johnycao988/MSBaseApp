@@ -32,7 +32,12 @@ import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.MSBaseAppStatus;
 import com.cs.baseapp.utils.PropertiesUtils;
+import com.cs.baseapp.utils.ResponseMessageUtils;
 import com.cs.cloud.message.api.MessageRequest;
+import com.cs.cloud.message.api.MessageResponse;
+import com.cs.cloud.message.api.MessageResponseBodyService;
+import com.cs.cloud.message.api.MessageResponseBodyServiceStatus;
+import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
 import com.cs.log.logs.bean.ServiceLogKey;
@@ -153,10 +158,19 @@ public class MSBaseApplication {
 				f.doWebFilter(csReqMsg, request, response);
 			} catch (AuthException authEx) {
 				try {
-					response.getOutputStream().print("No Permission!");
+					MessageResponseBodyServiceStatus status = MessageFactory.getResponseMessageBuilder()
+							.getMessageResponseBodyServiceStatusBuilder().setErrCode("401").setSuccess(false)
+							.setErrMsg("No Permission!").build();
+					MessageResponseBodyService body = MessageFactory.getResponseMessageBuilder()
+							.getMessageResponseBodyServiceBuilder().setApplicationId(base.getAppId())
+							.setResponseData("{\"code\":401,\"msg\":\"You have no permission to operate this transaction!\"}").setServiceStatus(status)
+							.build();
+					List<MessageResponse> l = new ArrayList<>();
+					l.add(MessageFactory.getResponseMessageBuilder().addResponseBodyService(body).build());
+					response.getOutputStream().print(ResponseMessageUtils.mergeResponse(csReqMsg, l).getJsonString());
 					response.flushBuffer();
 					break;
-				} catch (IOException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} catch (Exception e) {

@@ -11,21 +11,24 @@ import com.cs.baseapp.errorhandling.BaseAppException;
  * @author Donald.Wang
  *
  */
-public abstract class RefreshTokenHandler {
+public abstract class AuthTokenHandler {
 
-	private String refreshTokenId;
+	private String authTokenId;
 
 	private Properties prop;
 
 	private String currentToken;
 
+	private boolean isDefault = false;
+
 	public abstract String getTokenByFirst() throws BaseAppException;
 
 	public abstract String refreshToken() throws BaseAppException;
 
-	public RefreshTokenHandler(String id, Properties prop) throws BaseAppException {
-		this.refreshTokenId = id;
+	public AuthTokenHandler(String id, boolean isDefault, Properties prop) {
+		this.authTokenId = id;
 		this.prop = prop;
+		this.isDefault = isDefault;
 	}
 
 	public String getProperty(String key) {
@@ -33,7 +36,7 @@ public abstract class RefreshTokenHandler {
 	}
 
 	public String getId() {
-		return this.refreshTokenId;
+		return this.authTokenId;
 	}
 
 	public String getCurrentToken() {
@@ -42,6 +45,10 @@ public abstract class RefreshTokenHandler {
 
 	public void setCurrentToken(String newToken) {
 		this.currentToken = newToken;
+	}
+
+	public boolean isDefault() {
+		return this.isDefault;
 	}
 
 }

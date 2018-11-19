@@ -14,6 +14,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
@@ -29,7 +32,9 @@ public class AuthManager {
 
 	private Map<String, AuthRule> authRules = new HashMap<>();
 
-	private Map<String, RefreshTokenHandler> refreshTokens = new HashMap<>();
+	private Map<String, AuthTokenHandler> authTokens = new HashMap<>();
+
+	private String defaultAuthTokenId;
 
 	private ExecutorService threadPool;
 
@@ -37,14 +42,14 @@ public class AuthManager {
 
 	@SuppressWarnings("unchecked")
 	public AuthManager(Map<String, Object> configs) {
-		buildRefreshTokenHandlers((List<Map<String, Object>>) configs.get(ConfigConstant.REFRESH_TOKEN.getValue()));
+		buildAuthTokenHandlers((List<Map<String, Object>>) configs.get(ConfigConstant.AUTH_TOKEN.getValue()));
 		buildAuthRules((List<Map<String, Object>>) configs.get(ConfigConstant.RULES.getValue()));
 	}
 
 	public void start() {
 		this.threadPool = Executors.newFixedThreadPool(this.authRules.size());
-		Set<Entry<String, RefreshTokenHandler>> set = this.refreshTokens.entrySet();
-		for (Entry<String, RefreshTokenHandler> e : set) {
+		Set<Entry<String, AuthTokenHandler>> set = this.authTokens.entrySet();
+		for (Entry<String, AuthTokenHandler> e : set) {
 			try {
 				this.threadPool.execute(new RefreshTokenTask(e.getValue()));
 			} catch (BaseAppException e1) {
@@ -60,7 +65,7 @@ public class AuthManager {
 		for (Map<String, Object> c : authRuleConfig) {
 			try {
 				id = (String) c.get(ConfigConstant.ID.getValue());
-				String refreshTokenId = (String) c.get(ConfigConstant.REFRESH_TOKEN_ID.getValue());
+				String authTokenId = (String) c.get(ConfigConstant.AUTH_TOKEN_ID.getValue());
 				Properties prop = PropertiesUtils
 						.convertMapToProperties((Map<String, String>) c.get(ConfigConstant.PARAMETERS.getValue()));
 				List<Map<String, Object>> authClientConfig = (List<Map<String, Object>>) c
@@ -71,7 +76,7 @@ public class AuthManager {
 							(boolean) ac.get(ConfigConstant.IS_AUTH.getValue()),
 							((String) ac.get(ConfigConstant.ROLES.getValue())).trim().split(",")));
 				}
-				this.authRules.put(id, new DefaultAuthRule(id, refreshTokenId, prop, authClients));
+				this.authRules.put(id, new DefaultAuthRule(id, authTokenId, prop, authClients));
 			} catch (Exception e) {
 				logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("", id)));
 			}
@@ -79,21 +84,25 @@ public class AuthManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void buildRefreshTokenHandlers(List<Map<String, Object>> refreshTokenConfig) {
+	private void buildAuthTokenHandlers(List<Map<String, Object>> refreshTokenConfig) {
 		for (Map<String, Object> c : refreshTokenConfig) {
-			String refreshTokenId = null;
+			String authTokenId = null;
 			String implClass = null;
 			try {
-				refreshTokenId = (String) c.get(ConfigConstant.ID.getValue());
+				authTokenId = (String) c.get(ConfigConstant.ID.getValue());
 				implClass = (String) c.get(ConfigConstant.IMPL_CLASS.getValue());
 				Properties prop = PropertiesUtils
 						.convertMapToProperties((Map<String, String>) c.get(ConfigConstant.PARAMETERS.getValue()));
-				RefreshTokenHandler headler = (RefreshTokenHandler) Class.forName(implClass)
-						.getConstructor(String.class, Properties.class).newInstance(refreshTokenId, prop);
-				this.refreshTokens.put(headler.getId(), headler);
+				AuthTokenHandler headler = (AuthTokenHandler) Class.forName(implClass)
+						.getConstructor(String.class, boolean.class, Properties.class)
+						.newInstance(authTokenId, c.get(ConfigConstant.IS_DEFAULT.getValue()), prop);
+				this.authTokens.put(headler.getId(), headler);
+				if (headler.isDefault()) {
+					this.defaultAuthTokenId = headler.getId();
+				}
 			} catch (Exception e) {
 				logger.write(LogManager.getServiceLogKey(),
-						new BaseAppException(e, LogInfoMgr.getErrorInfo("", refreshTokenId, implClass)));
+						new BaseAppException(e, LogInfoMgr.getErrorInfo("", authTokenId, implClass)));
 			}
 		}
 	}
@@ -102,8 +111,20 @@ public class AuthManager {
 		return this.authRules.get(authRuleId);
 	}
 
-	public String getAccessToken(String refreshTokenId) {
-		return this.refreshTokens.get(refreshTokenId).getCurrentToken();
+	public String getAccessToken(String authTokenId) {
+		return this.authTokens.get(authTokenId).getCurrentToken();
+	}
+
+	public String getDefaultAccessToken() {
+		return this.getAccessToken(this.defaultAuthTokenId);
+	}
+
+	public String getAccessTokenByService(String serviceId) throws BaseAppException {
+		String authTokenId = MSBaseApplication.getMessageBroker().getService(serviceId).getAuthTokenId();
+		if (!StringUtils.isEmpty(authTokenId)) {
+			return this.authTokens.get(authTokenId).getCurrentToken();
+		}
+		return getDefaultAccessToken();
 	}
 
 	public void shutdown() throws BaseAppException {
@@ -128,9 +149,9 @@ public class AuthManager {
 
 class RefreshTokenTask implements Runnable {
 
-	private RefreshTokenHandler handler = null;
+	private AuthTokenHandler handler = null;
 
-	RefreshTokenTask(RefreshTokenHandler handler) throws BaseAppException {
+	RefreshTokenTask(AuthTokenHandler handler) throws BaseAppException {
 		this.handler = handler;
 		this.handler.getTokenByFirst();
 	}
@@ -138,7 +159,7 @@ class RefreshTokenTask implements Runnable {
 	@Override
 	public void run() {
 		try {
-			while (true) {
+			while (!Thread.interrupted()) {
 				handler.setCurrentToken(handler.refreshToken());
 				Thread.sleep(55000);
 			}
