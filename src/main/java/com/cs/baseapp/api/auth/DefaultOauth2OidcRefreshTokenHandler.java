@@ -16,6 +16,9 @@ import org.apache.http.util.EntityUtils;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
+import com.cs.baseapp.logger.LogManager;
+import com.cs.log.logs.LogInfoMgr;
+import com.cs.log.logs.bean.Logger;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -25,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class DefaultOauth2OidcRefreshTokenHandler extends AuthTokenHandler {
 
+	private Logger logger = LogManager.getSystemLog();
+
 	public DefaultOauth2OidcRefreshTokenHandler(String id, boolean isDefault, Properties prop) throws BaseAppException {
 		super(id, isDefault, prop);
 	}
@@ -33,49 +38,60 @@ public class DefaultOauth2OidcRefreshTokenHandler extends AuthTokenHandler {
 
 	@Override
 	public String refreshToken() throws BaseAppException {
-		HttpPost post = new HttpPost(super.getProperty("token_endpoint"));
-		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+		logger.debug(LogManager.getServiceLogKey(), "Start to refresh application token. AuthTokenId:" + super.getId());
+		HttpPost post = new HttpPost(super.getProperty(AuthConst.PARA_TAKEN_ENDPOINT));
+		post.setHeader(AuthConst.REQUEST_CONTENT_TYPE, AuthConst.REQUEST_FORM_TYPE);
 		CloseableHttpResponse resp = null;
 		try (CloseableHttpClient client = HttpClients.createDefault();) {
 			EntityBuilder entityBuilder = EntityBuilder.create();
-			entityBuilder.setParameters(new BasicNameValuePair("grant_type", "refresh_token"),
-					new BasicNameValuePair("client_id", MSBaseApplication.getBaseInfo().getAppId()),
-					new BasicNameValuePair("client_secret", MSBaseApplication.getBaseInfo().getSecret()),
-					new BasicNameValuePair("refresh_token", this.refreshToken));
+			entityBuilder.setParameters(
+					new BasicNameValuePair(AuthConst.PARA_GRANT_TYPE, AuthConst.PARA_GRANT_TYPE_REFRESH_TOKEN),
+					new BasicNameValuePair(AuthConst.PARA_CLIENT_ID, MSBaseApplication.getBaseInfo().getAppId()),
+					new BasicNameValuePair(AuthConst.PARA_CLIENT_SECRET, MSBaseApplication.getBaseInfo().getSecret()),
+					new BasicNameValuePair(AuthConst.PARA_GRANT_TYPE_REFRESH_TOKEN, this.refreshToken));
 			post.setEntity(entityBuilder.build());
 			resp = client.execute(post);
 			JsonNode jsonObj = new ObjectMapper()
 					.readTree(EntityUtils.toString(resp.getEntity(), Charset.forName("UTF-8")));
-			String accToken = jsonObj.path("access_token").asText();
-			this.refreshToken = jsonObj.path("refresh_token").asText();
+			String accToken = jsonObj.path(AuthConst.PARA_ACCESS_TOKEN).asText();
+			this.refreshToken = jsonObj.path(AuthConst.PARA_GRANT_TYPE_REFRESH_TOKEN).asText();
+			super.setExpireTime(jsonObj.path(AuthConst.PARA_EXPIRES_IN).asInt());
 			super.setCurrentToken(accToken);
-			System.out.println("Refresh Token:" + super.getCurrentToken());
+			logger.debug(LogManager.getServiceLogKey(),
+					"Refresh appliaction token success! AuthTokenId: " + super.getId() + ", Token: " + accToken);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.write(LogManager.getServiceLogKey(),
+					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0062", super.getId())));
 		}
 		return super.getCurrentToken();
 	}
 
 	@Override
 	public String getTokenByFirst() throws BaseAppException {
-		HttpPost post = new HttpPost(super.getProperty("token_endpoint"));
-		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+		logger.info(LogManager.getServiceLogKey(),
+				"Start to register the application to sso service. AuthTokenId:" + super.getId());
+		HttpPost post = new HttpPost(super.getProperty(AuthConst.PARA_TAKEN_ENDPOINT));
+		post.setHeader(AuthConst.REQUEST_CONTENT_TYPE, AuthConst.REQUEST_FORM_TYPE);
 		CloseableHttpResponse resp = null;
 		try (CloseableHttpClient client = HttpClients.createDefault();) {
 			EntityBuilder entityBuilder = EntityBuilder.create();
-			entityBuilder.setParameters(new BasicNameValuePair("grant_type", "client_credentials"),
-					new BasicNameValuePair("client_id", MSBaseApplication.getBaseInfo().getAppId()),
-					new BasicNameValuePair("client_secret", MSBaseApplication.getBaseInfo().getSecret()));
+			entityBuilder.setParameters(
+					new BasicNameValuePair(AuthConst.PARA_GRANT_TYPE, AuthConst.PARA_GRANT_TYPE_CLIENT_CREDNETIALS),
+					new BasicNameValuePair(AuthConst.PARA_CLIENT_ID, MSBaseApplication.getBaseInfo().getAppId()),
+					new BasicNameValuePair(AuthConst.PARA_CLIENT_SECRET, MSBaseApplication.getBaseInfo().getSecret()));
 			post.setEntity(entityBuilder.build());
 			resp = client.execute(post);
 			JsonNode jsonObj = new ObjectMapper()
 					.readTree(EntityUtils.toString(resp.getEntity(), Charset.forName("UTF-8")));
-			String accToken = jsonObj.path("access_token").asText();
-			this.refreshToken = jsonObj.path("refresh_token").asText();
+			String accToken = jsonObj.path(AuthConst.PARA_ACCESS_TOKEN).asText();
+			this.refreshToken = jsonObj.path(AuthConst.PARA_GRANT_TYPE_REFRESH_TOKEN).asText();
+			super.setExpireTime(jsonObj.path(AuthConst.PARA_EXPIRES_IN).asInt());
 			super.setCurrentToken(accToken);
-			System.out.println("Get Token First:" + super.getCurrentToken());
+			logger.info(LogManager.getServiceLogKey(),
+					"Register the application to sso service Success! AuthTokenId:" + super.getId());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.write(LogManager.getServiceLogKey(),
+					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0070", super.getId())));
 		}
 		return super.getCurrentToken();
 	}

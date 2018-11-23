@@ -62,4 +62,9 @@ public class MSMessageSender implements Sender {
 		return this.sender;
 	}
 
+	@Override
+	public void sendAsyncRespMessage(MessageResponse resp) throws BaseAppException {
+		this.sender.sendAsyncRespMessage(resp);
+	}
+
 }

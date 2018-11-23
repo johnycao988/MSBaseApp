@@ -62,4 +62,10 @@ public class DefaultRestSender extends MessageSender {
 		// Do nothing
 	}
 
+	@Override
+	public void sendAsyncRespMessage(MessageResponse resp) throws BaseAppException {
+		// do nothing
+
+	}
+
 }

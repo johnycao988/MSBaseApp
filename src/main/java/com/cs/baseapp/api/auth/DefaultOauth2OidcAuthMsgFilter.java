@@ -55,18 +55,20 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 
 	private void authenticationMessage(AuthRule rule, MessageRequest request) throws AuthException {
 		HttpPost post = new HttpPost(rule.getProperty(ConfigConstant.USERINFO_ENDPOINT.getValue()));
-		post.setHeader("Content-Type", "application/x-www-form-urlencoded");
+		post.setHeader(AuthConst.REQUEST_CONTENT_TYPE, AuthConst.REQUEST_FORM_TYPE);
 		CloseableHttpResponse resp = null;
 		try (CloseableHttpClient client = HttpClients.createDefault();) {
 			post.setEntity(EntityBuilder.create()
-					.setParameters(new BasicNameValuePair("access_token", request.getConsumer().getToken())).build());
+					.setParameters(
+							new BasicNameValuePair(AuthConst.PARA_ACCESS_TOKEN, request.getConsumer().getToken()))
+					.build());
 			resp = client.execute(post);
 		} catch (Exception e) {
 			logger.write(LogManager.getServiceLogKey(request),
-					new BaseAppException(e, LogInfoMgr.getErrorInfo("", request.getJsonString())));
+					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0063", request.getJsonString())));
 		}
 		if (resp != null && 200 != resp.getStatusLine().getStatusCode()) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("vaild Token!"));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0064", request.getJsonString()));
 		}
 	}
 
@@ -76,16 +78,16 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 		Map<String, Object> tokenInfo = parseAccessTokenByJWT(MSBaseApplication.getBaseInfo().getAppId(),
 				request.getConsumer().getToken());
 		if (needCheckRoles.contains(AuthConst.ROLE_USER) && !checkUser(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("User Auth Fail!"));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0066", request.getJsonString()));
 		}
 		if (needCheckRoles.contains(AuthConst.ROLE_SERVICE) && !checkService(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("Service Auth Fail!"));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0067", request.getJsonString()));
 		}
 		if (needCheckRoles.contains(AuthConst.ROLE_FUNC) && !checkFunc(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("Func Auth Fail!"));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0068",request.getJsonString()));
 		}
 		if (needCheckRoles.contains(AuthConst.ROLE_ORG_UNIT) && checkOrgUnit(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("OrgUnit Auth Fail!"));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0069",request.getJsonString()));
 		}
 	}
 

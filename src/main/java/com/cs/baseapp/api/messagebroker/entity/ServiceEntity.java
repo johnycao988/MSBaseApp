@@ -41,6 +41,8 @@ public class ServiceEntity implements MBService {
 
 	private String authTokenId;
 
+	private String asyncRespSenderId;
+
 	private boolean storeMsg;
 
 	private Constructor<?> businessServiceConstructor;
@@ -55,6 +57,7 @@ public class ServiceEntity implements MBService {
 		this.receiverId = serviceConfig.get(ConfigConstant.RECEIVER_ID.getValue());
 		this.implementClass = serviceConfig.get(ConfigConstant.IMPL_CLASS.getValue());
 		this.authTokenId = serviceConfig.get(ConfigConstant.AUTH_TOKEN_ID.getValue());
+		this.asyncRespSenderId = serviceConfig.get(ConfigConstant.ASYNC_RESPONSE_SENDER_ID.getValue());
 		if (this.type == MessageBrokerFactory.LOCAL_SERVICE) {
 			this.getLocalBusinessServiceConstructor();
 		}
@@ -144,6 +147,11 @@ public class ServiceEntity implements MBService {
 
 	public String getAuthTokenId() {
 		return this.authTokenId;
+	}
+
+	@Override
+	public Sender getAsyncRespSender() throws BaseAppException {
+		return MSBaseApplication.getMessageBroker().getSender(this.asyncRespSenderId);
 	}
 
 }

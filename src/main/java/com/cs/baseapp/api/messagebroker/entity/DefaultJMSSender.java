@@ -114,4 +114,10 @@ public class DefaultJMSSender extends MessageSender {
 		}
 	}
 
+	@Override
+	public void sendAsyncRespMessage(MessageResponse resp) throws BaseAppException {
+		// do Nothing
+		
+	}
+
 }

@@ -53,4 +53,10 @@ public class TestSender extends MessageSender {
 		return testRes;
 	}
 
+	@Override
+	public void sendAsyncRespMessage(MessageResponse resp) throws BaseAppException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

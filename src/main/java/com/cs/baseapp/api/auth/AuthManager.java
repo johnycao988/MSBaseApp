@@ -42,8 +42,12 @@ public class AuthManager {
 
 	@SuppressWarnings("unchecked")
 	public AuthManager(Map<String, Object> configs) {
+		logger.info(LogManager.getServiceLogKey(), "Start build AuthTokenHandler.");
 		buildAuthTokenHandlers((List<Map<String, Object>>) configs.get(ConfigConstant.AUTH_TOKEN.getValue()));
+		logger.info(LogManager.getServiceLogKey(), "Build AuthTokenHandler Finish.");
+		logger.info(LogManager.getServiceLogKey(), "Start build AuthRules.");
 		buildAuthRules((List<Map<String, Object>>) configs.get(ConfigConstant.RULES.getValue()));
+		logger.info(LogManager.getServiceLogKey(), "Build AuthRules finish.");
 	}
 
 	public void start() {
@@ -53,10 +57,12 @@ public class AuthManager {
 			try {
 				this.threadPool.execute(new RefreshTokenTask(e.getValue()));
 			} catch (BaseAppException e1) {
-				e1.printStackTrace();
+				logger.write(LogManager.getServiceLogKey(),
+						new BaseAppException(e1, LogInfoMgr.getErrorInfo("ERR_0057", e.getValue().getId())));
 			}
 		}
 	}
+	
 
 	@SuppressWarnings("unchecked")
 	private void buildAuthRules(List<Map<String, Object>> authRuleConfig) {
@@ -77,8 +83,10 @@ public class AuthManager {
 							((String) ac.get(ConfigConstant.ROLES.getValue())).trim().split(",")));
 				}
 				this.authRules.put(id, new DefaultAuthRule(id, authTokenId, prop, authClients));
+				logger.info(LogManager.getServiceLogKey(), "Build AuthRole Success! AuthRoleId: " + id);
 			} catch (Exception e) {
-				logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("", id)));
+				logger.write(LogManager.getServiceLogKey(),
+						new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0058", id)));
 			}
 		}
 	}
@@ -97,12 +105,15 @@ public class AuthManager {
 						.getConstructor(String.class, boolean.class, Properties.class)
 						.newInstance(authTokenId, c.get(ConfigConstant.IS_DEFAULT.getValue()), prop);
 				this.authTokens.put(headler.getId(), headler);
+				logger.info(LogManager.getServiceLogKey(),
+						"Build AuthTokenHandler Success! AuthTokenId: " + authTokenId);
 				if (headler.isDefault()) {
 					this.defaultAuthTokenId = headler.getId();
+					logger.info(LogManager.getServiceLogKey(), "Set the " + authTokenId + " as the Default AuthToken!");
 				}
 			} catch (Exception e) {
 				logger.write(LogManager.getServiceLogKey(),
-						new BaseAppException(e, LogInfoMgr.getErrorInfo("", authTokenId, implClass)));
+						new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0059", authTokenId, implClass)));
 			}
 		}
 	}
@@ -128,21 +139,26 @@ public class AuthManager {
 	}
 
 	public void shutdown() throws BaseAppException {
+		logger.info(LogManager.getServiceLogKey(), "start to stop AuthManager!");
 		if (this.threadPool != null) {
 			this.threadPool.shutdown();
 			try {
 				if (!this.threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
 					this.threadPool.shutdownNow();
 					if (!this.threadPool.awaitTermination(60, TimeUnit.SECONDS)) {
-						throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0047"));
+						throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0060"));
 					}
 				}
+				logger.info(LogManager.getServiceLogKey(), "stop AuthToken Thread Pool Finish!");
+				this.authRules.clear();
+				this.authTokens.clear();
 			} catch (InterruptedException e) {
-				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0048"));
+				BaseAppException ex = new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0061"));
 				Thread.currentThread().interrupt();
 				logger.write(LogManager.getServiceLogKey(), ex);
 			}
 		}
+		logger.info(LogManager.getServiceLogKey(), "Stop AuthManager Finish!");
 	}
 
 }
@@ -150,6 +166,8 @@ public class AuthManager {
 class RefreshTokenTask implements Runnable {
 
 	private AuthTokenHandler handler = null;
+
+	private Logger logger = LogManager.getSystemLog();
 
 	RefreshTokenTask(AuthTokenHandler handler) throws BaseAppException {
 		this.handler = handler;
@@ -161,10 +179,14 @@ class RefreshTokenTask implements Runnable {
 		try {
 			while (!Thread.interrupted()) {
 				handler.setCurrentToken(handler.refreshToken());
-				Thread.sleep(55000);
+				Thread.sleep((long) handler.getExpireTime() * 1000 - 60000);
 			}
+		} catch (InterruptedException e1) {
+			logger.info(LogManager.getServiceLogKey(), "RefreshTokenTask stop finish! AuthTokenId:" + handler.getId());
+			Thread.currentThread().interrupt();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.write(LogManager.getServiceLogKey(),
+					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0062", handler.getId())));
 		}
 	}
 

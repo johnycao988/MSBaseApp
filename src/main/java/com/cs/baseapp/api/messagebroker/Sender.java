@@ -22,4 +22,6 @@ public interface Sender {
 
 	public MessageResponse sendSyncMessage(TranslationMessage requestMsg) throws BaseAppException;
 
+	public void sendAsyncRespMessage(MessageResponse resp) throws BaseAppException;
+
 }

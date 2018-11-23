@@ -22,7 +22,8 @@ public enum ConfigConstant {
 	CONNECTIONS("connections"), AUTH_RULES("authRules"), ROLES("roles"), IS_AUTH("isAuth"), ROLES_FUNC("func"),
 	ROLES_SERVICE("service"), ROLES_ORG_UNIT("orgUnit"), ROLES_USER("user"), CLIENT_ID("clientId"),
 	AUTH_TOKEN("authToken"), RULES("rules"), AUTH_TOKEN_ID("authTokenId"), CLIENTS("clients"),
-	AUTH_RULE_ID("authRuleId"), USERINFO_ENDPOINT("userinfo_endpoint"), IS_DEFAULT("isDefault");
+	AUTH_RULE_ID("authRuleId"), USERINFO_ENDPOINT("userinfo_endpoint"), IS_DEFAULT("isDefault"),
+	ASYNC_RESPONSE_SENDER_ID("asyncRespSenderId");
 
 	private String value;
 

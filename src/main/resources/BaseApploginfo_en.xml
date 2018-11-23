@@ -271,22 +271,19 @@
 	<info>
 		<code>ERR_0041</code>
 		<msg>Failed to get JMS Connection from context by JndiName! JNDIName:
-			%1$s
-		</msg>
+			%1$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
 	<info>
 		<code>ERR_0042</code>
-		<msg>Failed to close the listener connection! ListenerId: %1$s
-		</msg>
+		<msg>Failed to close the listener connection! ListenerId: %1$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
 	<info>
 		<code>ERR_0043</code>
-		<msg>Failed to initialize Message Listener. ListenerId: %1$s
-		</msg>
+		<msg>Failed to initialize Message Listener. ListenerId: %1$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
@@ -300,8 +297,7 @@
 	<info>
 		<code>ERR_0045</code>
 		<msg>Failed to process JMS message by Listener. MsgContent: %1$s
-			ListenerId: %2$s
-		</msg>
+			ListenerId: %2$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
@@ -371,15 +367,122 @@
 	</info>
 	<info>
 		<code>ERR_0055</code>
-		<msg>Fail to initialize Data Source by configuration file. FilePath:
-			%1$s
-		</msg>
+		<msg>Fail to initialize Data Source by configuration file.
+			FilePath:
+			%1$s</msg>
 		<action />
 		<level>ERROR</level>
 	</info>
 	<info>
 		<code>ERR_0056</code>
 		<msg>MSBaseApplication initialize fail!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0057</code>
+		<msg>Fail to start the refresh token thread! AuthTokenId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0058</code>
+		<msg>Fail to build AuthRule! AuthRuleId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0059</code>
+		<msg>Fail to build AuthTokenHandler! AuthTokenId: %1$s , ImplClass:
+			%2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0060</code>
+		<msg>Fail to stop AuthToken refresh thread pool!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0061</code>
+		<msg>Fail to shutdown the Auth Manager!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0062</code>
+		<msg>Fail to refresh application token! AuthTokenId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0063</code>
+		<msg>Something error when authenticate the request message! Message:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0064</code>
+		<msg>The message authenticate fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0065</code>
+		<msg>The message authenticate fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0066</code>
+		<msg>The message authorize user information fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0067</code>
+		<msg>The message authorize service roles fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0068</code>
+		<msg>The message authorize function roles fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0069</code>
+		<msg>The message authorize orgUnit fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0070</code>
+		<msg>Fail to register the application to SSO service! AuthTokenId:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0071</code>
+		<msg>Fail to process async local service! ServiceId: %1$s,
+			RequestMessage: %2$s, ResponseMessage: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0072</code>
+		<msg>Fail to send async local service response! ServiceId: %1$s,
+			RequestMessage: %2$s, ResponseMessage: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0073</code>
+		<msg>Fail to build the Async Local Service Thread Pool!</msg>
 		<action />
 		<level>ERROR</level>
 	</info>

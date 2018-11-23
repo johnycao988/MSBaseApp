@@ -9,6 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MBService;
@@ -17,6 +21,7 @@ import com.cs.baseapp.api.messagebroker.Receiver;
 import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
 import com.cs.log.logs.LogInfoMgr;
@@ -31,8 +36,18 @@ public class ServiceManager {
 
 	private Logger logger = LogManager.getSystemLog();
 
+	private ExecutorService asyncLocalServiceThreadPool;
+
 	public ServiceManager(Map<String, MBService> services) {
 		this.services = services;
+		try {
+			String envParaPoolSize = MSBaseApplication.getAppEnv()
+					.getEnvProperty(ConfigConstant.ASYNC_RESPONSE_SENDER_ID.getValue());
+			int poolSize = Integer.parseInt(StringUtils.isEmpty(envParaPoolSize) ? "30" : envParaPoolSize);
+			asyncLocalServiceThreadPool = Executors.newFixedThreadPool(poolSize);
+		} catch (Exception e) {
+			logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0073")));
+		}
 	}
 
 	public MBService getById(String id) {
@@ -66,7 +81,11 @@ public class ServiceManager {
 		try {
 			storeRequestMsg(service, req);
 			if (service.getServiceType() == MessageBrokerFactory.LOCAL_SERVICE) {
-				resp = service.getBusinessService(req).process();
+				if (req.getServices().get(0).isSycn()) {
+					resp = service.getBusinessService(req).process();
+				} else {
+					processAsyncLocalService(service, req);
+				}
 			} else {
 				resp = invokeRemoteService(service, req);
 			}
@@ -80,6 +99,13 @@ public class ServiceManager {
 		return resp;
 	}
 
+	private void processAsyncLocalService(MBService service, MessageRequest req) {
+		if (this.asyncLocalServiceThreadPool != null) {
+			this.asyncLocalServiceThreadPool.execute(new AsyncLocalServiceTask(service, req));
+		}
+
+	}
+
 	private MessageResponse invokeRemoteService(MBService service, MessageRequest req) throws BaseAppException {
 		Sender sender = null;
 		Receiver receiver = null;
@@ -90,8 +116,9 @@ public class ServiceManager {
 				resp = sender.sendSyncMessage(service.getTranslationMessage(req));
 				if (resp == null) {
 					receiver = service.getReceiver();
-					resp = receiver.recv(service.getTranslationMessage(req));
-
+					if (receiver != null) {
+						resp = receiver.recv(service.getTranslationMessage(req));
+					}
 				}
 			} else {
 				sender = service.getSender();
@@ -120,6 +147,41 @@ public class ServiceManager {
 			throws BaseAppException {
 		if (service.isStoreMsg()) {
 			MSBaseApplication.getMsgRepository().storeResponseMessage(request, response);
+		}
+	}
+
+}
+
+class AsyncLocalServiceTask implements Runnable {
+
+	private Logger logger = LogManager.getSystemLog();
+
+	private MBService service;
+
+	private MessageRequest request;
+
+	public AsyncLocalServiceTask(MBService service, MessageRequest request) {
+		this.service = service;
+		this.request = request;
+	}
+
+	@Override
+	public void run() {
+		MessageResponse resp = null;
+		try {
+			resp = service.getBusinessService(this.request).process();
+		} catch (Exception e) {
+			logger.write(LogManager.getServiceLogKey(this.request),
+					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0071", service.getId(),
+							this.request.getJsonString(), resp != null ? resp.getJsonString() : "")));
+		}
+		try {
+			if (resp != null) {
+				service.getAsyncRespSender().sendAsyncRespMessage(resp);
+			}
+		} catch (Exception e) {
+			logger.write(LogManager.getServiceLogKey(this.request), new BaseAppException(e, LogInfoMgr
+					.getErrorInfo("ERR_0072", service.getId(), this.request.getJsonString(), resp.getJsonString())));
 		}
 	}
 

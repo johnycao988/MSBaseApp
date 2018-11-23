@@ -6,7 +6,7 @@ app:
     applicationId: eloan
     secret: cc7dfc51-32da-4466-871a-800ccce36103
   env:
-    KEY_1: VALUE_1
+    ayncLoaclServiceThreads: 50
     KEY_2: VALUE_2
   authRules:
     authToken:
@@ -101,13 +101,15 @@ app:
     services:
       local:
       - id: eloan-accrue
-        implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService
+        implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService\
+        asyncRespSenderId: 
         msgStore: false #true & false
         parameters:
           KEY_1: value1
           KEY_2: value2
       - id: eloan-test
         implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService
+        asyncRespSenderId:
         parameters:
           KEY_1: value1
           KEY_2: value2

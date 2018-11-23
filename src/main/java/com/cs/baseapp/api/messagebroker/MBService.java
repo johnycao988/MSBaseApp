@@ -25,7 +25,7 @@ public interface MBService {
 	public String getProperty(String key);
 
 	public String getTranformClass();
-	
+
 	public String getAuthTokenId();
 
 	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException;
@@ -33,6 +33,8 @@ public interface MBService {
 	public Sender getSender() throws BaseAppException;
 
 	public Receiver getReceiver() throws BaseAppException;
+
+	public Sender getAsyncRespSender() throws BaseAppException;
 
 	public String getImplementClass();
 

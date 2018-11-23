@@ -19,6 +19,8 @@ public abstract class AuthTokenHandler {
 
 	private String currentToken;
 
+	private int expireTime;
+
 	private boolean isDefault = false;
 
 	public abstract String getTokenByFirst() throws BaseAppException;
@@ -49,6 +51,14 @@ public abstract class AuthTokenHandler {
 
 	public boolean isDefault() {
 		return this.isDefault;
+	}
+
+	public void setExpireTime(int time) {
+		this.expireTime = time;
+	}
+
+	public int getExpireTime() {
+		return this.expireTime;
 	}
 
 }
