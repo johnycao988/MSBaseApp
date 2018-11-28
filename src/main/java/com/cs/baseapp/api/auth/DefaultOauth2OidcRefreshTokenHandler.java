@@ -62,6 +62,8 @@ public class DefaultOauth2OidcRefreshTokenHandler extends AuthTokenHandler {
 		} catch (Exception e) {
 			logger.write(LogManager.getServiceLogKey(),
 					new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0062", super.getId())));
+			logger.info(LogManager.getServiceLogKey(), "Refresh Token Fail, and will login again!");
+			return getTokenByFirst();
 		}
 		return super.getCurrentToken();
 	}

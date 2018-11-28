@@ -12,8 +12,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBrokerFactory;
@@ -21,7 +19,6 @@ import com.cs.baseapp.api.messagebroker.Receiver;
 import com.cs.baseapp.api.messagebroker.Sender;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
-import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
 import com.cs.log.logs.LogInfoMgr;
@@ -41,10 +38,10 @@ public class ServiceManager {
 	public ServiceManager(Map<String, MBService> services) {
 		this.services = services;
 		try {
-			String envParaPoolSize = MSBaseApplication.getAppEnv()
-					.getEnvProperty(ConfigConstant.ASYNC_RESPONSE_SENDER_ID.getValue());
-			int poolSize = Integer.parseInt(StringUtils.isEmpty(envParaPoolSize) ? "30" : envParaPoolSize);
-			asyncLocalServiceThreadPool = Executors.newFixedThreadPool(poolSize);
+//			String envParaPoolSize = MSBaseApplication.getAppEnv()
+//					.getEnvProperty(ConfigConstant.ASYNC_RESPONSE_SENDER_ID.getValue());
+//			int poolSize = Integer.parseInt(StringUtils.isEmpty(envParaPoolSize) ? "30" : envParaPoolSize);
+			asyncLocalServiceThreadPool = Executors.newFixedThreadPool(30);
 		} catch (Exception e) {
 			logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0073")));
 		}

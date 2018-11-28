@@ -5,7 +5,6 @@ package com.cs.baseapp.api.app;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -158,20 +157,23 @@ public class MSBaseApplication {
 				f.doWebFilter(csReqMsg, request, response);
 			} catch (AuthException authEx) {
 				try {
+					logger.write(LogManager.getServiceLogKey(csReqMsg), authEx);
 					MessageResponseBodyServiceStatus status = MessageFactory.getResponseMessageBuilder()
 							.getMessageResponseBodyServiceStatusBuilder().setErrCode("401").setSuccess(false)
 							.setErrMsg("No Permission!").build();
 					MessageResponseBodyService body = MessageFactory.getResponseMessageBuilder()
 							.getMessageResponseBodyServiceBuilder().setApplicationId(base.getAppId())
-							.setResponseData("{\"code\":401,\"msg\":\"You have no permission to operate this transaction!\"}").setServiceStatus(status)
-							.build();
+							.setResponseData(
+									"{\"code\":401,\"msg\":\"You have no permission to operate this transaction!\"}")
+							.setServiceStatus(status).build();
 					List<MessageResponse> l = new ArrayList<>();
 					l.add(MessageFactory.getResponseMessageBuilder().addResponseBodyService(body).build());
 					response.getOutputStream().print(ResponseMessageUtils.mergeResponse(csReqMsg, l).getJsonString());
 					response.flushBuffer();
 					break;
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.write(LogManager.getServiceLogKey(),
+							new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0074", csReqMsg.getJsonString())));
 				}
 			} catch (Exception e) {
 				BaseAppException ex = new BaseAppException(e,
@@ -200,6 +202,8 @@ public class MSBaseApplication {
 		logger.info(logKey, "The message filter stop success!");
 		mb.shutdown();
 		logger.info(logKey, "The message broker stop success!");
+		authManager.shutdown();
+		logger.info(logKey, "The auth maneger stop success!");
 		status = MSBaseAppStatus.STOPPED.getValue();
 		logger.info(logKey, "MSBaseApplication stop success!");
 	}

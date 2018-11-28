@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
+import com.cs.baseapp.utils.MSBaseAppStatus;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.domain.factory.MessageFactory;
 import com.cs.commons.jdbc.DSManager;
@@ -35,7 +36,11 @@ public class MessageWebFilter implements Filter {
 	Logger logger = LogManager.getSystemLog();
 
 	public void destroy() {
-		// Do nothing
+		try {
+			MSBaseApplication.shutdown();
+		} catch (BaseAppException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -77,8 +82,12 @@ public class MessageWebFilter implements Filter {
 		String baseAppConfigFile = rootPath + "/baseConfig/baseAppConfig.yml";
 		try {
 			MSBaseApplication.init(baseAppConfigFile);
+			String strStatus = "Success";
+			if (MSBaseApplication.getStatus() != MSBaseAppStatus.RUNNING.getValue()) {
+				strStatus = "Fail";
+			}
 			logger.info(LogManager.getServiceLogKey(),
-					"Loading Base Application config File success. FilePath:" + baseAppConfigFile);
+					"Loading Base Application config File " + strStatus + ". FilePath:" + baseAppConfigFile);
 		} catch (BaseAppException e) {
 			logger.write(LogManager.getServiceLogKey(), e);
 		}

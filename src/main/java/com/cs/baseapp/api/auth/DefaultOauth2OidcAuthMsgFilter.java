@@ -47,7 +47,11 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 	public void doWebFilter(MessageRequest csReqMsg, ServletRequest request, ServletResponse response)
 			throws BaseAppException, MessageException {
 		AuthRule authRule = super.getAuthRule();
-		if (authRule.getAuthClient(csReqMsg.getConsumer().getClientId()).isAuth()) {
+		AuthClient ac = authRule.getAuthClient(csReqMsg.getConsumer().getClientId());
+		if (ac == null) {
+			ac = getDefaultAuthClient();
+		}
+		if (ac.isAuth()) {
 			authenticationMessage(authRule, csReqMsg);
 			authorizationMessage(authRule, csReqMsg);
 		}
@@ -84,10 +88,10 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0067", request.getJsonString()));
 		}
 		if (needCheckRoles.contains(AuthConst.ROLE_FUNC) && !checkFunc(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0068",request.getJsonString()));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0068", request.getJsonString()));
 		}
 		if (needCheckRoles.contains(AuthConst.ROLE_ORG_UNIT) && checkOrgUnit(tokenInfo, request)) {
-			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0069",request.getJsonString()));
+			throw new AuthException(LogInfoMgr.getErrorInfo("ERR_0069", request.getJsonString()));
 		}
 	}
 
@@ -121,6 +125,10 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 		tokenInfo.put(AuthConst.ROLE_ORG_UNIT, orgUnitRolesMap);
 		tokenInfo.put(AuthConst.ROLE_SERVICE, serviceRolesMap);
 		return tokenInfo;
+	}
+
+	private AuthClient getDefaultAuthClient() {
+		return new DefaultAuthClient("Default_Auth_Client", true, new String[] { AuthConst.ROLE_SERVICE });
 	}
 
 	private boolean checkUser(Map<String, Object> tokenInfo, MessageRequest request) {
