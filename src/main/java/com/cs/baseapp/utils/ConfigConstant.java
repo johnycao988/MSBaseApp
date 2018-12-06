@@ -9,12 +9,12 @@ package com.cs.baseapp.utils;
  */
 public enum ConfigConstant {
 
-	APP("app"), BASE("base"), BASE_NAME("name"), BASE_VERSION("version"), BASE_APP_ID("applicationId"),
-	BASE_SECRET("secret"), ENV("env"), WEB_MESSAGE_FILTER("webMessageFilter"), URLPATTERN("urlPattern"),
-	MESSAGE_BROKER("messageBroker"), SENDER("sender"), POOL_SZIE("poolSize"), REST_METHOD("METHOD"),
-	REST_PARA_TYPE("PARA_TYPE"), RECRIVER("receiver"), PARAMETERS("parameters"), ID("id"), IMPL_CLASS("implementClass"),
-	JMS_USER_NAME("USER_NAME"), JMS_USER_PWD("USER_PWD"), URI("URI"), JMS_QUEUE_NAME("QUEUE_NAME"),
-	LISTENER("listener"), MESSAGE_FILTER("messageFilter"), TRANS_CLASS("tranformClass"),
+	APP("app"), BASE("base"), BASE_NAME("name"), BASE_VERSION("version"), SYSTEM_DATA_SOURCE("systemDataSource"),
+	BASE_APP_ID("applicationId"), BASE_SECRET("secret"), ENV("env"), WEB_MESSAGE_FILTER("webMessageFilter"),
+	URLPATTERN("urlPattern"), MESSAGE_BROKER("messageBroker"), SENDER("sender"), POOL_SZIE("poolSize"),
+	REST_METHOD("METHOD"), REST_PARA_TYPE("PARA_TYPE"), RECRIVER("receiver"), PARAMETERS("parameters"), ID("id"),
+	IMPL_CLASS("implementClass"), JMS_USER_NAME("USER_NAME"), JMS_USER_PWD("USER_PWD"), URI("URI"),
+	JMS_QUEUE_NAME("QUEUE_NAME"), LISTENER("listener"), MESSAGE_FILTER("messageFilter"), TRANS_CLASS("tranformClass"),
 	MAX_PROCESS_THREADS("maxProcessThreads"), SERVICES("services"), LOACL_SERVICE("local"), REMOTE_SERVICE("remote"),
 	SENDER_ID("senderId"), RECEIVER_ID("receiverId"), TIMEOUT("timeout"),
 	JMS_CONNECTION_FACTORY_JNDI("CONN_FACTORY_JNDI"), JMS_QUEUE_JNDI("QUEUE_JNDI"), REPOSITORY("repository"),
@@ -23,7 +23,7 @@ public enum ConfigConstant {
 	ROLES_SERVICE("service"), ROLES_ORG_UNIT("orgUnit"), ROLES_USER("user"), CLIENT_ID("clientId"),
 	AUTH_TOKEN("authToken"), RULES("rules"), AUTH_TOKEN_ID("authTokenId"), CLIENTS("clients"),
 	AUTH_RULE_ID("authRuleId"), USERINFO_ENDPOINT("userinfo_endpoint"), IS_DEFAULT("isDefault"),
-	ASYNC_RESPONSE_SENDER_ID("asyncRespSenderId");
+	ASYNC_RESPONSE_SENDER_ID("asyncRespSenderId"), EVENTS("events"), HANDLER_CLASS("handlerClass"),NAME("name"),TOPIC_NAME("topic.name");
 
 	private String value;
 

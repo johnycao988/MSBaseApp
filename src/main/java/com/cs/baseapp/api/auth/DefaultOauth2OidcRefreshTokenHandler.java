@@ -51,6 +51,9 @@ public class DefaultOauth2OidcRefreshTokenHandler extends AuthTokenHandler {
 					new BasicNameValuePair(AuthConst.PARA_GRANT_TYPE_REFRESH_TOKEN, this.refreshToken));
 			post.setEntity(entityBuilder.build());
 			resp = client.execute(post);
+			if (resp.getStatusLine().getStatusCode() != 200) {
+				throw new BaseAppException(LogInfoMgr.getErrorInfo(""));
+			}
 			JsonNode jsonObj = new ObjectMapper()
 					.readTree(EntityUtils.toString(resp.getEntity(), Charset.forName("UTF-8")));
 			String accToken = jsonObj.path(AuthConst.PARA_ACCESS_TOKEN).asText();

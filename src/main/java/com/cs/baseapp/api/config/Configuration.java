@@ -41,6 +41,8 @@ public class Configuration {
 
 	private List<Map<String, Object>> mbRemoteServicesConfig = new ArrayList<>();
 
+	private List<Map<String, Object>> mbEventManagerConfig = new ArrayList<>();
+
 	private Map<String, String> repositoryConfig = new HashMap<>();
 
 	private Logger logger = LogManager.getSystemLog();
@@ -69,6 +71,8 @@ public class Configuration {
 			this.mbReceiversConfig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.RECRIVER.getValue());
 			this.processKey = ConfigConstant.LISTENER.getValue();
 			this.mbListenersConfig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.LISTENER.getValue());
+			this.processKey = ConfigConstant.EVENTS.getValue();
+			this.mbEventManagerConfig = (List<Map<String, Object>>) mbConfig.get(ConfigConstant.EVENTS.getValue());
 			this.processKey = ConfigConstant.SERVICES.getValue();
 			Map<String, Object> serviceConfig = (Map<String, Object>) mbConfig.get(ConfigConstant.SERVICES.getValue());
 			this.processKey = ConfigConstant.LOACL_SERVICE.getValue();
@@ -128,6 +132,10 @@ public class Configuration {
 
 	public Map<String, Object> getAuthRulesConfig() {
 		return this.authRulesConfig == null ? new HashMap<>() : this.authRulesConfig;
+	}
+
+	public List<Map<String, Object>> getMbEventManagerConfig() {
+		return this.mbEventManagerConfig;
 	}
 
 }

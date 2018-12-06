@@ -112,11 +112,12 @@ public class MSBaseApplication {
 			logger.info(logKey, "Build Web Filters finish. Total:" + filters.size());
 			initProcessStep = "Init MessageBroker";
 			mb = MessageBrokerFactory.buildMsgBroker(config.getMbSendersConfig(), config.getMbReceiversConfig(),
-					config.getMbListenersConfig(), config.getMbLocalServicesConfig(),
+					config.getMbListenersConfig(), config.getMbEventManagerConfig(), config.getMbLocalServicesConfig(),
 					config.getMbRemoteServicesConfig(),
 					PropertiesUtils.convertMapToProperties(config.getRepositoryConfig()));
 			status = MSBaseAppStatus.RUNNING.getValue();
 			logger.info(logKey, "Build Message Broker finish.");
+			mb.getListenerManager().start();
 			authManager.start();
 		} catch (Exception e) {
 			throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0035", initProcessStep));

@@ -15,6 +15,7 @@ import com.cs.baseapp.api.messagebroker.MBService;
 import com.cs.baseapp.api.messagebroker.MessageBroker;
 import com.cs.baseapp.api.messagebroker.Receiver;
 import com.cs.baseapp.api.messagebroker.Sender;
+import com.cs.baseapp.api.messagebroker.event.EventManager;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.cloud.message.api.MessageRequest;
@@ -34,15 +35,18 @@ public class MessageBrokerEntity implements MessageBroker {
 
 	private ServiceManager serviceManager;
 
+	private EventManager eventManager;
+
 	private BaseMessageRepository baseMessageRepository;
 
 	public MessageBrokerEntity(List<Map<String, Object>> sendersConfig, List<Map<String, Object>> receiverConfig,
-			List<Map<String, Object>> listenerConfig, Map<String, MBService> services,
-			BaseMessageRepository repository) {
+			List<Map<String, Object>> listenerConfig, List<Map<String, Object>> eventManagersConfig,
+			Map<String, MBService> services, BaseMessageRepository repository) {
 		this.senderManager = new SenderManager(sendersConfig);
 		this.receiverManager = new ReceiverManager(receiverConfig);
 		this.listenerManager = new ListenerManager(listenerConfig);
 		this.serviceManager = new ServiceManager(services);
+		this.eventManager = new EventManager(eventManagersConfig);
 		this.baseMessageRepository = repository;
 	}
 
@@ -54,16 +58,6 @@ public class MessageBrokerEntity implements MessageBroker {
 	@Override
 	public Receiver getReceiver(String id) throws BaseAppException {
 		return this.receiverManager.getById(id);
-	}
-
-	@Override
-	public Map<String, List<BaseMessageListener>> getListeners() {
-		return this.listenerManager.getAll();
-	}
-
-	@Override
-	public List<BaseMessageListener> getListener(String id) {
-		return this.listenerManager.getById(id);
 	}
 
 	@Override
@@ -92,6 +86,21 @@ public class MessageBrokerEntity implements MessageBroker {
 	@Override
 	public BaseMessageRepository getMessageRepository() {
 		return this.baseMessageRepository;
+	}
+
+	@Override
+	public EventManager getEventManager() {
+		return this.eventManager;
+	}
+
+	@Override
+	public BaseMessageListener getListener(String id) {
+		return this.listenerManager.getById(id);
+	}
+
+	@Override
+	public ListenerManager getListenerManager() {
+		return this.listenerManager;
 	}
 
 }

@@ -42,10 +42,10 @@ public class MessageBrokerFactory {
 
 	public static MessageBroker buildMsgBroker(List<Map<String, Object>> senderConfig,
 			List<Map<String, Object>> receiverConfig, List<Map<String, Object>> listenerConfig,
-			List<Map<String, Object>> localServiceConfig, List<Map<String, Object>> remoteServiceConfig,
-			Properties repositoryConfig) {
+			List<Map<String, Object>> eventManagerConfig, List<Map<String, Object>> localServiceConfig,
+			List<Map<String, Object>> remoteServiceConfig, Properties repositoryConfig) {
 		logger.info(logKey, "Start to build Base App MessageBroker.");
-		return new MessageBrokerEntity(senderConfig, receiverConfig, listenerConfig,
+		return new MessageBrokerEntity(senderConfig, receiverConfig, listenerConfig, eventManagerConfig,
 				buildServices(localServiceConfig, remoteServiceConfig), buildMessageRepository(repositoryConfig));
 	}
 

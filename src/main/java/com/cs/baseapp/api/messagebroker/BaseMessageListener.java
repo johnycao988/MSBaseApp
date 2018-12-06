@@ -45,6 +45,8 @@ public abstract class BaseMessageListener {
 
 	public abstract void stop() throws BaseAppException;
 
+	public abstract Object receive() throws BaseAppException;
+
 	public String getId() {
 		return this.id;
 	}
@@ -75,14 +77,19 @@ public abstract class BaseMessageListener {
 		return this.connections;
 	}
 
-	public TranslationMessage getTranslationMessage(MessageRequest req) throws BaseAppException {
+	public TranslationMessage getTranslationMessage(Object message) throws BaseAppException {
 		Object instance = null;
 		try {
-			instance = Class.forName(this.tranformClass).getConstructor(Properties.class, MessageRequest.class)
-					.newInstance(this.prop, req);
+			if (message instanceof MessageRequest) {
+				instance = Class.forName(this.tranformClass).getConstructor(Properties.class, MessageRequest.class)
+						.newInstance(this.prop, (MessageRequest) message);
+			} else {
+				instance = Class.forName(this.tranformClass).getConstructor(Properties.class, Object.class)
+						.newInstance(this.prop, message);
+			}
 		} catch (Exception e) {
 			throw new BaseAppException(e,
-					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, req.getJsonString()));
+					LogInfoMgr.getErrorInfo("ERR_0027", this.id, this.tranformClass, message.toString()));
 		}
 		return (TranslationMessage) instance;
 	}

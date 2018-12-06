@@ -111,6 +111,11 @@ public class DefaultJMSListener extends BaseMessageListener implements MessageLi
 			logger.write(LogManager.getServiceLogKey(), ex);
 		}
 	}
+
+	@Override
+	public Object receive() throws BaseAppException {
+		return null;
+	}
 }
 
 class MessageProcessor implements Runnable {

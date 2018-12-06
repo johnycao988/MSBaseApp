@@ -41,6 +41,11 @@ public class TestMessageListener extends BaseMessageListener {
 		System.out.println("Listener stop!");
 	}
 
+	@Override
+	public Object receive() throws BaseAppException {
+		return null;
+	}
+
 }
 
 class Listener extends Thread {

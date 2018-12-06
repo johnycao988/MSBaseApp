@@ -22,6 +22,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.api.filter.BaseMessageFilter;
+import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
@@ -159,7 +160,17 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 
 	@Override
 	public void doListenerFilter(MessageRequest requestMsg) throws BaseAppException {
-		// listener filter logic
+		try {
+			doWebFilter(requestMsg, null, null);
+		} catch (MessageException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void doListenerEventFilter(TranslationMessage message) throws BaseAppException {
+		// do nothing
+
 	}
 
 }

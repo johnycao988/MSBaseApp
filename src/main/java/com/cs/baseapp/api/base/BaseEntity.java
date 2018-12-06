@@ -21,11 +21,14 @@ public class BaseEntity implements Base {
 
 	private String secret;
 
+	private String systemDs;
+
 	public BaseEntity(Map<String, String> baseConfig) {
 		this.version = baseConfig.get(ConfigConstant.BASE_VERSION.getValue());
 		this.applicationId = baseConfig.get(ConfigConstant.BASE_APP_ID.getValue());
 		this.secret = baseConfig.get(ConfigConstant.BASE_SECRET.getValue());
 		this.name = baseConfig.get(ConfigConstant.BASE_NAME.getValue());
+		this.systemDs = baseConfig.get(ConfigConstant.SYSTEM_DATA_SOURCE.getValue());
 	}
 
 	@Override
@@ -46,6 +49,11 @@ public class BaseEntity implements Base {
 	@Override
 	public String getName() {
 		return this.name;
+	}
+
+	@Override
+	public String getSystemDataSource() {
+		return this.systemDs;
 	}
 
 }

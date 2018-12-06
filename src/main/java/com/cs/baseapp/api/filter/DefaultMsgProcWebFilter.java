@@ -11,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
 import com.cs.baseapp.api.app.MSBaseApplication;
+import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.utils.RequestMessageUtils;
 import com.cs.baseapp.utils.ResponseMessageUtils;
@@ -49,6 +50,12 @@ public class DefaultMsgProcWebFilter extends BaseMessageFilter {
 	@Override
 	public void doListenerFilter(MessageRequest requestMsg) throws BaseAppException {
 		// do nothing
+	}
+
+	@Override
+	public void doListenerEventFilter(TranslationMessage message) throws BaseAppException {
+		// do nothing
+
 	}
 
 }

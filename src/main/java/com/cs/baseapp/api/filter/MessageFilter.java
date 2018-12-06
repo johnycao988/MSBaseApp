@@ -6,6 +6,7 @@ package com.cs.baseapp.api.filter;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+import com.cs.baseapp.api.messagebroker.TranslationMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.domain.errorhandling.MessageException;
@@ -20,4 +21,6 @@ public interface MessageFilter {
 			throws BaseAppException, MessageException;
 
 	public void doListenerFilter(MessageRequest requestMsg) throws BaseAppException;
+
+	public void doListenerEventFilter(TranslationMessage message) throws BaseAppException;
 }

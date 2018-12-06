@@ -5,6 +5,7 @@ app:
     version: v01
     applicationId: eloan
     secret: cc7dfc51-32da-4466-871a-800ccce36103
+    systemDataSource: eximsys
   env:
     ayncLoaclServiceThreads: 50
     KEY_2: VALUE_2
@@ -98,8 +99,30 @@ app:
       parameters:
         CONN_FACTORY_JNDI: Queue_Factory/ActiveMQ
         QUEUE_JNDI: Queue/Eloan_Queue_Receive
+    events:
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
     services:
       local:
+      - id: default-event-filter
+        implementClass: asdas
+        msgStore: false
+        parameters:
+          k1: v1
+          k2: v2
       - id: eloan-accrue
         implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService\
         asyncRespSenderId: 

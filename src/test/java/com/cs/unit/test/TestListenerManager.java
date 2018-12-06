@@ -33,14 +33,12 @@ class TestListenerManager {
 	@Test
 	void test() {
 		try {
-			List<BaseMessageListener> list = MSBaseApplication.getMessageBroker().getListener("TestListener");
-			for (BaseMessageListener l : list) {
-				System.out.println(l.getMaxProcessThreads());
-			}
+			BaseMessageListener listener = MSBaseApplication.getMessageBroker().getListener("TestListener");
+			System.out.println(listener.getMaxProcessThreads());
 			Thread.sleep(1000);
 			for (int i = 0; i <= 100; i++) {
 				queue.offer("" + i);
-				//Thread.sleep(1000);
+				// Thread.sleep(1000);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

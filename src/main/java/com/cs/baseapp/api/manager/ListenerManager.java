@@ -7,18 +7,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.cs.baseapp.api.filter.FilterFactory;
 import com.cs.baseapp.api.messagebroker.BaseMessageListener;
+import com.cs.baseapp.api.messagebroker.entity.MessageProcessTask;
+import com.cs.baseapp.api.messagebroker.entity.MessageProcessTaskFactory;
+import com.cs.baseapp.api.messagebroker.listener.MSBaseAppListenerThread;
+import com.cs.baseapp.api.messagebroker.pool.ObjectPool;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.baseapp.utils.ConfigConstant;
 import com.cs.baseapp.utils.PropertiesUtils;
+import com.cs.baseapp.utils.ThreadPoolUtils;
 import com.cs.log.logs.LogInfoMgr;
 import com.cs.log.logs.bean.Logger;
 
@@ -32,7 +37,9 @@ public class ListenerManager {
 
 	private static Map<String, ExecutorService> threadPools = new HashMap<>();
 
-	private static Map<String, List<BaseMessageListener>> listeners = new HashMap<>();
+	private static Map<String, ObjectPool<MessageProcessTask>> messageProcessTaskPool = new HashMap<>();
+
+	private static Map<String, List<MSBaseAppListenerThread>> listeners = new HashMap<>();
 
 	public ListenerManager(List<Map<String, Object>> listenersConfig) {
 		try {
@@ -40,10 +47,12 @@ public class ListenerManager {
 				throw new BaseAppException(LogInfoMgr.getErrorInfo("ERR_0054"));
 			}
 			for (Map<String, Object> singleConfig : listenersConfig) {
-				List<BaseMessageListener> listener = buildSingleListener(singleConfig);
-				listeners.put(listener.get(0).getId(), listener);
-				threadPools.put(listener.get(0).getId(),
-						Executors.newFixedThreadPool(listener.get(0).getMaxProcessThreads()));
+				List<MSBaseAppListenerThread> listener = buildSingleListener(singleConfig);
+				listeners.put(listener.get(0).getListener().getId(), listener);
+				threadPools.put(listener.get(0).getListener().getId(), ThreadPoolUtils.getBlockingThreadPool(5,
+						listener.get(0).getListener().getMaxProcessThreads(), 1));
+				messageProcessTaskPool.put(listener.get(0).getListener().getId(), new ObjectPool<MessageProcessTask>(
+						listener.get(0).getListener().getMaxProcessThreads(), new MessageProcessTaskFactory()));
 			}
 		} catch (Exception e) {
 			logger.write(LogManager.getServiceLogKey(), new BaseAppException(e, LogInfoMgr.getErrorInfo("ERR_0053")));
@@ -54,17 +63,35 @@ public class ListenerManager {
 		threadPools.get(listenerId).execute(task);
 	}
 
-	public List<BaseMessageListener> getById(String id) {
-		return listeners.get(id);
+	public static MessageProcessTask getMessageTaskObject(String listenerId) throws BaseAppException {
+		return messageProcessTaskPool.get(listenerId).getObject();
 	}
 
-	public Map<String, List<BaseMessageListener>> getAll() {
-		return listeners;
+	public static void releaseMessageTaskObject(String listenerId, MessageProcessTask taskObj) throws BaseAppException {
+		messageProcessTaskPool.get(listenerId).releaseObject(taskObj);
+	}
+
+	public BaseMessageListener getById(String id) {
+		return listeners.get(id).get(0).getListener();
+	}
+
+	public void start() {
+		Set<Entry<String, List<MSBaseAppListenerThread>>> set = listeners.entrySet();
+		for (Entry<String, List<MSBaseAppListenerThread>> entry : set) {
+			List<MSBaseAppListenerThread> listeners = entry.getValue();
+			for (MSBaseAppListenerThread listener : listeners) {
+				try {
+					listener.start();
+				} catch (BaseAppException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void stop(String id) throws BaseAppException {
-		List<BaseMessageListener> listenerList = getById(id);
-		for (BaseMessageListener listener : listenerList) {
+		List<MSBaseAppListenerThread> listenerList = listeners.get(id);
+		for (MSBaseAppListenerThread listener : listenerList) {
 			listener.stop();
 		}
 		ExecutorService pool = threadPools.get(id);
@@ -97,8 +124,8 @@ public class ListenerManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<BaseMessageListener> buildSingleListener(Map<String, Object> singleConfig) {
-		List<BaseMessageListener> liteners = new ArrayList<>();
+	private List<MSBaseAppListenerThread> buildSingleListener(Map<String, Object> singleConfig) {
+		List<MSBaseAppListenerThread> liteners = new ArrayList<>();
 		if (singleConfig == null || singleConfig.isEmpty()) {
 			return liteners;
 		}
@@ -115,9 +142,9 @@ public class ListenerManager {
 								FilterFactory.buildListenerFilters((List<Map<String, Object>>) singleConfig
 										.get(ConfigConstant.MESSAGE_FILTER.getValue())),
 								connections, (String) singleConfig.get(ConfigConstant.TRANS_CLASS.getValue()));
-				listener.initialize();
-				listener.start();
-				liteners.add(listener);
+				MSBaseAppListenerThread t = new MSBaseAppListenerThread(listener);
+//				t.start();
+				liteners.add(t);
 			}
 
 		} catch (Exception e) {

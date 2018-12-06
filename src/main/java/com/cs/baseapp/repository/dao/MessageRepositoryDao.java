@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.cs.baseapp.api.app.MSBaseApplication;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.logger.LogManager;
 import com.cs.cloud.message.api.MessageHeadConsumer;
@@ -35,8 +36,7 @@ public class MessageRepositoryDao {
 
 	public void storeMessage(MessageRequest request, MessageResponse response) {
 		try {
-			String unitCode = request.getTransaction().getUnitCode();
-			IJdbcExec exec = DSManager.getJdbcExec(unitCode);
+			IJdbcExec exec = DSManager.getJdbcExec(MSBaseApplication.getBaseInfo().getSystemDataSource());
 			String sql;
 			if (response != null) {
 				sql = buildSQL(buildParaMap(request, response));

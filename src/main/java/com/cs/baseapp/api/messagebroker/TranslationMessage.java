@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.cs.baseapp.api.messagebroker.event.EventMessage;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.cloud.message.api.MessageRequest;
 import com.cs.cloud.message.api.MessageResponse;
@@ -21,6 +22,8 @@ public abstract class TranslationMessage {
 
 	private MessageRequest msgReqeust;
 
+	private Object incomingMsg;
+
 	private Properties prop;
 
 	public abstract String getOutboundString() throws BaseAppException;
@@ -31,11 +34,20 @@ public abstract class TranslationMessage {
 
 	public abstract InputStream getOutboundInputStream() throws BaseAppException;
 
-	public abstract MessageResponse getInboundMessage(Object msgResponse) throws BaseAppException, MessageException;
+	public abstract MessageResponse getInboundResponseMessage() throws BaseAppException, MessageException;
+
+	public abstract EventMessage getInboundEventMessage() throws BaseAppException, MessageException;
+
+	public abstract MessageRequest getInboundRequestMessage() throws BaseAppException, MessageException;
 
 	public TranslationMessage(Properties prop, MessageRequest msgRequest) {
 		this.prop = prop;
 		this.msgReqeust = msgRequest;
+	}
+
+	public TranslationMessage(Properties prop, Object incomingMsg) {
+		this.prop = prop;
+		this.incomingMsg = incomingMsg;
 	}
 
 	public String getProperty(String key) {
@@ -51,6 +63,10 @@ public abstract class TranslationMessage {
 
 	public MessageRequest getRequestMsg() {
 		return msgReqeust;
+	}
+
+	public Object getIncomingMessage() {
+		return this.incomingMsg;
 	}
 
 }

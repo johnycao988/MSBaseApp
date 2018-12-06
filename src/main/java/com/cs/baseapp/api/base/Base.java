@@ -17,4 +17,6 @@ public interface Base {
 
 	public String getSecret();
 
+	public String getSystemDataSource();
+
 }

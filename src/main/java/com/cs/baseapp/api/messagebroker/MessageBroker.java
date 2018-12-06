@@ -4,8 +4,9 @@
 package com.cs.baseapp.api.messagebroker;
 
 import java.util.List;
-import java.util.Map;
 
+import com.cs.baseapp.api.manager.ListenerManager;
+import com.cs.baseapp.api.messagebroker.event.EventManager;
 import com.cs.baseapp.errorhandling.BaseAppException;
 import com.cs.baseapp.repository.BaseMessageRepository;
 import com.cs.cloud.message.api.MessageRequest;
@@ -21,9 +22,7 @@ public interface MessageBroker {
 
 	public Receiver getReceiver(String id) throws BaseAppException;
 
-	public Map<String, List<BaseMessageListener>> getListeners();
-
-	public List<BaseMessageListener> getListener(String id);
+	public BaseMessageListener getListener(String id);
 
 	public List<MBService> getServices();
 
@@ -32,6 +31,10 @@ public interface MessageBroker {
 	public MessageResponse invokeService(MessageRequest req) throws BaseAppException;
 
 	public BaseMessageRepository getMessageRepository();
+
+	public EventManager getEventManager();
+	
+	public ListenerManager getListenerManager();
 
 	public void shutdown() throws BaseAppException;
 

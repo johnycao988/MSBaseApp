@@ -27,13 +27,13 @@ class TestBaseAppShutdown {
 
 	@Test
 	void test() throws BaseAppException {
-		int s = MSBaseApplication.getMessageBroker().getListener("TestListener").get(0).getMaxProcessThreads();
+		int s = MSBaseApplication.getMessageBroker().getListener("TestListener").getMaxProcessThreads();
 		System.out.println(s);
 		MSBaseApplication.shutdown();
 		// MSBaseApplication.doWebFilters(null, null, null);
 		// MSBaseApplication.getAppEnv().getEnvProperty("OPOP");
 		// MSBaseApplication.getBaseInfo().getAppId();
-		int n = MSBaseApplication.getMessageBroker().getListener("TestListener").get(0).getMaxProcessThreads();
+		int n = MSBaseApplication.getMessageBroker().getListener("TestListener").getMaxProcessThreads();
 		System.out.println(n);
 	}
 
