@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<info>
+		<code>ERR_0001</code>
+		<msg>The request message is null!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0002</code>
+		<msg>Failed to load the configuration file!Please check the file in:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0003</code>
+		<msg>The Application Base configuration is Empty! Please check the
+			configuration file!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0004</code>
+		<msg>The Configuration parse error! Please check the Configuration
+			file. ErrorElement: %1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0005</code>
+		<msg>Failed process response message! RequestMessage: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0006</code>
+		<msg>Failed to merge response message! The request message is null or
+			the response message is empty!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0007</code>
+		<msg>Failed to build web filter! FilterID: %1$s implement Class:
+			%2$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0008</code>
+		<msg>Filed to build listener message filter!Implement
+			Class: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0009</code>
+		<msg>Failed to build message receiver! ReceiverId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0010</code>
+		<msg>The receiver configuration is empty!Please check configuration!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0011</code>
+		<msg>Failed to create receiver! ReceiverId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0012</code>
+		<msg>The sender configuration is empty!Please check configuration!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0013</code>
+		<msg>Failed to create sender! SenderId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0014</code>
+		<msg>Can not find the match service! RequestMessage: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0015</code>
+		<msg>Failed to process request message! RequestMessage: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0016</code>
+		<msg>Failed to build message listener! ListenerId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0017</code>
+		<msg>Failed to build service! ServiceId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0018</code>
+		<msg>Failed to initialize Default JMS receiver! ReceiverId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0019</code>
+		<msg>Failed to receive the response message! ReceiverId: %1$s
+			RequestMessage: %2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0020</code>
+		<msg>Failed to close connection! ReceiverId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0021</code>
+		<msg>Failed to close Session! ReceiverId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0022</code>
+		<msg>Failed to close Session! SenderId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0023</code>
+		<msg>Failed to send message! SenderId: %1$s ,RequestMessage:
+			%2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0024</code>
+		<msg>Failed to receive response message! SenderId: %1$s
+			,RequestMessage: %2$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0025</code>
+		<msg>Failed to close connection! SenderId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0026</code>
+		<msg>Failed to send http request message! SenderId: %1$s
+			,RequestMessage: %2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0027</code>
+		<msg>Failed to get translation message! ServiceId: %1$s,
+			transformClass: %2$s,ReqeustMessage: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0028</code>
+		<msg>Failed to get translation message constructor! ServiceId: %1$s,
+			transformClass: %2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0029</code>
+		<msg>Failed to get Object from Object pool!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0030</code>
+		<msg>The response message has the error return code! Url: %1$s
+			,RequestMessage: %2$s ,ReturnCode: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0031</code>
+		<msg>Failed to send get http request! Url: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0032</code>
+		<msg>Failed to send http post request! Url: %1$s, RequestMessage: %2$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0033</code>
+		<msg>Failed to do web filter!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0034</code>
+		<msg>The CS_ROOT_PATH is empty! Please set the path first!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0035</code>
+		<msg>Failed to initialize MSBaseAPP! Process Step: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0036</code>
+		<msg>Failed to get JsonMessage from http Request!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0036</code>
+		<msg>Failed to initialize MSBaseApp</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0037</code>
+		<msg>Failed to initialize DS! JndiName: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0038</code>
+		<msg>Failed to store message to DataBase! MessageContent: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0039</code>
+		<msg>Failed to build Message Repository! ImplClass: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0040</code>
+		<msg>Failed to build Message Repository! The configuration is empty!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0041</code>
+		<msg>Failed to get JMS Connection from context by JndiName! JNDIName:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0042</code>
+		<msg>Failed to close the listener connection! ListenerId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0043</code>
+		<msg>Failed to initialize Message Listener. ListenerId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0044</code>
+		<msg>Failed to start Message Listener. ListenerId: %1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0045</code>
+		<msg>Failed to process JMS message by Listener. MsgContent: %1$s
+			ListenerId: %2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0046</code>
+		<msg>The MS Base Application not in running status!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0047</code>
+		<msg>The Listener thread pool can not terminate after waiting 120
+			seconds!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0048</code>
+		<msg>Stop Sender Manager error! SenderId:%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0049</code>
+		<msg>Stop Receiver Manager error! ReceiverId:%1$s
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0050</code>
+		<msg>MSBaseApplication is already running! Please stop first!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0051</code>
+		<msg>MSBaseApplication is not running or is stopped! Please run
+			initialize first!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0052</code>
+		<msg>MSBaseApplication is already stop or is stopping! Please do not
+			stop again!
+		</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0053</code>
+		<msg>Fail to build Listener!Please check configuration!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0054</code>
+		<msg>The Listener configuration is Empty!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0055</code>
+		<msg>Fail to initialize Data Source by configuration file.
+			FilePath:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0056</code>
+		<msg>MSBaseApplication initialize fail!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0057</code>
+		<msg>Fail to start the refresh token thread! AuthTokenId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0058</code>
+		<msg>Fail to build AuthRule! AuthRuleId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0059</code>
+		<msg>Fail to build AuthTokenHandler! AuthTokenId: %1$s , ImplClass:
+			%2$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0060</code>
+		<msg>Fail to stop AuthToken refresh thread pool!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0061</code>
+		<msg>Fail to shutdown the Auth Manager!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0062</code>
+		<msg>Fail to refresh application token! AuthTokenId: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0063</code>
+		<msg>Something error when authenticate the request message! Message:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0064</code>
+		<msg>The message authenticate fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0065</code>
+		<msg>The message authenticate fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0066</code>
+		<msg>The message authorize user information fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0067</code>
+		<msg>The message authorize service roles fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0068</code>
+		<msg>The message authorize function roles fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0069</code>
+		<msg>The message authorize orgUnit fail! Message: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0070</code>
+		<msg>Fail to register the application to SSO service! AuthTokenId:
+			%1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0071</code>
+		<msg>Fail to process async local service! ServiceId: %1$s,
+			RequestMessage: %2$s, ResponseMessage: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0072</code>
+		<msg>Fail to send async local service response! ServiceId: %1$s,
+			RequestMessage: %2$s, ResponseMessage: %3$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0073</code>
+		<msg>Fail to build the Async Local Service Thread Pool!</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+	<info>
+		<code>ERR_0074</code>
+		<msg>Fail to return the auth fail response! RequestMessage: %1$s</msg>
+		<action />
+		<level>ERROR</level>
+	</info>
+</root>

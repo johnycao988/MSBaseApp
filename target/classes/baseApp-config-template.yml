@@ -1,0 +1,168 @@
+---
+app:
+  base: #The Base Information of this MS
+    name: eloanMS
+    version: v01
+    applicationId: eloan
+    secret: cc7dfc51-32da-4466-871a-800ccce36103
+    systemDataSource: eximsys
+  env:
+    ayncLoaclServiceThreads: 50
+    KEY_2: VALUE_2
+  authRules:
+    authToken:
+      - id: oauth2-Oidc-refreshToken
+        implementClass: com.cs.baseapp.api.auth.DefaultOauth2OidcRefreshTokenHandler
+        isDefault: true # true&false
+        parameters: 
+          token_endpoint: http://sso.cscloud.com/auth/realms/CS/protocol/openid-connect/token
+          KEY_2: VALUE_2
+    rules:
+    - id: httpOauth2OidcAuth
+      authTokenId: oauth2-Oidc-refreshToken
+      clients:
+       - clientId: eloan-web-ui
+         roles: "service, func, orgUnit, user" # service, func, orgUnit, user
+         isAuth: true #true & false
+       - clientId: std
+         roles: "service"
+         isAuth: false
+      parameters:
+        userinfo_endpoint: http://sso.cscloud.com/auth/realms/CS/protocol/openid-connect/userinfo
+        KEY_2: Value_2
+    - id: HttpOauth2Auth
+      refreshTokenId:
+      clients:
+       - clientId: eloanMS
+         roles: "service, func, orgUnit, user" # service, func, orgUnit, user
+         isAuth: true #true & false
+       - clientId: std
+         roles: "service"
+         isAuth: false
+      parameters:
+        KEY_1: Value_1
+        KEY_2: Value_2
+  webMessageFilter:
+    - id: filter1
+      implementClass: com.cs.baseapp.api.filter.DefaultOauth2OidcAuthMsgFilter #com.cs.baseapp.api.filter.BaseMessageFilter
+      desc: AuthMsgFileter filter 1
+      urlPattern: /*
+      authRuleId: httpOauth2OidcAuth
+      parameters:
+        KEY_1: value1
+        KEY_2: value2
+    - id: filter2
+      implementClass : com.cs.baseapp.api.filter.DefaultMsgProcWebFilter
+      desc: eloan filter 1
+      urlPattern: /*
+      clients:
+      parameters:
+        KEY_1: value1
+        KEY_2: value2
+  messageBroker:
+    sender:
+    - id: rest-sender
+      desc: rest sender
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultRestSender #com.cs.baseapp.api.messagebroker.MessageSender
+      poolSize: -1
+      parameters:
+        URI: "http://localhost:8082/StandingData/STDWebFilter"
+        METHOD: POST
+    - id: jms-sender
+      desc: com.cs.unit.test.TestSender
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSSender #com.cs.baseapp.api.messagebroker.MessageSender
+      poolSize: 5
+      parameters:
+        CONN_FACTORY_JNDI: Queue_Factory/ActiveMQ
+        QUEUE_JNDI: Queue/Eloan_Queue_Reply
+    receiver:
+    - id: jms-receiver
+      desc: eloan limit jms receiver
+      implementClass: com.cs.eloan.ActiveMQReceiver #com.cs.baseapp.api.messagebroker.MessageReceiver
+      poolSize: 10
+      parameters:
+        userName: admin
+        pwd: admin
+        URI: "tcp://DonaldWang:61616"
+        queueName: eloan_receive_queue
+        timeout: 8000
+    listener:
+    - id: TestListener
+      desc: Test
+      implementClass: com.cs.baseapp.api.messagebroker.entity.DefaultJMSListener #com.cs.baseapp.api.messagebroker.MessageListener
+      tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
+      maxProcessThreads: 2
+      connections: 2
+      messageFilter: 
+      - id: msgFilter1
+        implementClass: com.cs.baseapp.api.filter.DefaultListenerFilter #com.cs.baseapp.api.filter.BaseMessageFilter
+      parameters:
+        CONN_FACTORY_JNDI: Queue_Factory/ActiveMQ
+        QUEUE_JNDI: Queue/Eloan_Queue_Receive
+    events:
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
+      - name:
+        handlerClass:
+        parameters:
+         KEY_1: V1
+         KEY_2: V2
+    services:
+      local:
+      - id: default-event-filter
+        implementClass: asdas
+        msgStore: false
+        parameters:
+          k1: v1
+          k2: v2
+      - id: eloan-accrue
+        implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService\
+        asyncRespSenderId: 
+        msgStore: false #true & false
+        parameters:
+          KEY_1: value1
+          KEY_2: value2
+      - id: eloan-test
+        implementClass: com.cs.unit.test.Accrue #com.cs.baseapp.api.messagebroker.BusinessService
+        asyncRespSenderId:
+        parameters:
+          KEY_1: value1
+          KEY_2: value2
+      remote:
+      - id: jms-test
+        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage
+        senderId: jms-sender
+        receiverId:
+        msgStore: false #ture & false
+        parameters:
+          KEY_1: VALUE_1
+          KEY_2: VALUE_2
+      - id: std-country
+        authTokenId: asdasd
+        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
+        senderId: TestSender
+        receiverId: 
+        msgStore: false #true & false
+        parameters:
+         K1: V1
+      - id: tp-service
+        tranformClass: com.cs.baseapp.api.messagebroker.entity.DefaultTranslationMessage #com.cs.baseapp.api.messagebroker.TranslationMessage
+        senderId: jms-sender
+        receiverId: jms-receiver
+        msgStore: false #true & false
+        parameters:
+          KEY_1: value1
+          KEY_2: value2
+    repository: 
+      parameters:
+        K1: V1
+        K2: V2
+    

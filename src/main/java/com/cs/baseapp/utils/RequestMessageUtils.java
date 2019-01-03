@@ -44,7 +44,7 @@ public class RequestMessageUtils {
 						.setType(MessageConstant.MESSAGE_HEAD_BASE_TYPE_REQUEST).build());
 				builder.setConsumer(builder.getConsumerBuilder().setClientId(MSBaseApplication.getBaseInfo().getAppId())
 						.setId(mutiOriginReqMsg.getConsumer().getId())
-						.setUserName(mutiOriginReqMsg.getConsumer().getUserName())
+						.setUserId(mutiOriginReqMsg.getConsumer().getUserId())
 						.setToken(MSBaseApplication.getAuthManager().getAccessTokenByService(headService.getId()))
 						.build());
 			} else {
