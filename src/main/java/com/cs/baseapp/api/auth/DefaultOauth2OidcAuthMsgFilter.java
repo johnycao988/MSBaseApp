@@ -133,7 +133,7 @@ public class DefaultOauth2OidcAuthMsgFilter extends BaseMessageFilter {
 	}
 
 	private boolean checkUser(Map<String, Object> tokenInfo, MessageRequest request) {
-		return ((String) tokenInfo.get(AuthConst.ROLE_USER)).equals(request.getConsumer().getUserId());
+		return ((String) tokenInfo.get(AuthConst.ROLE_USER)).equals(request.getConsumer().getUserName());
 	}
 
 	@SuppressWarnings("unchecked")
